@@ -18,7 +18,7 @@
             android:id="@+id/tv_reviews"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Reviews"
+            android:text="@string/title_reviews"
             android:textColor="@color/white"
             android:fontFamily="@font/poppins_bold"
             android:layout_marginTop="24dp"
@@ -41,7 +41,7 @@
             android:id="@+id/tv_similar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Similar Movies"
+            android:text="@string/similar_movies"
             app:layout_constraintTop_toBottomOf="@id/rv_reviews"
             android:textColor="@color/white"
             android:fontFamily="@font/poppins_bold"
@@ -49,7 +49,6 @@
             android:textSize="16sp" />
 
         <TextView
-            android:id="@+id/tv_see_all_similar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/see_all"
@@ -79,7 +78,7 @@
             android:id="@+id/tv_recommended"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Recommended Movies"
+            android:text="@string/recommended_movies"
             android:textColor="@color/white"
             android:fontFamily="@font/poppins_bold"
             android:layout_marginTop="28dp"
@@ -88,7 +87,6 @@
             />
 
         <TextView
-            android:id="@+id/tv_see_all_recommended"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/see_all"
@@ -101,7 +99,6 @@
             />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_recommendations"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"

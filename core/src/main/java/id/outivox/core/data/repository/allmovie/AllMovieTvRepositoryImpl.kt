@@ -1,43 +1,51 @@
 package id.outivox.core.data.repository.allmovie
 
-import id.outivox.core.data.NetworkResource
+import android.util.Log
+import androidx.paging.map
 import id.outivox.core.data.remote.RemoteDataSource
-import id.outivox.core.data.remote.source.response.movie.MovieResponse
-import id.outivox.core.data.remote.source.response.tv.TvResponse
-import id.outivox.core.domain.model.Resource
-import id.outivox.core.domain.model.movie.MovieResult
-import id.outivox.core.domain.model.tv.TvResult
+import id.outivox.core.data.remote.source.network.ApiResponse
+import id.outivox.core.domain.model.Resource.Companion.empty
+import id.outivox.core.domain.model.Resource.Companion.loading
+import id.outivox.core.domain.model.Resource.Companion.success
+import id.outivox.core.domain.model.Resource.Companion.error
 import id.outivox.core.domain.repository.allmovietv.AllMovieTvRepository
-import id.outivox.core.mapper.HomeMapper.map
-import io.reactivex.rxjava3.core.Flowable
+import id.outivox.core.mapper.MovieMapper.map
+import id.outivox.core.mapper.TvMapper.map
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
 
-class AllMovieTvRepositoryImpl(
-    val remoteDataSource: RemoteDataSource
-): AllMovieTvRepository {
-    override fun getMovies(category: String, page: String): Flowable<Resource<MovieResult>> {
-        return object: NetworkResource<MovieResult, MovieResponse>() {
-            override fun createResult(data: MovieResponse): MovieResult {
-                return data.map()
+class AllMovieTvRepositoryImpl(val remoteDataSource: RemoteDataSource) : AllMovieTvRepository {
+    override fun getMovies(category: String, region: String) = flow {
+        emit(loading())
+        try {
+            when (val response = remoteDataSource.getMoviesByCategory(category, region).first()) {
+                is ApiResponse.Success -> {
+                    val data = response.data.map { it.map() }
+                    emit(success(data))
+                }
+                is ApiResponse.Empty -> emit(empty())
+                is ApiResponse.Error -> emit(error(response.message))
             }
-
-            override fun createCall(): Flowable<MovieResponse> {
-                return remoteDataSource.getMoviesByCategory(category, page)
-            }
-
-        }.asFlowable()
+        } catch (e: Exception) {
+            Log.e("logError", e.message.orEmpty())
+            emit(error(e.message.orEmpty()))
+        }
     }
 
-    override fun getTvShow(category: String, page: String): Flowable<Resource<TvResult>> {
-        return object: NetworkResource<TvResult, TvResponse>() {
-            override fun createResult(data: TvResponse): TvResult {
-                return data.map()
+    override fun getTvShow(category: String) = flow {
+        emit(loading())
+        try {
+            when (val response = remoteDataSource.getTvByCategory(category).first()) {
+                is ApiResponse.Success -> {
+                    val data = response.data.map { it.map() }
+                    emit(success(data))
+                }
+                is ApiResponse.Empty -> emit(empty())
+                is ApiResponse.Error -> emit(error(response.message))
             }
-
-            override fun createCall(): Flowable<TvResponse> {
-                return remoteDataSource.getTvByCategory(category, page)
-            }
-
-        }.asFlowable()
+        } catch (e: Exception) {
+            Log.e("logError", e.message.orEmpty())
+            emit(error(e.message.orEmpty()))
+        }
     }
-
 }

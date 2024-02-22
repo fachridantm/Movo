@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import id.outivox.core.domain.model.Resource
@@ -19,15 +18,14 @@ import id.outivox.core.utils.Constants.BUNDLE_MEDIA_MOVIE
 import id.outivox.core.utils.Constants.BUNDLE_MEDIA_TYPE
 import id.outivox.core.utils.Constants.BUNDLE_MOVIE_ID
 import id.outivox.core.utils.Constants.EXTRA_MOVIE_ID
-import id.outivox.core.utils.Constants.POPULAR_MOVIE
-import id.outivox.core.utils.Constants.TOP_RATED_MOVIE
+import id.outivox.core.utils.showSnackbar
+import id.outivox.movo.R
 import id.outivox.movo.adapter.HorizontalListAdapter
 import id.outivox.movo.adapter.ReviewAdapter
 import id.outivox.movo.databinding.FragmentOtherBinding
 import id.outivox.movo.`interface`.OnItemClickCallback
 import id.outivox.movo.presentation.detail.DetailActivity
 import id.outivox.movo.presentation.detail.DetailViewModel
-import id.outivox.movo.presentation.home.HomeFragmentDirections
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class OtherFragment : Fragment() {
@@ -102,20 +100,13 @@ class OtherFragment : Fragment() {
 
                             mAdapter.setOnItemClickCallback(object : OnItemClickCallback {
                                 override fun onItemClicked(id: Int) {
-                                    startActivity(
-                                        Intent(context, DetailActivity::class.java)
-                                            .putExtra(EXTRA_MOVIE_ID, id)
-                                    )
+                                    startActivity(Intent(context, DetailActivity::class.java).putExtra(EXTRA_MOVIE_ID, id))
                                 }
                             })
                         }
                         binding.tvSeeAllRecommended.setOnClickListener {
-                            findNavController().navigate(
-                                HomeFragmentDirections.actionNavigationHomeToAllMovieTvFragment(
-                                    POPULAR_MOVIE,
-                                    result.totalPages
-                                )
-                            )
+                            // TODO: See all recommended movies
+                            getString(R.string.under_development).showSnackbar(binding.root)
                         }
                     }
 
@@ -130,10 +121,7 @@ class OtherFragment : Fragment() {
 
                             mAdapter.setOnItemClickCallback(object : OnItemClickCallback {
                                 override fun onItemClicked(id: Int) {
-                                    startActivity(
-                                        Intent(context, DetailActivity::class.java)
-                                            .putExtra(EXTRA_MOVIE_ID, id)
-                                    )
+                                    startActivity(Intent(context, DetailActivity::class.java).putExtra(EXTRA_MOVIE_ID, id))
                                 }
                             })
                         }
@@ -170,12 +158,8 @@ class OtherFragment : Fragment() {
                             })
                         }
                         binding.tvSeeAllSimilar.setOnClickListener {
-                            findNavController().navigate(
-                                HomeFragmentDirections.actionNavigationHomeToAllMovieTvFragment(
-                                    TOP_RATED_MOVIE,
-                                    result.totalPages
-                                )
-                            )
+                            // TODO: See all similar movies
+                            getString(R.string.under_development).showSnackbar(binding.root)
                         }
                     }
 
@@ -190,10 +174,7 @@ class OtherFragment : Fragment() {
 
                             mAdapter.setOnItemClickCallback(object : OnItemClickCallback {
                                 override fun onItemClicked(id: Int) {
-                                    startActivity(
-                                        Intent(context, DetailActivity::class.java)
-                                            .putExtra(EXTRA_MOVIE_ID, id)
-                                    )
+                                    startActivity(Intent(context, DetailActivity::class.java).putExtra(EXTRA_MOVIE_ID, id))
                                 }
 
                             })

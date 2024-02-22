@@ -6,8 +6,7 @@
     android:backgroundTint="@color/darker_primary_color"
     app:cardCornerRadius="7dp"
     android:layout_marginHorizontal="7dp"
-    app:cardElevation="0dp"
-    android:id="@+id/bg_genre">
+    app:cardElevation="0dp">
 
     <TextView
         android:id="@+id/tv_genre"
@@ -16,8 +15,8 @@
         android:layout_marginTop="7dp"
         android:layout_marginBottom="5dp"
         android:layout_marginHorizontal="12dp"
-        android:text="Adventure"
-        android:textSize="10sp"
+        android:text="@string/sample_genre_alt"
+        android:textSize="12sp"
         android:fontFamily="@font/poppins_semibold"
         android:textColor="@color/white" />
 

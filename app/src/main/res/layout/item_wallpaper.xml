@@ -8,10 +8,10 @@
     app:cardCornerRadius="10dp">
 
     <ImageView
-        android:id="@+id/img_wallpaper"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:src="@drawable/img_wallpaper_sample"
-        android:scaleType="centerCrop" />
+        android:scaleType="centerCrop"
+        android:contentDescription="@string/content_desc_wallpaper_movie" />
 
 </com.google.android.material.card.MaterialCardView>

@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlin.math.abs
+import kotlin.math.min
 
 class CenterItemLayoutManager(context: Context?, orientation: Int, reverseLayout: Boolean) :
     LinearLayoutManager(context, orientation, reverseLayout) {
@@ -30,9 +31,9 @@ class CenterItemLayoutManager(context: Context?, orientation: Int, reverseLayout
         val center = width / 2.0f
         val d1 = 0.9f * center
         for (i in 0 until childCount) {
-            val child = getChildAt(i)
-            val centerChild = (getDecoratedLeft(child!!) + getDecoratedRight(child)) / 2.0f
-            val d = Math.min(d1, abs(center - centerChild))
+            val child = getChildAt(i) ?: continue // no need to check null, because we have checked it in the loop condition
+            val centerChild = (getDecoratedLeft(child) + getDecoratedRight(child)) / 2.0f
+            val d = min(d1, abs(center - centerChild))
             val scale = 1.0f - 0.15f * d / d1
             child.scaleX = scale
             child.scaleY = scale

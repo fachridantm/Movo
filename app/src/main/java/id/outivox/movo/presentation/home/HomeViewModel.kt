@@ -10,6 +10,7 @@ import id.outivox.core.utils.Constants.UPCOMING_MOVIE
 import id.outivox.core.domain.model.Resource
 import id.outivox.core.domain.model.movie.MovieResult
 import id.outivox.core.domain.usecase.home.HomeUseCase
+import id.outivox.core.utils.Constants.INDONESIA
 
 class HomeViewModel(private val homeUseCase: HomeUseCase) : ViewModel() {
 
@@ -20,7 +21,7 @@ class HomeViewModel(private val homeUseCase: HomeUseCase) : ViewModel() {
     private var currentPage = MutableLiveData(1)
 
     fun getNowPlayingMovies() {
-        val source = homeUseCase.getMovies(NOW_PLAYING_MOVIE, currentPage.value.toString()).toLiveData()
+        val source = homeUseCase.getMovies(NOW_PLAYING_MOVIE, currentPage.value.toString(), INDONESIA).toLiveData()
 
         nowPlayingResponse.addSource(source){
             nowPlayingResponse.postValue(it)
@@ -29,7 +30,7 @@ class HomeViewModel(private val homeUseCase: HomeUseCase) : ViewModel() {
     }
 
     fun getPopularMovies() {
-        val source = homeUseCase.getMovies(POPULAR_MOVIE, currentPage.value.toString()).toLiveData()
+        val source = homeUseCase.getMovies(POPULAR_MOVIE, currentPage.value.toString(), INDONESIA).toLiveData()
 
         popularResponse.addSource(source){
             popularResponse.postValue(it)
@@ -38,7 +39,7 @@ class HomeViewModel(private val homeUseCase: HomeUseCase) : ViewModel() {
     }
 
     fun getUpComingMovies() {
-        val source = homeUseCase.getMovies(UPCOMING_MOVIE, currentPage.value.toString()).toLiveData()
+        val source = homeUseCase.getMovies(UPCOMING_MOVIE, currentPage.value.toString(), INDONESIA).toLiveData()
 
         upcomingResponse.addSource(source){
             upcomingResponse.postValue(it)

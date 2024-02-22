@@ -21,15 +21,15 @@
             android:layout_height="34dp"
             android:src="@drawable/logo_home_movo"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            android:contentDescription="@string/content_desc_movo_logo" />
 
         <TextView
-            android:id="@+id/tv_movo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
             android:fontFamily="@font/plus_jakarta_plus_bold"
-            android:text="@string/movo"
+            android:text="@string/title_movo"
             android:textColor="@color/white"
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="@id/logo_movo"
@@ -48,7 +48,6 @@
             app:strokeWidth="2dp">
 
             <TextView
-                android:id="@+id/tv_region"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -56,7 +55,7 @@
                 android:drawableEnd="@drawable/ic_arrow_right"
                 android:fontFamily="@font/poppins_semibold"
                 android:gravity="center_vertical"
-                android:text="ID"
+                android:text="@string/region_code_indonesia"
                 android:textColor="@color/white"
                 android:textSize="12sp" />
 
@@ -77,7 +76,6 @@
             app:layout_constraintTop_toBottomOf="@id/logo_movo" />
 
         <com.google.android.material.card.MaterialCardView
-            android:id="@+id/sv_home_click"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:alpha="0"
@@ -110,7 +108,7 @@
             android:layout_marginEnd="50dp"
             android:fontFamily="@font/poppins_semibold"
             android:maxLines="1"
-            android:text="Minions: The Rise of Gru"
+            android:text="@string/sample_carousel_movie_title"
             android:textAlignment="center"
             android:textColor="@color/white"
             android:textSize="19sp"
@@ -148,13 +146,12 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="-4dp"
             android:fontFamily="@font/poppins_regular"
-            android:text="@string/playing_now_on_cinema"
+            android:text="@string/see_playing_now_on_cinema"
             android:textColor="@color/gray_text"
             android:textSize="11sp"
             app:layout_constraintTop_toBottomOf="@id/tv_popular_movies" />
 
         <TextView
-            android:id="@+id/tv_see_all_popular_movies"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/poppins_regular"
@@ -202,7 +199,6 @@
             app:layout_constraintTop_toBottomOf="@id/tv_upcoming_movies" />
 
         <TextView
-            android:id="@+id/tv_see_all_upcoming_movies"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/poppins_regular"
@@ -249,7 +245,6 @@
             app:tabTextColor="@color/gray_text" />
 
         <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/vp_home"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="-28dp"

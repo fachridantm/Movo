@@ -9,7 +9,7 @@ import id.outivox.core.data.remote.source.response.detail.video.VideoResponse
 import id.outivox.core.data.remote.source.response.detail.wallpaper.WallpaperResponse
 import id.outivox.core.data.remote.source.response.movie.MovieResponse
 import id.outivox.core.data.remote.source.response.tv.TvResponse
-import io.reactivex.rxjava3.core.Flowable
+import id.outivox.core.utils.Constants.ENGLISH
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -18,110 +18,106 @@ interface ApiService {
 
     // Movie
     @GET("movie/{category}")
-    fun getMovieByCategory(
+    suspend fun getMoviesByCategory(
         @Path("category") category: String,
-        @Query("api_key") apiKey: String,
         @Query("region") region: String,
-        @Query("page") page: String
-    ): Flowable<MovieResponse>
+        @Query("page") page: Int = 1,
+        @Query("language") language: String = ENGLISH,
+    ): MovieResponse
 
     @GET("movie/{id}")
-    fun getMovieDetail(
-        @Path("id") id: String,
-        @Query("api_key") apiKey: String,
-    ): Flowable<MovieDetailResponse>
+    suspend fun getMovieDetail(
+        @Path("id") id: Int // required
+    ): MovieDetailResponse
 
     @GET("search/movie")
-    fun searchMovieByQuery(
-        @Query("api_key") apiKey: String,
-        @Query("query") query: String,
+    suspend fun searchMovieByQuery(
+        @Query("query") query: String, // required
         @Query("region") region: String,
-        @Query("page") page: String
-    ): Flowable<MovieResponse>
+        @Query("page") page: Int = 1,
+        @Query("language") language: String = ENGLISH,
+        @Query("include_adult") adult: Boolean = false,
+        @Query("year") year: String? = null
+    ): MovieResponse
 
     @GET("movie/{id}/similar")
-    fun getSimilarMovies(
-        @Path("id") id: String,
-        @Query("api_key") apiKey: String,
-        @Query("region") region: String,
-        @Query("page") page: String
-    ): Flowable<MovieResponse>
+    suspend fun getSimilarMovies(
+        @Path("id") id: Int, // required
+        @Query("page") page: Int = 1,
+        @Query("language") language: String = ENGLISH
+    ): MovieResponse
 
     @GET("movie/{id}/recommendations")
-    fun getRecommendationsMovies(
-        @Path("id") id: String,
-        @Query("api_key") apiKey: String,
-        @Query("region") region: String,
-        @Query("page") page: String
-    ): Flowable<MovieResponse>
+    suspend fun getRecommendationsMovies(
+        @Path("id") id: Int, // required
+        @Query("page") page: Int = 1,
+        @Query("language") language: String = ENGLISH
+    ): MovieResponse
 
     // TV Show
     @GET("tv/{category}")
-    fun getTvByCategory(
+    suspend fun getTvByCategory(
         @Path("category") category: String,
-        @Query("api_key") apiKey: String,
-        @Query("region") region: String,
-        @Query("page") page: String
-    ): Flowable<TvResponse>
+        @Query("page") page: Int = 1,
+        @Query("language") language: String = ENGLISH
+    ): TvResponse
 
     @GET("tv/{id}")
-    fun getTvDetail(
-        @Path("id") id: String,
-        @Query("api_key") apiKey: String,
-    ): Flowable<TvDetailResponse>
+    suspend fun getTvDetail(
+        @Path("id") id: Int, // required
+        @Query("language") language: String = ENGLISH
+    ): TvDetailResponse
 
     @GET("search/tv")
-    fun searchTvByQuery(
-        @Query("api_key") apiKey: String,
-        @Query("query") query: String,
-        @Query("region") region: String,
-        @Query("page") page: String
-    ): Flowable<TvResponse>
+    suspend fun searchTvByQuery(
+        @Query("query") query: String, // required
+        @Query("include_adult") adult: Boolean = false,
+        @Query("page") page: Int = 1,
+        @Query("language") language: String = ENGLISH,
+        @Query("year") year: String? = null
+    ): TvResponse
 
     @GET("tv/{id}/similar")
-    fun getSimilarTv(
-        @Path("id") id: String,
-        @Query("api_key") apiKey: String,
-        @Query("region") region: String,
-        @Query("page") page: String
-    ): Flowable<TvResponse>
+    suspend fun getSimilarTv(
+        @Path("id") id: Int, // required
+        @Query("page") page: Int = 1,
+        @Query("language") language: String = ENGLISH
+    ): TvResponse
 
     @GET("tv/{id}/recommendations")
-    fun getRecommendationsTv(
-        @Path("id") id: String,
-        @Query("api_key") apiKey: String,
-        @Query("region") region: String,
-        @Query("page") page: String
-    ): Flowable<TvResponse>
+    suspend fun getRecommendationsTv(
+        @Path("id") id: Int, // required
+        @Query("page") page: Int = 1,
+        @Query("language") language: String = ENGLISH
+    ): TvResponse
 
     // Details
     @GET("{media}/{id}/reviews")
-    fun getReviewList(
+    suspend fun getReviewList(
         @Path("media") media: String,
-        @Path("id") id: String,
-        @Query("api_key") apiKey: String,
-        @Query("page") page: String
-    ): Flowable<ReviewResponse>
+        @Path("id") id: Int,
+        @Query("page") page: Int = 1,
+        @Query("language") language: String = ENGLISH
+    ): ReviewResponse
 
     @GET("{media}/{id}/credits")
-    fun getCreditList(
+    suspend fun getCreditList(
         @Path("media") media: String,
-        @Path("id") id: String,
-        @Query("api_key") apiKey: String,
-        @Query("region") region: String
-    ): Flowable<ActorResponse>
+        @Path("id") id: Int,
+        @Query("language") language: String = ENGLISH
+    ): ActorResponse
 
     @GET("{media}/{id}/videos")
-    fun getVideoList(
+    suspend fun getVideoList(
         @Path("media") media: String,
-        @Path("id") id: String,
-        @Query("api_key") apiKey: String
-    ): Flowable<VideoResponse>
+        @Path("id") id: Int,
+        @Query("language") language: String = ENGLISH
+    ): VideoResponse
 
     @GET("{media}/{id}/images")
-    fun getWallpaperList(
+    suspend fun getWallpaperList(
         @Path("media") media: String,
-        @Path("id") id: String,
-        @Query("api_key") apiKey: String
-    ): Flowable<WallpaperResponse>
+        @Path("id") id: Int,
+        @Query("language") language: String = ENGLISH,
+    ): WallpaperResponse
 }

@@ -13,7 +13,7 @@
         android:id="@+id/tv_genre"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Animation"
+        android:text="@string/sample_genre"
         android:layout_gravity="center"
         android:layout_marginHorizontal="12dp"
         android:layout_marginVertical="6dp"

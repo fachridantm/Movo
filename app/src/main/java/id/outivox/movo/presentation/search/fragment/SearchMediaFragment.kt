@@ -1,12 +1,11 @@
 package id.outivox.movo.presentation.search.fragment
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import com.google.android.material.tabs.TabLayoutMediator
-import id.outivox.core.utils.Constants
 import id.outivox.core.utils.Constants.BUNDLE_MEDIA_MOVIE
 import id.outivox.core.utils.Constants.BUNDLE_MEDIA_TV
 import id.outivox.core.utils.Constants.BUNDLE_MEDIA_TYPE

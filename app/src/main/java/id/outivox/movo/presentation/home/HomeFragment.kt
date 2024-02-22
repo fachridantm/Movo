@@ -11,13 +11,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.tabs.TabLayoutMediator
-import id.outivox.core.utils.Constants
 import id.outivox.core.domain.model.Resource
 import id.outivox.core.domain.model.movie.Movie
 import id.outivox.core.domain.model.movie.MovieResult
+import id.outivox.core.utils.Constants.EXTRA_DATA_MOVIE
 import id.outivox.core.utils.Constants.EXTRA_MOVIE_ID
 import id.outivox.core.utils.Constants.POPULAR_MOVIE
 import id.outivox.core.utils.Constants.UPCOMING_MOVIE
+import id.outivox.core.utils.showSnackbar
 import id.outivox.movo.R
 import id.outivox.movo.`interface`.OnItemClickCallback
 import id.outivox.movo.adapter.CarouselAdapter
@@ -47,16 +48,22 @@ class HomeFragment : Fragment() {
 
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
 
+        initListener()
         initObserver()
-        setUpView()
         setUpTabBar()
 
         return binding.root
     }
 
-    private fun setUpView() {
-        binding.svHomeClick.setOnClickListener {
-            findNavController().navigate(R.id.action_navigation_home_to_navigation_search)
+    private fun initListener() {
+        binding.apply {
+            svHomeClick.setOnClickListener {
+                findNavController().navigate(R.id.action_navigation_home_to_navigation_search)
+            }
+            tvRegion.setOnClickListener {
+                // TODO: Add region picker
+                getString(R.string.under_development).showSnackbar(binding.root)
+            }
         }
     }
 
@@ -97,8 +104,7 @@ class HomeFragment : Fragment() {
                     mAdapter.setOnItemClickCallback(object : OnItemClickCallback {
                         override fun onItemClicked(id: Int) {
                             startActivity(
-                                Intent(context, DetailActivity::class.java)
-                                    .putExtra(EXTRA_MOVIE_ID, id)
+                                Intent(context, DetailActivity::class.java).putExtra(EXTRA_MOVIE_ID, id)
                             )
                         }
 
@@ -143,7 +149,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun setUpCarouselMovieData(movie: List<Movie>, currentItem: Int) {
-        setUpGenreList(movie[currentItem].genre)
+        setUpGenreList(movie[currentItem].genres)
         binding.tvCarouselTitle.text = movie[currentItem].title
     }
 

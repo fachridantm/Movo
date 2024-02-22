@@ -3,7 +3,6 @@ package id.outivox.core.data.remote.source.response.movie
 import com.google.gson.annotations.SerializedName
 
 data class MovieItem(
-
 	@field:SerializedName("original_title")
 	val originalTitle: String? = null,
 
@@ -33,5 +32,4 @@ data class MovieItem(
 
 	@field:SerializedName("adult")
 	val adult: Boolean? = null
-
 )

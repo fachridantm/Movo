@@ -1,146 +1,143 @@
 package id.outivox.core.data.repository.detail.movie
 
-import id.outivox.core.data.NetworkResource
-import id.outivox.core.data.local.LocalDataSource
+import android.util.Log
+import androidx.paging.map
+import id.outivox.core.data.NetworkBoundResource
 import id.outivox.core.data.remote.RemoteDataSource
-import id.outivox.core.data.remote.source.response.detail.actor.ActorResponse
+import id.outivox.core.data.remote.source.network.ApiResponse
 import id.outivox.core.data.remote.source.response.detail.movie.MovieDetailResponse
-import id.outivox.core.data.remote.source.response.detail.review.ReviewResponse
-import id.outivox.core.data.remote.source.response.detail.video.VideoResponse
-import id.outivox.core.data.remote.source.response.detail.wallpaper.WallpaperResponse
-import id.outivox.core.data.remote.source.response.movie.MovieResponse
 import id.outivox.core.domain.model.Resource
-import id.outivox.core.domain.model.detail.*
-import id.outivox.core.domain.model.movie.Movie
-import id.outivox.core.domain.model.movie.MovieResult
+import id.outivox.core.domain.model.Resource.Companion.empty
+import id.outivox.core.domain.model.Resource.Companion.error
+import id.outivox.core.domain.model.Resource.Companion.loading
+import id.outivox.core.domain.model.Resource.Companion.success
+import id.outivox.core.domain.model.detail.MovieDetail
 import id.outivox.core.domain.repository.detail.movie.MovieDetailRepository
-import id.outivox.core.mapper.HomeMapper.map
-import id.outivox.core.mapper.MovieDetailMapper.asEntity
-import id.outivox.core.mapper.MovieDetailMapper.map
-import id.outivox.core.mapper.TvDetailMapper.map
-import io.reactivex.rxjava3.core.Flowable
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import id.outivox.core.mapper.DetailsMapper.map
+import id.outivox.core.mapper.MovieMapper.map
+import id.outivox.core.utils.Constants.MOVIE
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
 
-class MovieDetailRepositoryImpl(
-    val localDataSource: LocalDataSource,
-    val remoteDataSource: RemoteDataSource
-): MovieDetailRepository {
-    override fun getMovieDetail(id: String): Flowable<Resource<MovieDetail>> {
-        return object : NetworkResource<MovieDetail, MovieDetailResponse>(){
-            override fun createResult(data: MovieDetailResponse): MovieDetail {
-                return data.map()
-            }
+class MovieDetailRepositoryImpl(val remoteDataSource: RemoteDataSource) : MovieDetailRepository {
+    override fun getMovieDetail(id: Int): Flow<Resource<MovieDetail>> {
+        return object : NetworkBoundResource<MovieDetail, MovieDetailResponse>() {
+            override fun loadFromDB() = throw UnsupportedOperationException()
 
-            override fun createCall(): Flowable<MovieDetailResponse> {
-                return remoteDataSource.getMovieDetail(id)
-            }
+            override fun shouldFetch(data: MovieDetail?) = true
 
-        }.asFlowable()
+            override suspend fun createCall() = remoteDataSource.getMovieDetail(id)
+
+            override suspend fun saveCallResult(data: MovieDetailResponse) = throw UnsupportedOperationException()
+        }.asFlow()
     }
 
-    override fun getMovieReviews(id: String): Flowable<Resource<List<Review>>> {
-        return object : NetworkResource<List<Review>, ReviewResponse>(){
-            override fun createResult(data: ReviewResponse): List<Review> {
-                return data.map()
+    override fun getSimilarMovies(id: Int) = flow {
+        emit(loading())
+        try {
+            when (val response = remoteDataSource.getSimilarMovies(id).first()) {
+                is ApiResponse.Success -> {
+                    val data = response.data.map()
+                    emit(success(data))
+                }
+
+                is ApiResponse.Empty -> emit(empty())
+                is ApiResponse.Error -> emit(error(response.message))
             }
-
-            override fun createCall(): Flowable<ReviewResponse> {
-                return remoteDataSource.getReviewList(MOVIE, id, PAGE)
-            }
-
-        }.asFlowable()
-    }
-
-    override fun getMovieWallpapers(id: String): Flowable<Resource<Wallpaper>> {
-        return object : NetworkResource<Wallpaper, WallpaperResponse>(){
-            override fun createResult(data: WallpaperResponse): Wallpaper {
-                return data.map()
-            }
-
-            override fun createCall(): Flowable<WallpaperResponse> {
-                return remoteDataSource.getWallpaperList(MOVIE, id)
-            }
-
-        }.asFlowable()
-    }
-
-    override fun getMovieActors(id: String): Flowable<Resource<List<Actor>>> {
-        return object : NetworkResource<List<Actor>, ActorResponse>(){
-            override fun createResult(data: ActorResponse): List<Actor> {
-                return data.map()
-            }
-
-            override fun createCall(): Flowable<ActorResponse> {
-                return remoteDataSource.getCreditList(MOVIE, id)
-            }
-
-        }.asFlowable()
-    }
-
-    override fun getMovieVideos(id: String): Flowable<Resource<List<Video>>> {
-        return object : NetworkResource<List<Video>, VideoResponse>(){
-            override fun createResult(data: VideoResponse): List<Video> {
-                return data.map()
-            }
-
-            override fun createCall(): Flowable<VideoResponse> {
-                return remoteDataSource.getVideoList(MOVIE, id)
-            }
-
-        }.asFlowable()
-    }
-
-    override fun getRecommendationsMovies(id: String): Flowable<Resource<MovieResult>> {
-        return object : NetworkResource<MovieResult, MovieResponse>(){
-            override fun createResult(data: MovieResponse): MovieResult {
-                return data.map()
-            }
-
-            override fun createCall(): Flowable<MovieResponse> {
-                return remoteDataSource.getRecommendationsMovies(id, PAGE)
-            }
-
-        }.asFlowable()
-    }
-
-    override fun getSimilarMovies(id: String): Flowable<Resource<MovieResult>> {
-        return object : NetworkResource<MovieResult, MovieResponse>(){
-            override fun createResult(data: MovieResponse): MovieResult {
-                return data.map()
-            }
-
-            override fun createCall(): Flowable<MovieResponse> {
-                return remoteDataSource.getSimilarMovies(id, PAGE)
-            }
-
-        }.asFlowable()
-    }
-
-    override fun isFollowed(id: String): Flow<Boolean> {
-        return localDataSource.getMovieFavoriteById(id).map {
-            it != null
+        } catch (e: Exception) {
+            Log.e("logError", e.message.orEmpty())
+            emit(error(e.message.orEmpty()))
         }
     }
 
-    override fun insertFavoriteMovie(movie: Movie) {
-        CoroutineScope(Dispatchers.IO).launch {
-            localDataSource.insertFavoriteMovie(movie.asEntity())
+    override fun getMovieReviews(id: Int) = flow {
+        emit(loading())
+        try {
+            when (val response = remoteDataSource.getReviewList(MOVIE, id).first()) {
+                is ApiResponse.Success -> {
+                    val data = response.data.map { it.map() }
+                    emit(success(data))
+                }
+
+                is ApiResponse.Empty -> emit(empty())
+                is ApiResponse.Error -> emit(error(response.message))
+            }
+        } catch (e: Exception) {
+            Log.e("logError", e.message.orEmpty())
+            emit(error(e.message.orEmpty()))
         }
     }
 
-    override fun deleteFavoriteMovie(movie: Movie) {
-        CoroutineScope(Dispatchers.IO).launch {
-            localDataSource.deleteFavoriteMovie(movie.asEntity())
+    override fun getRecommendationsMovies(id: Int) = flow {
+        emit(loading())
+        try {
+            when (val response = remoteDataSource.getRecommendationsMovies(id).first()) {
+                is ApiResponse.Success -> {
+                    val data = response.data.map { it.map() }
+                    emit(success(data))
+                }
+
+                is ApiResponse.Empty -> emit(empty())
+                is ApiResponse.Error -> emit(error(response.message))
+            }
+        } catch (e: Exception) {
+            Log.e("logError", e.message.orEmpty())
+            emit(error(e.message.orEmpty()))
         }
     }
 
-    companion object{
-        const val PAGE = "1"
-        const val MOVIE = "movie"
+    override fun getMovieWallpapers(id: Int) = flow {
+        emit(loading())
+        try {
+            when (val response = remoteDataSource.getWallpaperList(MOVIE, id).first()) {
+                is ApiResponse.Success -> {
+                    val data = response.data.map()
+                    emit(success(data))
+                }
+
+                is ApiResponse.Empty -> emit(empty())
+                is ApiResponse.Error -> emit(error(response.message))
+            }
+        } catch (e: Exception) {
+            Log.e("logError", e.message.orEmpty())
+            emit(error(e.message.orEmpty()))
+        }
     }
 
+    override fun getMovieActors(id: Int) = flow {
+        emit(loading())
+        try {
+            when (val response = remoteDataSource.getCreditList(MOVIE, id).first()) {
+                is ApiResponse.Success -> {
+                    val data = response.data.map()
+                    emit(success(data))
+                }
+
+                is ApiResponse.Empty -> emit(empty())
+                is ApiResponse.Error -> emit(error(response.message))
+            }
+        } catch (e: Exception) {
+            Log.e("logError", e.message.orEmpty())
+            emit(error(e.message.orEmpty()))
+        }
+    }
+
+    override fun getMovieVideos(id: Int) = flow {
+        emit(loading())
+        try {
+            when (val response = remoteDataSource.getVideoList(MOVIE, id).first()) {
+                is ApiResponse.Success -> {
+                    val data = response.data.map()
+                    emit(success(data))
+                }
+
+                is ApiResponse.Empty -> emit(empty())
+                is ApiResponse.Error -> emit(error(response.message))
+            }
+        } catch (e: Exception) {
+            Log.e("logError", e.message.orEmpty())
+            emit(error(e.message.orEmpty()))
+        }
+    }
 }

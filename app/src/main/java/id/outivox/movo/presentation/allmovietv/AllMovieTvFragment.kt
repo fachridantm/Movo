@@ -28,7 +28,7 @@ class AllMovieTvFragment : Fragment() {
     private lateinit var category: String
     private var totalPages = 1
 
-    val args: AllMovieTvFragmentArgs by navArgs()
+    private val args: AllMovieTvFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

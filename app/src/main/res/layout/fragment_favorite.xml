@@ -20,7 +20,7 @@
             android:id="@+id/tv_popular_movies"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Favorite Movies"
+            android:text="@string/favorite_movies"
             app:layout_constraintTop_toTopOf="parent"
             android:textColor="@color/white"
             android:fontFamily="@font/poppins_bold"
@@ -30,7 +30,7 @@
             android:id="@+id/tv_popular_movies_desc"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="See what’s your favorite movies"
+            android:text="@string/see_favorite_movies"
             android:textColor="@color/gray_text"
             android:fontFamily="@font/poppins_regular"
             android:layout_marginTop="-4dp"
@@ -54,7 +54,6 @@
             />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_favorite_movies"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"

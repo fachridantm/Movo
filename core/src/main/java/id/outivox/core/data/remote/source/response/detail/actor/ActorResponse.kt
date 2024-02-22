@@ -6,5 +6,4 @@ data class ActorResponse(
 
 	@field:SerializedName("cast")
 	val cast: List<CastItem>? = null
-
 )

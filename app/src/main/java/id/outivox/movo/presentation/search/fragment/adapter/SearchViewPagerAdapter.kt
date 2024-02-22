@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import id.outivox.core.utils.Constants
 import id.outivox.core.utils.Constants.BUNDLE_MEDIA_MOVIE
 import id.outivox.core.utils.Constants.BUNDLE_MEDIA_TV
 import id.outivox.core.utils.Constants.BUNDLE_MEDIA_TYPE

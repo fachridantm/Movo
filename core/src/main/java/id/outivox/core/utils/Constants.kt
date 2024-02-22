@@ -34,14 +34,24 @@ object Constants {
     const val ALL = "multi"
 
     // Country/Region List
-    const val INDONESIA = "ID"
-    const val UNITED_STATES = "US"
-    const val CHINA = "CN"
+    const val INDONESIA = "IDN"
+    const val UNITED_STATES = "USA"
+    const val CHINA = "CHN"
     const val ARAB = "AE"
-    const val MALASYIA = "MY"
+    const val MALASYIA = "MYS"
+
+    // Language
+    const val ENGLISH = "en-US"
+    const val INDONESIAN = "id-ID"
+
+    // Date & Time Format
+    const val API_DATE_FORMAT = "yyyy-MM-dd"
+    const val UI_DATE_FORMAT = "d MMMM yyyy"
+    const val JAKARTA_TIME_ZONE = "Asia/Jakarta"
 
     // Intent Key
     const val EXTRA_MOVIE_ID = "EXTRA_MOVIE_ID"
+    const val EXTRA_DATA_MOVIE = "EXTRA_DATA_MOVIE"
     const val EXTRA_TV_ID = "EXTRA_TV_ID"
     const val EXTRA_MEDIA_TYPE = "EXTRA_MEDIA_TYPE"
     const val EXTRA_MEDIA_MOVIE = "EXTRA_MEDIA_MOVIE"

@@ -9,7 +9,6 @@
     android:background="@color/app_backround">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_search"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         tools:listitem="@layout/item_vertical_movie"

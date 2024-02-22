@@ -24,7 +24,6 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <WebView
-                android:id="@+id/web_view_trailer"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 />
@@ -38,7 +37,7 @@
             android:textColor="#ECECEC"
             android:fontFamily="@font/poppins_regular"
             android:textSize="12sp"
-            android:text="Lightning McQueen and his best friend Mater head east from Radiator Springs on a cross-country road trip to meet up with Mater’s sister."
+            android:text="@string/sample_synopsis_movie"
             android:layout_marginTop="24dp"
             app:layout_constraintTop_toBottomOf="@id/cv_trailer" />
 
@@ -46,7 +45,7 @@
             android:id="@+id/tv_actor"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Actors"
+            android:text="@string/title_actors"
             android:textColor="@color/white"
             android:fontFamily="@font/poppins_bold"
             android:layout_marginTop="24dp"
@@ -71,7 +70,7 @@
             android:id="@+id/tv_wallpaper"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Wallpaper"
+            android:text="@string/title_wallpaper"
             android:textColor="@color/white"
             android:fontFamily="@font/poppins_bold"
             android:layout_marginTop="24dp"
@@ -79,7 +78,6 @@
             app:layout_constraintTop_toBottomOf="@id/rv_actors"/>
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_wallpaper"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             tools:listitem="@layout/item_wallpaper"

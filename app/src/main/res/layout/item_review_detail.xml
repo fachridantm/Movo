@@ -23,11 +23,11 @@
             app:cardCornerRadius="120dp">
 
             <ImageView
-                android:id="@+id/img_profile_review"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"
-                tools:src="@tools:sample/avatars" />
+                tools:src="@tools:sample/avatars"
+                android:contentDescription="@string/content_desc_profile_review_photo" />
 
         </androidx.cardview.widget.CardView>
 
@@ -41,7 +41,6 @@
             android:layout_marginHorizontal="12dp">
 
             <TextView
-                android:id="@+id/tv_name_review"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 tools:text="Reihan Fatilla"
@@ -52,7 +51,6 @@
                 android:textStyle="normal" />
 
             <TextView
-                android:id="@+id/tv_username_review"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 tools:text="\@reihanfatilla"
@@ -73,51 +71,50 @@
             app:layout_constraintTop_toBottomOf="@id/cv_profile">
 
             <ImageView
-                android:id="@+id/stars_1"
                 android:layout_width="12dp"
                 android:layout_height="12dp"
                 android:src="@drawable/ic_stars"
-                app:tint="@color/yellow_star" />
+                app:tint="@color/yellow_star"
+                android:contentDescription="@string/content_desc_rating_stars" />
 
             <ImageView
-                android:id="@+id/stars_2"
                 android:layout_width="12dp"
                 android:layout_height="12dp"
                 android:layout_marginStart="6dp"
                 android:src="@drawable/ic_stars"
-                app:tint="@color/yellow_star" />
+                app:tint="@color/yellow_star"
+                android:contentDescription="@string/content_desc_rating_stars" />
 
             <ImageView
-                android:id="@+id/stars_3"
                 android:layout_width="12dp"
                 android:layout_height="12dp"
                 android:layout_marginStart="6dp"
                 android:src="@drawable/ic_stars"
-                app:tint="@color/yellow_star" />
+                app:tint="@color/yellow_star"
+                android:contentDescription="@string/content_desc_rating_stars" />
 
             <ImageView
-                android:id="@+id/stars_4"
                 android:layout_width="12dp"
                 android:layout_height="12dp"
                 android:layout_marginStart="6dp"
                 android:src="@drawable/ic_stars"
-                app:tint="@color/yellow_star" />
+                app:tint="@color/yellow_star"
+                android:contentDescription="@string/content_desc_rating_stars" />
 
             <ImageView
-                android:id="@+id/stars_5"
                 android:layout_width="12dp"
                 android:layout_height="12dp"
                 android:layout_marginStart="6dp"
                 android:src="@drawable/ic_stars"
-                app:tint="@color/yellow_star" />
+                app:tint="@color/yellow_star"
+                android:contentDescription="@string/content_desc_rating_stars" />
 
         </LinearLayout>
 
         <TextView
-            android:id="@+id/tv_message"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/review_message_sample"
+            android:text="@string/sample_review_message"
             android:textSize="12sp"
             android:fontFamily="@font/poppins_regular"
             android:textColor="@color/light_grey"

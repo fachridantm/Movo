@@ -8,11 +8,10 @@ import id.outivox.core.domain.model.tv.Tv
 import id.outivox.core.utils.loadImageWithOptions
 import id.outivox.movo.databinding.ItemVerticalMovieBinding
 import id.outivox.movo.`interface`.OnItemClickCallback
-import id.outivox.movo.utils.HelperFunction
 
 class VerticalListAdapter<T> : RecyclerView.Adapter<VerticalListAdapter.VerticalViewholder>() {
 
-    val listMovie = ArrayList<T>()
+    private val listMovie = ArrayList<T>()
 
     private var onItemClickCallback: OnItemClickCallback? = null
 
@@ -38,7 +37,7 @@ class VerticalListAdapter<T> : RecyclerView.Adapter<VerticalListAdapter.Vertical
                 is Movie -> {
                     with(listMovie[position] as Movie) {
                         tvTitle.text = title
-                        tvGenre.text = HelperFunction.genreComaFormatter(genre)
+                        tvGenre.text = HelperFunction.genreComaFormatter(genres)
                         HelperFunction.setUpRatingStars(this@apply, voteAverage)
                         imgPoster.loadImageWithOptions(posterPath, 300, 300)
 
@@ -50,7 +49,7 @@ class VerticalListAdapter<T> : RecyclerView.Adapter<VerticalListAdapter.Vertical
 
                 is Tv -> {
                     with(listMovie[position] as Tv) {
-                        tvTitle.text = name
+                        tvTitle.text = title
                         tvGenre.text = HelperFunction.genreComaFormatter(genre)
                         HelperFunction.setUpRatingStars(this@apply, voteAverage)
                         imgPoster.loadImageWithOptions(posterPath)

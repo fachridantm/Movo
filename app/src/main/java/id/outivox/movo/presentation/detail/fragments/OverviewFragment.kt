@@ -1,9 +1,15 @@
 package id.outivox.movo.presentation.detail.fragments
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.webkit.JsResult
+import android.webkit.WebChromeClient
+import android.webkit.WebResourceRequest
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -60,22 +66,35 @@ class OverviewFragment : Fragment() {
         }
     }
 
+    @SuppressLint("SetJavaScriptEnabled")
     private fun setTrailerWebView(resource: Resource<List<Video>>) {
         binding.apply {
             when (resource) {
                 is Resource.Success -> {
-                    if(resource.data?.isEmpty() == true) {
-
-                    } else {
+                    if (resource.data?.isEmpty() != true) {
                         val frameVideo = "<html><body style=\"margin: 0;margin-top: -30px;\"><br><iframe  width=\"100%\" height=\"100%\" src=\"https://www.youtube.com/embed/${
                             resource.data?.get(
                                 0
                             )?.key
                         }\" frameborder=\"0\" allowfullscreen></iframe></body></html>"
 
-                        val webSettings = webViewTrailer.settings
-                        webSettings.javaScriptEnabled = true;
-                        webViewTrailer.loadData(frameVideo, "text/html", "utf-8")
+                        webViewTrailer.apply {
+                            settings.javaScriptEnabled = true
+                            webViewClient = object : WebViewClient() {
+                                override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
+                                    // Only allow URLs from trusted sources
+                                    return request?.url?.host != "https://www.youtube.com/"
+                                }
+                            }
+
+                            webChromeClient = object : WebChromeClient() {
+                                override fun onJsAlert(view: WebView?, url: String?, message: String?, result: JsResult?): Boolean {
+                                    // Handle JavaScript alerts here
+                                    return super.onJsAlert(view, url, message, result)
+                                }
+                            }
+                            loadData(frameVideo, "text/html", "utf-8")
+                        }
                     }
 
                 }
@@ -88,12 +107,12 @@ class OverviewFragment : Fragment() {
         if(isMovieType()){
             viewModel.getMovieActor(id)
             viewModel.actorResponse.observe(viewLifecycleOwner) {
-                setUpActorRV(it)
+                setUpActorData(it)
             }
 
             viewModel.getMovieWallpaper(id)
             viewModel.wallpaperResponse.observe(viewLifecycleOwner) {
-                setUpWallpaperRV(it)
+                setUpWallpaperData(it)
             }
 
             viewModel.getMovieTrailer(id)
@@ -103,12 +122,12 @@ class OverviewFragment : Fragment() {
         } else {
             viewModel.getTvActor(id)
             viewModel.actorResponse.observe(viewLifecycleOwner) {
-                setUpActorRV(it)
+                setUpActorData(it)
             }
 
             viewModel.getTvTrailer(id)
             viewModel.wallpaperResponse.observe(viewLifecycleOwner) {
-                setUpWallpaperRV(it)
+                setUpWallpaperData(it)
             }
 
             viewModel.getTvTrailer(id)
@@ -118,7 +137,7 @@ class OverviewFragment : Fragment() {
         }
     }
 
-    private fun setUpWallpaperRV(resource: Resource<Wallpaper>?) {
+    private fun setUpWallpaperData(resource: Resource<Wallpaper>?) {
         when (resource) {
             is Resource.Success -> {
                 binding.rvWallpaper.apply {
@@ -133,7 +152,7 @@ class OverviewFragment : Fragment() {
 
     }
 
-    private fun setUpActorRV(resource: Resource<List<Actor>>?) {
+    private fun setUpActorData(resource: Resource<List<Actor>>?) {
         when (resource) {
             is Resource.Success -> {
                 binding.rvActors.apply {

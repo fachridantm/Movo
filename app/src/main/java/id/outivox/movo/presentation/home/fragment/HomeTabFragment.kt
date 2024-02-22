@@ -2,12 +2,11 @@ package id.outivox.movo.presentation.home.fragment
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import id.outivox.core.utils.Constants
 import id.outivox.core.domain.model.Resource
 import id.outivox.core.domain.model.movie.Movie
 import id.outivox.core.domain.model.movie.MovieResult
@@ -21,9 +20,9 @@ import id.outivox.core.utils.Constants.EXTRA_MEDIA_TV
 import id.outivox.core.utils.Constants.EXTRA_MEDIA_TYPE
 import id.outivox.core.utils.Constants.EXTRA_MOVIE_ID
 import id.outivox.core.utils.Constants.NOW_PLAYING_MOVIE
-import id.outivox.movo.`interface`.OnItemClickCallback
 import id.outivox.movo.adapter.VerticalListAdapter
 import id.outivox.movo.databinding.FragmentHomeTabBinding
+import id.outivox.movo.`interface`.OnItemClickCallback
 import id.outivox.movo.presentation.allmovietv.AllMovieTvViewModel
 import id.outivox.movo.presentation.detail.DetailActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel

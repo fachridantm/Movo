@@ -8,7 +8,7 @@ import id.outivox.movo.databinding.ItemWallpaperBinding
 
 class WallpaperAdapter : RecyclerView.Adapter<WallpaperAdapter.WallpaperViewHolder>() {
 
-    val listWallpaper = arrayListOf<String>()
+    private val listWallpaper = arrayListOf<String>()
 
     fun setData(list: List<String>) {
         listWallpaper.clear()

@@ -7,7 +7,7 @@ import id.outivox.movo.databinding.ItemGenreListBinding
 
 class GenreListAdapter:RecyclerView.Adapter<GenreListAdapter.GenreViewHolder>() {
 
-    val listGenre = ArrayList<String>()
+    private val listGenre = ArrayList<String>()
 
     fun setData(data: List<String>?) {
         if (data == null) return

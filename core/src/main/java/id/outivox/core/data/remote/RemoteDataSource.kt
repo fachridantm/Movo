@@ -1,43 +1,368 @@
 package id.outivox.core.data.remote
 
+import android.util.Log
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import id.outivox.core.data.remote.paging.details.GetReviewList
+import id.outivox.core.data.remote.paging.movie.GetMoviesByCategory
+import id.outivox.core.data.remote.paging.movie.GetRecommendationsMovies
+import id.outivox.core.data.remote.paging.movie.SearchMovieByCategory
+import id.outivox.core.data.remote.paging.tv.GetRecommendationsTv
+import id.outivox.core.data.remote.paging.tv.GetSimilarTv
+import id.outivox.core.data.remote.paging.tv.GetTvByCategory
+import id.outivox.core.data.remote.paging.tv.SearchTvByCategory
+import id.outivox.core.data.remote.source.network.ApiResponse.Companion.apiError
+import id.outivox.core.data.remote.source.network.ApiResponse.Companion.apiSuccess
 import id.outivox.core.data.remote.source.network.ApiService
-import id.outivox.core.data.remote.source.response.detail.actor.ActorResponse
-import id.outivox.core.data.remote.source.response.detail.movie.MovieDetailResponse
-import id.outivox.core.data.remote.source.response.detail.review.ReviewResponse
-import id.outivox.core.data.remote.source.response.detail.tv.TvDetailResponse
-import id.outivox.core.data.remote.source.response.detail.video.VideoResponse
-import id.outivox.core.data.remote.source.response.detail.wallpaper.WallpaperResponse
-import id.outivox.core.data.remote.source.response.movie.MovieResponse
-import id.outivox.core.data.remote.source.response.tv.TvResponse
-import id.outivox.movo.core.BuildConfig.API_KEY
-import id.outivox.movo.core.BuildConfig.REGION
-import io.reactivex.rxjava3.core.Flowable
+import id.outivox.core.utils.localizedApiCodeErrorMessage
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
+import retrofit2.HttpException
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 
-class RemoteDataSource(
-    private val apiService: ApiService
-) {
+class RemoteDataSource(private val apiService: ApiService) {
     // Movie
-    fun getMovieDetail(id: String) = apiService.getMovieDetail(id, apiKey)
-    fun getSimilarMovies(id: String, page: String) = apiService.getSimilarMovies(id, apiKey, region, page)
-    fun getRecommendationsMovies(id: String, page: String) = apiService.getRecommendationsMovies(id, apiKey, region, page)
-    fun getMoviesByCategory(category: String, page: String) = apiService.getMovieByCategory(category, apiKey, region, page)
-    fun searchMovieByQuery(query: String, page: String) = apiService.searchMovieByQuery(apiKey, query, region, page)
+    suspend fun getMovieDetail(id: Int) = flow {
+        try {
+            val response = apiService.getMovieDetail(id)
+            emit(apiSuccess(response))
+        } catch (e: Exception) {
+            when (e) {
+                is HttpException -> {
+                    emit(apiError(e.localizedApiCodeErrorMessage()))
+                    Log.e("logError", e.localizedApiCodeErrorMessage())
+                }
+
+                is UnknownHostException -> emit(apiError("No internet connection"))
+
+                is SocketTimeoutException -> emit(apiError("Connection timeout"))
+
+                else -> {
+                    emit(apiError("Something went wrong"))
+                    Log.e("logError", e.message.orEmpty())
+                }
+            }
+        }
+    }.flowOn(Dispatchers.IO)
+
+    suspend fun getSimilarMovies(id: Int) = flow {
+        try {
+            val response = apiService.getSimilarMovies(id)
+            emit(apiSuccess(response))
+        } catch (e: Exception) {
+            when (e) {
+                is HttpException -> {
+                    emit(apiError(e.localizedApiCodeErrorMessage()))
+                    Log.e("logError", e.localizedApiCodeErrorMessage())
+                }
+
+                is UnknownHostException -> emit(apiError("No internet connection"))
+
+                is SocketTimeoutException -> emit(apiError("Connection timeout"))
+
+                else -> {
+                    emit(apiError("Something went wrong"))
+                    Log.e("logError", e.message.orEmpty())
+                }
+            }
+        }
+    }.flowOn(Dispatchers.IO)
+
+    suspend fun getRecommendationsMovies(id: Int) = flow {
+        Pager(
+            config = PagingConfig(pageSize = 25),
+            pagingSourceFactory = { GetRecommendationsMovies(apiService, id) }
+        ).flow
+            .map { apiSuccess(it) }
+            .catch { e ->
+                when (e) {
+                    is HttpException -> {
+                        emit(apiError(e.localizedApiCodeErrorMessage()))
+                        Log.e("logError", e.localizedApiCodeErrorMessage())
+                    }
+
+                    is UnknownHostException -> emit(apiError("No internet connection"))
+
+                    is SocketTimeoutException -> emit(apiError("Connection timeout"))
+
+                    else -> {
+                        emit(apiError("Something went wrong"))
+                        Log.e("logError", e.message.orEmpty())
+                    }
+                }
+            }.flowOn(Dispatchers.IO).collect { emit(it) }
+    }.flowOn(Dispatchers.IO)
+
+    suspend fun getMoviesByCategory(category: String, region: String) = flow {
+        Pager(
+            config = PagingConfig(pageSize = 25),
+            pagingSourceFactory = { GetMoviesByCategory(apiService, category, region) }
+        ).flow
+            .map { apiSuccess(it) }
+            .catch { e ->
+                when (e) {
+                    is HttpException -> {
+                        emit(apiError(e.localizedApiCodeErrorMessage()))
+                        Log.e("logError", e.localizedApiCodeErrorMessage())
+                    }
+
+                    is UnknownHostException -> emit(apiError("No internet connection"))
+
+                    is SocketTimeoutException -> emit(apiError("Connection timeout"))
+
+                    else -> {
+                        emit(apiError("Something went wrong"))
+                        Log.e("logError", e.message.orEmpty())
+                    }
+                }
+            }.flowOn(Dispatchers.IO).collect { emit(it) }
+    }.flowOn(Dispatchers.IO)
+
+    suspend fun searchMovieByQuery(query: String, region: String) = flow {
+        Pager(
+            config = PagingConfig(pageSize = 25),
+            pagingSourceFactory = { SearchMovieByCategory(apiService, query, region) }
+        ).flow
+            .map { apiSuccess(it) }
+            .catch { e ->
+                when (e) {
+                    is HttpException -> {
+                        emit(apiError(e.localizedApiCodeErrorMessage()))
+                        Log.e("logError", e.localizedApiCodeErrorMessage())
+                    }
+
+                    is UnknownHostException -> emit(apiError("No internet connection"))
+
+                    is SocketTimeoutException -> emit(apiError("Connection timeout"))
+
+                    else -> {
+                        emit(apiError("Something went wrong"))
+                        Log.e("logError", e.message.orEmpty())
+                    }
+                }
+            }.flowOn(Dispatchers.IO).collect { emit(it) }
+    }.flowOn(Dispatchers.IO)
 
     // TV Show
-    fun getTvDetail(id: String) = apiService.getTvDetail(id, apiKey)
-    fun getTvByCategory(category: String, page: String) = apiService.getTvByCategory(category, apiKey, region, page)
-    fun searchTvByQuery(query: String, page: String) = apiService.searchTvByQuery(apiKey, query, region, page)
-    fun getSimilarTv(id: String, page: String) = apiService.getSimilarTv(id, apiKey, region, page)
-    fun getRecommendationsTv(id: String, page: String) = apiService.getRecommendationsTv(id, apiKey, region, page)
+    suspend fun getTvDetail(id: Int) = flow {
+        try {
+            val response = apiService.getTvDetail(id)
+            emit(apiSuccess(response))
+        } catch (e: Exception) {
+            when (e) {
+                is HttpException -> {
+                    emit(apiError(e.localizedApiCodeErrorMessage()))
+                    Log.e("logError", e.localizedApiCodeErrorMessage())
+                }
 
-    // Detail
-    fun getReviewList(media: String, id: String, page: String) = apiService.getReviewList(media, id, apiKey, page)
-    fun getCreditList(media: String, id: String, ) = apiService.getCreditList(media, id, apiKey, region)
-    fun getVideoList(media: String, id: String, ) = apiService.getVideoList(media, id, apiKey)
-    fun getWallpaperList(media: String, id: String, ) = apiService.getWallpaperList(media, id, apiKey)
+                is UnknownHostException -> emit(apiError("No internet connection"))
 
-    companion object {
-        const val apiKey = API_KEY
-        const val region = REGION
-    }
+                is SocketTimeoutException -> emit(apiError("Connection timeout"))
+
+                else -> {
+                    emit(apiError("Something went wrong"))
+                    Log.e("logError", e.message.orEmpty())
+                }
+            }
+        }
+    }.flowOn(Dispatchers.IO)
+
+    suspend fun getTvByCategory(category: String) = flow {
+        Pager(
+            config = PagingConfig(pageSize = 25),
+            pagingSourceFactory = { GetTvByCategory(apiService, category) }
+        ).flow
+            .map { apiSuccess(it) }
+            .catch { e ->
+                when (e) {
+                    is HttpException -> {
+                        emit(apiError(e.localizedApiCodeErrorMessage()))
+                        Log.e("logError", e.localizedApiCodeErrorMessage())
+                    }
+
+                    is UnknownHostException -> emit(apiError("No internet connection"))
+
+                    is SocketTimeoutException -> emit(apiError("Connection timeout"))
+
+                    else -> {
+                        emit(apiError("Something went wrong"))
+                        Log.e("logError", e.message.orEmpty())
+                    }
+                }
+            }.flowOn(Dispatchers.IO).collect { emit(it) }
+    }.flowOn(Dispatchers.IO)
+
+    suspend fun searchTvByQuery(query: String) = flow {
+        Pager(
+            config = PagingConfig(pageSize = 25),
+            pagingSourceFactory = { SearchTvByCategory(apiService, query) }
+        ).flow
+            .map { apiSuccess(it) }
+            .catch { e ->
+                when (e) {
+                    is HttpException -> {
+                        emit(apiError(e.localizedApiCodeErrorMessage()))
+                        Log.e("logError", e.localizedApiCodeErrorMessage())
+                    }
+
+                    is UnknownHostException -> emit(apiError("No internet connection"))
+
+                    is SocketTimeoutException -> emit(apiError("Connection timeout"))
+
+                    else -> {
+                        emit(apiError("Something went wrong"))
+                        Log.e("logError", e.message.orEmpty())
+                    }
+                }
+            }.flowOn(Dispatchers.IO).collect { emit(it) }
+    }.flowOn(Dispatchers.IO)
+
+    suspend fun getSimilarTv(id: Int) = flow {
+        Pager(
+            config = PagingConfig(pageSize = 25),
+            pagingSourceFactory = { GetSimilarTv(apiService, id) }
+        ).flow
+            .map { apiSuccess(it) }
+            .catch { e ->
+                when (e) {
+                    is HttpException -> {
+                        emit(apiError(e.localizedApiCodeErrorMessage()))
+                        Log.e("logError", e.localizedApiCodeErrorMessage())
+                    }
+
+                    is UnknownHostException -> emit(apiError("No internet connection"))
+
+                    is SocketTimeoutException -> emit(apiError("Connection timeout"))
+
+                    else -> {
+                        emit(apiError("Something went wrong"))
+                        Log.e("logError", e.message.orEmpty())
+                    }
+                }
+            }.flowOn(Dispatchers.IO).collect { emit(it) }
+    }.flowOn(Dispatchers.IO)
+
+    suspend fun getRecommendationsTv(id: Int) = flow {
+        Pager(
+            config = PagingConfig(pageSize = 25),
+            pagingSourceFactory = { GetRecommendationsTv(apiService, id) }
+        ).flow
+            .map { apiSuccess(it) }
+            .catch { e ->
+                when (e) {
+                    is HttpException -> {
+                        emit(apiError(e.localizedApiCodeErrorMessage()))
+                        Log.e("logError", e.localizedApiCodeErrorMessage())
+                    }
+
+                    is UnknownHostException -> emit(apiError("No internet connection"))
+
+                    is SocketTimeoutException -> emit(apiError("Connection timeout"))
+
+                    else -> {
+                        emit(apiError("Something went wrong"))
+                        Log.e("logError", e.message.orEmpty())
+                    }
+                }
+            }.flowOn(Dispatchers.IO).collect { emit(it) }
+    }.flowOn(Dispatchers.IO)
+
+    // Details
+    suspend fun getReviewList(media: String, id: Int) = flow {
+        Pager(
+            config = PagingConfig(pageSize = 25),
+            pagingSourceFactory = { GetReviewList(apiService, media, id) }
+        ).flow
+            .map { apiSuccess(it) }
+            .catch { e ->
+                when (e) {
+                    is HttpException -> {
+                        emit(apiError(e.localizedApiCodeErrorMessage()))
+                        Log.e("logError", e.localizedApiCodeErrorMessage())
+                    }
+
+                    is UnknownHostException -> emit(apiError("No internet connection"))
+
+                    is SocketTimeoutException -> emit(apiError("Connection timeout"))
+
+                    else -> {
+                        emit(apiError("Something went wrong"))
+                        Log.e("logError", e.message.orEmpty())
+                    }
+                }
+            }.flowOn(Dispatchers.IO).collect { emit(it) }
+    }.flowOn(Dispatchers.IO)
+
+    suspend fun getCreditList(media: String, id: Int) = flow {
+        try {
+            val response = apiService.getCreditList(media, id)
+            emit(apiSuccess(response))
+        } catch (e: Exception) {
+            when (e) {
+                is HttpException -> {
+                    emit(apiError(e.localizedApiCodeErrorMessage()))
+                    Log.e("logError", e.localizedApiCodeErrorMessage())
+                }
+
+                is UnknownHostException -> emit(apiError("No internet connection"))
+
+                is SocketTimeoutException -> emit(apiError("Connection timeout"))
+
+                else -> {
+                    emit(apiError("Something went wrong"))
+                    Log.e("logError", e.message.orEmpty())
+                }
+            }
+        }
+    }.flowOn(Dispatchers.IO)
+
+    suspend fun getVideoList(media: String, id: Int) = flow {
+        try {
+            val response = apiService.getVideoList(media, id)
+            emit(apiSuccess(response))
+        } catch (e: Exception) {
+            when (e) {
+                is HttpException -> {
+                    emit(apiError(e.localizedApiCodeErrorMessage()))
+                    Log.e("logError", e.localizedApiCodeErrorMessage())
+                }
+
+                is UnknownHostException -> emit(apiError("No internet connection"))
+
+                is SocketTimeoutException -> emit(apiError("Connection timeout"))
+
+                else -> {
+                    emit(apiError("Something went wrong"))
+                    Log.e("logError", e.message.orEmpty())
+                }
+            }
+        }
+    }.flowOn(Dispatchers.IO)
+
+    suspend fun getWallpaperList(media: String, id: Int) = flow {
+        try {
+            val response = apiService.getWallpaperList(media, id)
+            emit(apiSuccess(response))
+        } catch (e: Exception) {
+            when (e) {
+                is HttpException -> {
+                    emit(apiError(e.localizedApiCodeErrorMessage()))
+                    Log.e("logError", e.localizedApiCodeErrorMessage())
+                }
+
+                is UnknownHostException -> emit(apiError("No internet connection"))
+
+                is SocketTimeoutException -> emit(apiError("Connection timeout"))
+
+                else -> {
+                    emit(apiError("Something went wrong"))
+                    Log.e("logError", e.message.orEmpty())
+                }
+            }
+        }
+    }.flowOn(Dispatchers.IO)
 }

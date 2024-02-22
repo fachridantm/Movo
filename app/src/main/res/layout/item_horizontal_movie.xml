@@ -17,11 +17,11 @@
         android:orientation="vertical">
 
         <ImageView
-            android:id="@+id/img_movie"
             android:layout_width="match_parent"
             android:layout_height="220dp"
             android:scaleType="centerCrop"
-            android:src="@drawable/sample_movie_poster"/>
+            android:src="@drawable/sample_movie_poster"
+            android:contentDescription="@string/content_desc_movie_poster" />
 
         <TextView
             android:id="@+id/tv_title"
@@ -42,11 +42,11 @@
             android:fontFamily="@font/poppins_regular"
             android:maxLines="2"
             android:textColor="@color/gray_text"
-            android:text="Animation, Comedy, Family"
+            android:text="@string/sample_genres"
             android:layout_marginBottom="2dp"
             android:layout_marginTop="-4dp"
             android:ellipsize="end"
-            android:textSize="10sp" />
+            android:textSize="12sp" />
 
 
     </LinearLayout>

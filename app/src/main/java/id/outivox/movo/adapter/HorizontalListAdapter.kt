@@ -11,7 +11,7 @@ import id.outivox.movo.`interface`.OnItemClickCallback
 
 class HorizontalListAdapter<T> : RecyclerView.Adapter<HorizontalListAdapter.MyViewHolder>() {
 
-    val listMovie = ArrayList<T>()
+    private val listMovie = ArrayList<T>()
 
     private var onItemClickCallBack: OnItemClickCallback? = null
 
@@ -48,7 +48,7 @@ class HorizontalListAdapter<T> : RecyclerView.Adapter<HorizontalListAdapter.MyVi
                 is Tv -> {
                     with(listMovie[position] as Tv) {
                         imgMovie.loadImageWithOptions(posterPath, 300, 300)
-                        tvTitle.text = name
+                        tvTitle.text = title
 
                         holder.itemView.setOnClickListener {
                             onItemClickCallBack?.onItemClicked(id)

@@ -3,7 +3,6 @@ package id.outivox.movo.presentation.home.fragment.adapter
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import id.outivox.core.utils.Constants
 import id.outivox.core.utils.Constants.AIRING_TODAY_TV
 import id.outivox.core.utils.Constants.BUNDLE_MEDIA_MOVIE
 import id.outivox.core.utils.Constants.BUNDLE_MEDIA_TV

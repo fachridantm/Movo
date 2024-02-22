@@ -12,10 +12,6 @@ internal class HelperFunctionTest {
     }
 
     @Test
-    fun dateFormatter() {
-    }
-
-    @Test
     fun monthNameGenerator() {
         val month = "12"
         assertEquals("December", HelperFunction.monthNameGenerator(month))

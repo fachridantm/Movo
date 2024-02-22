@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import id.outivox.core.domain.model.movie.Movie
-import id.outivox.core.utils.Constants
 import id.outivox.core.utils.Constants.EXTRA_MOVIE_ID
 import id.outivox.core.utils.loadImageWithOptions
 import id.outivox.movo.databinding.ItemCarouselHomeBinding

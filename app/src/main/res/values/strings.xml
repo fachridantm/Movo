@@ -2,26 +2,60 @@
     <string name="app_name">Movo</string>
 
     <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
-    <string name="title_bookmark">Bookmark</string>
-    <string name="title_explore">Explore</string>
+    <string name="title_movo">Movo</string>
+    <string name="title_favorite">Favorite</string>
+    <string name="title_search">Search</string>
+    <string name="title_overview">Overview</string>
+    <string name="title_others">Others</string>
+    <string name="title_reviews">Reviews</string>
+    <string name="title_actors">Actors</string>
+    <string name="title_wallpaper">Wallpaper</string>
 
-    <string name="review_message_sample">Whilst I really did quite enjoy this - and it was great to be in a busy cinema again - it\'s really more of a testament to the skills of the VFX guys rather than to any of the writers. The story is really pretty thin with the engaging and confident Benedict Cumberbatch joining forces with the charismatic and feisty young Xochitl Gomez\' \"America\" - a young lady who has been appearing in his dreams. Turns out, she can cross from one universe to another - and soon both are being sought by the mighty Elizabeth Olsen\'s \"Wanda Maximoff\" (surely a \"Bond\" girl?) who wants control of time so she can get back to her lost family, yada yada… Benedict Wong features sparingly, but always adds a little value as the \"Sorcerer Supreme\" and there are a few cameos from Charlize Theron and Sir Patrick Stewart to help prop up what is, admittedly, a pretty meagre second half. I think this multiverse strand could provide Marvel with the gift that keeps on giving, but they have got to tighten the pace up - two hours for this was just too long; the plot doesn\'t sustain it and though the combat scenes are nothing to the length in the \"Avengers\" movies; there is still far too much slack here. It does look and sound great on a big screen, though, and I am now warming to the star in the role (and his intuitive flying cape). Fun, but flawed.</string>
-
-    <string name="movo">Movo</string>
-    <string name="favorite">Favorite</string>
-    <string name="search">Search</string>
-    <string name="overview">Overview</string>
-    <string name="others">Others</string>
+    <string name="sample_movie_title">Cars on the Road</string>
+    <string name="sample_carousel_movie_title">Minions: The Rise of Gru</string>
+    <string name="sample_character_name">Peter Parker</string>
+    <string name="sample_artist_name">Tobey Maguire</string>
+    <string name="sample_movie_duration">2h 24min</string>
+    <string name="sample_release_movie_date">16 Desember 2022</string>
+    <string name="sample_rating_count">4.7</string>
+    <string name="sample_raters_count">(4284)</string>
+    <string name="sample_review_message">Whilst I really did quite enjoy this - and it was great to be in a busy cinema again - it\'s really more of a testament to the skills of the VFX guys rather than to any of the writers. The story is really pretty thin with the engaging and confident Benedict Cumberbatch joining forces with the charismatic and feisty young Xochitl Gomez\' \"America\" - a young lady who has been appearing in his dreams. Turns out, she can cross from one universe to another - and soon both are being sought by the mighty Elizabeth Olsen\'s \"Wanda Maximoff\" (surely a \"Bond\" girl?) who wants control of time so she can get back to her lost family, yada yada… Benedict Wong features sparingly, but always adds a little value as the \"Sorcerer Supreme\" and there are a few cameos from Charlize Theron and Sir Patrick Stewart to help prop up what is, admittedly, a pretty meagre second half. I think this multiverse strand could provide Marvel with the gift that keeps on giving, but they have got to tighten the pace up - two hours for this was just too long; the plot doesn\'t sustain it and though the combat scenes are nothing to the length in the \"Avengers\" movies; there is still far too much slack here. It does look and sound great on a big screen, though, and I am now warming to the star in the role (and his intuitive flying cape). Fun, but flawed.</string>
+    <string name="sample_synopsis_movie">Lightning McQueen and his best friend Mater head east from Radiator Springs on a cross-country road trip to meet up with Mater’s sister.</string>
+    <string name="sample_genre">Animation</string>
+    <string name="sample_genre_alt">Adventure</string>
+    <string name="sample_genres">Animation, Comedy, Family</string>
 
     <string name="eps_and_seasons">%1$d Eps, %2$d Seasons</string>
     <string name="vote_count">(%1$d)</string>
+    <string name="username_review">\@%1$s</string>
 
-    <string name="see_all">See all</string>
+    <string name="added_to_favorite">Added %1$s to favorite</string>
+    <string name="removed_from_favorite">Removed %1$s from favorite</string>
+
     <string name="upcoming_movies">Upcoming Movies</string>
     <string name="popular_movies">Popular Movies</string>
+    <string name="similar_movies">Similar Movies</string>
+    <string name="favorite_movies">Favorite Movies</string>
+    <string name="recommended_movies">Recommended Movies</string>
 
+    <string name="see_all">See all</string>
     <string name="see_upcoming_movies">See what’s upcoming movies</string>
-    <string name="playing_now_on_cinema">See what’s playing now on the cinema</string>
+    <string name="see_playing_now_on_cinema">See what’s playing now on the cinema</string>
+    <string name="see_favorite_movies">See what’s your favorite movies</string>
+
+    <string name="under_development">Under development</string>
+    <string name="add_to_favorite">Add to Favorite</string>
+
+    <string name="content_desc_movie_poster">Movie Poster</string>
+    <string name="content_desc_rating_stars">Rating Stars</string>
+    <string name="content_desc_back_button">Back Button</string>
+    <string name="content_desc_movo_logo">Movo Logo</string>
+    <string name="content_desc_explore_button">Explore Button</string>
+    <string name="content_desc_profile_credit_photo">Profile Credit Photo</string>
+    <string name="content_desc_profile_review_photo">Profile Review Photo</string>
+    <string name="content_desc_wallpaper_movie">Wallpaper Movie</string>
+
+    <string name="region_code_indonesia">ID</string>
+
+    <string name="not_given_access">Please give the access for debugging it</string>
 </resources>
