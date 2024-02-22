@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="155dp"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:cardElevation="0dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:layout_marginHorizontal="12dp"
+    app:cardCornerRadius="10dp"
+    android:backgroundTint="@color/app_backround">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/img_movie"
+            android:layout_width="match_parent"
+            android:layout_height="220dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/sample_movie_poster"/>
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxLines="2"
+            android:textColor="@color/white"
+            tools:text="Cars on the Road "
+            android:fontFamily="@font/poppins_semibold"
+            android:layout_marginTop="8dp"
+            android:ellipsize="end"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/tv_genre"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins_regular"
+            android:maxLines="2"
+            android:textColor="@color/gray_text"
+            android:text="Animation, Comedy, Family"
+            android:layout_marginBottom="2dp"
+            android:layout_marginTop="-4dp"
+            android:ellipsize="end"
+            android:textSize="10sp" />
+
+
+    </LinearLayout>
+
+
+</com.google.android.material.card.MaterialCardView>

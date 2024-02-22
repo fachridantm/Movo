@@ -1,0 +1,70 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
+    id 'kotlin-parcelize'
+    id 'androidx.navigation.safeargs.kotlin'
+}
+
+apply from: '../shared.gradle'
+
+android {
+    namespace "id.outivox.movo"
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "id.outivox.movo"
+        minSdk 21
+        targetSdk 34
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildFeatures {
+        viewBinding true
+        buildConfig true
+    }
+
+    signingConfigs {
+        debug {
+            def debugKeystoreFile = new File(System.getProperty("user.home"), ".android/debug.keystore")
+            storeFile debugKeystoreFile
+            storePassword 'android'
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
+        }
+    }
+
+    buildTypes {
+        debug {
+            buildConfigField("String", "BASE_URL", BASE_URL)
+            buildConfigField("String", "IMAGE_BASE_URL", IMAGE_BASE_URL)
+            buildConfigField("String", "API_KEY", API_KEY)
+            buildConfigField("String", "REGION", REGION)
+            signingConfig signingConfigs.debug
+        }
+        release {
+            minifyEnabled false
+            signingConfig signingConfigs.debug
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = '1.8' +
+                ''
+    }
+}
+
+dependencies {
+    // Core Module
+    implementation project(":core")
+    implementation fileTree(dir: "libs", include: ["*.jar"])
+}

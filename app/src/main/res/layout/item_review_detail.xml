@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="310dp"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:cardCornerRadius="10dp"
+    android:layout_marginHorizontal="8dp"
+    android:backgroundTint="@color/card_background">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="18dp">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cv_profile"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_width="37dp"
+            android:layout_height="37dp"
+            app:cardElevation="0dp"
+            app:cardCornerRadius="120dp">
+
+            <ImageView
+                android:id="@+id/img_profile_review"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                tools:src="@tools:sample/avatars" />
+
+        </androidx.cardview.widget.CardView>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@id/cv_profile"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginHorizontal="12dp">
+
+            <TextView
+                android:id="@+id/tv_name_review"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="Reihan Fatilla"
+                android:maxLines="1"
+                android:fontFamily="@font/poppins_regular"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:textStyle="normal" />
+
+            <TextView
+                android:id="@+id/tv_username_review"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="\@reihanfatilla"
+                android:maxLines="1"
+                android:fontFamily="@font/poppins_regular"
+                android:textColor="@color/light_grey"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_rating"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:layout_marginTop="12dp"
+            app:layout_constraintTop_toBottomOf="@id/cv_profile">
+
+            <ImageView
+                android:id="@+id/stars_1"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:src="@drawable/ic_stars"
+                app:tint="@color/yellow_star" />
+
+            <ImageView
+                android:id="@+id/stars_2"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:layout_marginStart="6dp"
+                android:src="@drawable/ic_stars"
+                app:tint="@color/yellow_star" />
+
+            <ImageView
+                android:id="@+id/stars_3"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:layout_marginStart="6dp"
+                android:src="@drawable/ic_stars"
+                app:tint="@color/yellow_star" />
+
+            <ImageView
+                android:id="@+id/stars_4"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:layout_marginStart="6dp"
+                android:src="@drawable/ic_stars"
+                app:tint="@color/yellow_star" />
+
+            <ImageView
+                android:id="@+id/stars_5"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:layout_marginStart="6dp"
+                android:src="@drawable/ic_stars"
+                app:tint="@color/yellow_star" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/review_message_sample"
+            android:textSize="12sp"
+            android:fontFamily="@font/poppins_regular"
+            android:textColor="@color/light_grey"
+            app:layout_constraintTop_toBottomOf="@id/ll_rating"
+            android:layout_marginTop="8dp"
+            android:maxLines="2" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</com.google.android.material.card.MaterialCardView>
