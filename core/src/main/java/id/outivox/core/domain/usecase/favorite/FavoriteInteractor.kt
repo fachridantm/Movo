@@ -9,8 +9,8 @@ import kotlinx.coroutines.flow.Flow
 
 class FavoriteInteractor(private val favoriteRepository: FavoriteRepository): FavoriteUseCase {
     override fun getFavoriteMovies() = favoriteRepository.getFavoriteMovies()
-    override fun getFavoriteTv() = favoriteRepository.getFavoriteTv()
     override fun getFavoriteMovieById(id: String) = favoriteRepository.getFavoriteMovieById(id)
+    override fun getFavoriteTv() = favoriteRepository.getFavoriteTv()
     override fun getFavoriteTvById(id: String) = favoriteRepository.getFavoriteTvById(id)
     override suspend fun setFavoriteTv(tv: TvDetail, newState: Boolean) = favoriteRepository.setFavoriteTv(tv, newState)
     override suspend fun setFavoriteMovie(movie: MovieDetail, newState: Boolean) = favoriteRepository.setFavoriteMovie(movie, newState)
