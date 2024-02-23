@@ -5,11 +5,11 @@ import id.outivox.core.domain.model.tv.Tv
 import id.outivox.core.domain.repository.detail.tv.TvDetailRepository
 
 class TvDetailInteractor(private val tvDetailRepository: TvDetailRepository): TvDetailUseCase {
-    override fun getTvDetail(id: String) = tvDetailRepository.getTvDetail(id)
-    override fun getTvReviews(id: String) = tvDetailRepository.getTvReviews(id)
-    override fun getTvWallpapers(id: String) = tvDetailRepository.getTvWallpapers(id)
-    override fun getTvActors(id: String, region: String) = tvDetailRepository.getTvActors(id, region)
-    override fun getTvVideos(id: String) = tvDetailRepository.getTvVideos(id)
-    override fun getRecommendationsTv(id: String, region: String) = tvDetailRepository.getRecommendationsTv(id, region)
-    override fun getSimilarTv(id: String, region: String) = tvDetailRepository.getSimilarTv(id, region)
+    override fun getTvDetail(id: Int) = tvDetailRepository.getTvDetail(id)
+    override fun getSimilarTv(id: Int) = tvDetailRepository.getSimilarTv(id)
+    override fun getTvReviews(id: Int) = tvDetailRepository.getTvReviews(id)
+    override fun getRecommendationsTv(id: Int) = tvDetailRepository.getRecommendationsTv(id)
+    override fun getTvWallpapers(id: Int) = tvDetailRepository.getTvWallpapers(id)
+    override fun getTvActors(id: Int) = tvDetailRepository.getTvActors(id)
+    override fun getTvVideos(id: Int) = tvDetailRepository.getTvVideos(id)
 }

@@ -6,6 +6,7 @@ import androidx.paging.PagingConfig
 import id.outivox.core.data.remote.paging.details.GetReviewList
 import id.outivox.core.data.remote.paging.movie.GetMoviesByCategory
 import id.outivox.core.data.remote.paging.movie.GetRecommendationsMovies
+import id.outivox.core.data.remote.paging.movie.GetSimilarMovies
 import id.outivox.core.data.remote.paging.movie.SearchMovieByCategory
 import id.outivox.core.data.remote.paging.tv.GetRecommendationsTv
 import id.outivox.core.data.remote.paging.tv.GetSimilarTv
@@ -50,26 +51,28 @@ class RemoteDataSource(private val apiService: ApiService) {
     }.flowOn(Dispatchers.IO)
 
     suspend fun getSimilarMovies(id: Int) = flow {
-        try {
-            val response = apiService.getSimilarMovies(id)
-            emit(apiSuccess(response))
-        } catch (e: Exception) {
-            when (e) {
-                is HttpException -> {
-                    emit(apiError(e.localizedApiCodeErrorMessage()))
-                    Log.e("logError", e.localizedApiCodeErrorMessage())
+        Pager(
+            config = PagingConfig(pageSize = 25),
+            pagingSourceFactory = { GetSimilarMovies(apiService, id) }
+        ).flow
+            .map { apiSuccess(it) }
+            .catch { e ->
+                when (e) {
+                    is HttpException -> {
+                        emit(apiError(e.localizedApiCodeErrorMessage()))
+                        Log.e("logError", e.localizedApiCodeErrorMessage())
+                    }
+
+                    is UnknownHostException -> emit(apiError("No internet connection"))
+
+                    is SocketTimeoutException -> emit(apiError("Connection timeout"))
+
+                    else -> {
+                        emit(apiError("Something went wrong"))
+                        Log.e("logError", e.message.orEmpty())
+                    }
                 }
-
-                is UnknownHostException -> emit(apiError("No internet connection"))
-
-                is SocketTimeoutException -> emit(apiError("Connection timeout"))
-
-                else -> {
-                    emit(apiError("Something went wrong"))
-                    Log.e("logError", e.message.orEmpty())
-                }
-            }
-        }
+            }.flowOn(Dispatchers.IO).collect { emit(it) }
     }.flowOn(Dispatchers.IO)
 
     suspend fun getRecommendationsMovies(id: Int) = flow {

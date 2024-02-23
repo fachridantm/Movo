@@ -15,6 +15,7 @@ import id.outivox.core.domain.model.detail.MovieDetail
 import id.outivox.core.domain.repository.detail.movie.MovieDetailRepository
 import id.outivox.core.mapper.DetailsMapper.map
 import id.outivox.core.mapper.MovieMapper.map
+import id.outivox.core.mapper.TvMapper.map
 import id.outivox.core.utils.Constants.MOVIE
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -38,7 +39,7 @@ class MovieDetailRepositoryImpl(val remoteDataSource: RemoteDataSource) : MovieD
         try {
             when (val response = remoteDataSource.getSimilarMovies(id).first()) {
                 is ApiResponse.Success -> {
-                    val data = response.data.map()
+                    val data = response.data.map { it.map() }
                     emit(success(data))
                 }
 

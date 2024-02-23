@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 interface MovieDetailUseCase {
     fun getMovieDetail(id: Int): Flow<Resource<MovieDetail>>
     fun getMovieReviews(id: Int): Flow<Resource<PagingData<Review>>>
-    fun getSimilarMovies(id: Int): Flow<Resource<MovieResult>>
+    fun getSimilarMovies(id: Int): Flow<Resource<PagingData<Movie>>>
     fun getRecommendationsMovies(id: Int): Flow<Resource<PagingData<Movie>>>
     fun getMovieWallpapers(id: Int): Flow<Resource<Wallpaper>>
     fun getMovieActors(id: Int): Flow<Resource<List<Actor>>>
