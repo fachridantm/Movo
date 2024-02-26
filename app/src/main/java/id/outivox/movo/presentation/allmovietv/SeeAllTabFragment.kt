@@ -6,14 +6,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
-import id.outivox.core.utils.Constants.BUNDLE_MOVIE_CATEGORY
-import id.outivox.core.utils.Constants.BUNDLE_MOVIE_PAGE
-import id.outivox.core.utils.Constants.EXTRA_MOVIE_ID
-import id.outivox.core.utils.Constants.NOW_PLAYING_MOVIE
 import id.outivox.core.domain.model.Resource
 import id.outivox.core.domain.model.movie.Movie
 import id.outivox.core.domain.model.movie.MovieResult
+import id.outivox.core.utils.Constants.BUNDLE_MOVIE_CATEGORY
+import id.outivox.core.utils.Constants.BUNDLE_MOVIE_PAGE
+import id.outivox.core.utils.Constants.EXTRA_DETAIL_ID
+import id.outivox.core.utils.Constants.NOW_PLAYING_MOVIE
 import id.outivox.movo.adapter.VerticalListAdapter
 import id.outivox.movo.databinding.FragmentSeeAllTabBinding
 import id.outivox.movo.`interface`.OnItemClickCallback
@@ -34,14 +33,17 @@ class SeeAllTabFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentSeeAllTabBinding.inflate(layoutInflater)
+        _binding = FragmentSeeAllTabBinding.inflate(layoutInflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         category = arguments?.getString(BUNDLE_MOVIE_CATEGORY) ?: NOW_PLAYING_MOVIE
         page = arguments?.getInt(BUNDLE_MOVIE_PAGE) ?: 1
 
         initObservers()
-
-        return binding.root
     }
 
     private fun initObservers() {
@@ -59,7 +61,6 @@ class SeeAllTabFragment : Fragment() {
                         val result = resource.data as MovieResult
                         binding.rvSeeAllTab.apply {
                             val mAdapter = VerticalListAdapter<Movie>()
-                            layoutManager = LinearLayoutManager(context)
                             adapter = mAdapter
                             mAdapter.setData(result.movie)
 
@@ -67,14 +68,11 @@ class SeeAllTabFragment : Fragment() {
                                 override fun onItemClicked(id: Int) {
                                     startActivity(
                                         Intent(context, DetailActivity::class.java)
-                                            .putExtra(EXTRA_MOVIE_ID, id)
+                                            .putExtra(EXTRA_DETAIL_ID, id)
                                     )
                                 }
-
                             })
-
                         }
-
                     }
                 }
             }

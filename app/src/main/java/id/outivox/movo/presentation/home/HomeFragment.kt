@@ -1,26 +1,28 @@
 package id.outivox.movo.presentation.home
 
-import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.paging.PagingData
+import androidx.paging.map
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.tabs.TabLayoutMediator
 import id.outivox.core.domain.model.Resource
 import id.outivox.core.domain.model.movie.Movie
-import id.outivox.core.domain.model.movie.MovieResult
-import id.outivox.core.utils.Constants.EXTRA_DATA_MOVIE
-import id.outivox.core.utils.Constants.EXTRA_MOVIE_ID
-import id.outivox.core.utils.Constants.POPULAR_MOVIE
-import id.outivox.core.utils.Constants.UPCOMING_MOVIE
+import id.outivox.core.domain.model.tv.Tv
+import id.outivox.core.utils.Constants.AIRING_TODAY_TV
+import id.outivox.core.utils.Constants.MOVIE
+import id.outivox.core.utils.Constants.POPULAR_TV
+import id.outivox.core.utils.Constants.TOP_RATED_MOVIE
+import id.outivox.core.utils.Constants.TOP_RATED_TV
+import id.outivox.core.utils.Constants.TV_SHOW
 import id.outivox.core.utils.showSnackbar
 import id.outivox.movo.R
-import id.outivox.movo.`interface`.OnItemClickCallback
 import id.outivox.movo.adapter.CarouselAdapter
 import id.outivox.movo.adapter.GenreListAdapter
 import id.outivox.movo.adapter.HorizontalListAdapter
@@ -37,22 +39,158 @@ class HomeFragment : Fragment() {
     private val binding get() = _binding as FragmentHomeBinding
 
     private val viewModel: HomeViewModel by viewModel()
+    private val carouselAdapter: CarouselAdapter by lazy { CarouselAdapter(::onCarouselClick) }
+    private val genreListAdapter: GenreListAdapter by lazy { GenreListAdapter() }
+    private val horizontalAdapter: HorizontalListAdapter by lazy { HorizontalListAdapter(::onItemHorizontalClick) }
+    private val homeVieewPagerAdapter: HomeViewPagerAdapter by lazy { HomeViewPagerAdapter(requireActivity()) }
 
-    private var currentPage = 1
+    private lateinit var movies: PagingData<Movie>
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
-
-        initListener()
-        initObserver()
-        setUpTabBar()
-
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        initData()
+        initObserver()
+        initView()
+        initListener()
+    }
+
+    private fun initData() {
+        viewModel.apply {
+            getNowPlayingMovies()
+            getPopularMovies()
+            getUpcomingMovies()
+            getAiringTodayTv()
+            getPopularTv()
+        }
+    }
+
+    private fun initObserver() {
+        viewModel.apply {
+            nowPlayingMovies.observe(viewLifecycleOwner, ::setupNowPlayingMoviesData)
+            popularMovies.observe(viewLifecycleOwner, ::setupPopularMoviesData)
+            upcomingMovies.observe(viewLifecycleOwner, ::setupUpcomingMoviesData)
+            airingTodayTv.observe(viewLifecycleOwner, ::setupAiringTodayTvData)
+            popularTv.observe(viewLifecycleOwner, ::setupPopularTvData)
+        }
+    }
+
+    private fun initView() {
+        binding.apply {
+            rvCarousel.apply {
+                adapter = carouselAdapter
+                onFlingListener = null
+                layoutManager = CenterItemLayoutManager(context, RecyclerView.HORIZONTAL, false)
+                PagerSnapHelper().attachToRecyclerView(this)
+            }
+
+            vpMovies.apply {
+                adapter = homeVieewPagerAdapter
+                TabLayoutMediator(tabLayout, this) { tab, position ->
+                    val listTab = listOf(AIRING_TODAY_TV, TOP_RATED_MOVIE, TOP_RATED_TV, POPULAR_TV)
+                    tab.text = listTab[position]
+                }.attach()
+            }
+
+            rvCarouselGenre.apply {
+                adapter = genreListAdapter
+            }
+        }
+    }
+
+
+    private fun setupNowPlayingMoviesData(resource: Resource<PagingData<Movie>>?) {
+        when (resource) {
+            is Resource.Loading -> {}
+
+            is Resource.Success -> {
+                movies = resource.data
+                carouselAdapter.submitData(lifecycle, resource.data)
+            }
+
+            is Resource.Error -> resource.message.showSnackbar(binding.root)
+
+            is Resource.Empty -> getString(R.string.data_is_empty).showSnackbar(binding.root)
+
+            else -> {}
+        }
+    }
+
+    private fun setupPopularMoviesData(resource: Resource<PagingData<Movie>>?) {
+        when (resource) {
+            is Resource.Loading -> {}
+
+            is Resource.Success -> {
+                val data: PagingData<Any> = resource.data.map { it }
+                horizontalAdapter.submitData(lifecycle, data)
+            }
+
+            is Resource.Error -> resource.message.showSnackbar(binding.root)
+
+            is Resource.Empty -> getString(R.string.data_is_empty).showSnackbar(binding.root)
+
+            else -> {}
+        }
+    }
+
+    private fun setupUpcomingMoviesData(resource: Resource<PagingData<Movie>>?) {
+        when (resource) {
+            is Resource.Loading -> {}
+
+            is Resource.Success -> {
+                val data: PagingData<Any> = resource.data.map { it }
+                horizontalAdapter.submitData(lifecycle, data)
+            }
+
+            is Resource.Error -> resource.message.showSnackbar(binding.root)
+
+            is Resource.Empty -> getString(R.string.data_is_empty).showSnackbar(binding.root)
+
+            else -> {}
+        }
+    }
+
+    private fun setupAiringTodayTvData(resource: Resource<PagingData<Tv>>?) {
+        when (resource) {
+            is Resource.Loading -> {}
+
+            is Resource.Success -> {
+                val data: PagingData<Any> = resource.data.map { it }
+                horizontalAdapter.submitData(lifecycle, data)
+            }
+
+            is Resource.Error -> resource.message.showSnackbar(binding.root)
+
+            is Resource.Empty -> getString(R.string.data_is_empty).showSnackbar(binding.root)
+
+            else -> {}
+        }
+    }
+
+    private fun setupPopularTvData(resource: Resource<PagingData<Tv>>?) {
+        when (resource) {
+            is Resource.Loading -> {}
+
+            is Resource.Success -> {
+                val data: PagingData<Any> = resource.data.map { it }
+                horizontalAdapter.submitData(lifecycle, data)
+            }
+
+            is Resource.Error -> resource.message.showSnackbar(binding.root)
+
+            is Resource.Empty -> getString(R.string.data_is_empty).showSnackbar(binding.root)
+
+            else -> {}
+        }
     }
 
     private fun initListener() {
@@ -64,150 +202,39 @@ class HomeFragment : Fragment() {
                 // TODO: Add region picker
                 getString(R.string.under_development).showSnackbar(binding.root)
             }
-        }
-    }
 
-    private fun initObserver() {
-        viewModel.getNowPlayingMovies()
-        viewModel.nowPlayingResponse.observe(viewLifecycleOwner) {
-            setUpCarousel(it)
-        }
-
-        viewModel.getPopularMovies()
-        viewModel.popularResponse.observe(viewLifecycleOwner) {
-            setUpPopularMovies(it)
-        }
-
-        viewModel.getUpComingMovies()
-        viewModel.upcomingResponse.observe(viewLifecycleOwner) {
-            setUpUpcomingMovies(it)
-        }
-    }
-
-    private fun setUpUpcomingMovies(resource: Resource<MovieResult>?) {
-        when (resource) {
-            is Resource.Success -> {
-                binding.tvSeeAllUpcomingMovies.setOnClickListener {
-                    findNavController().navigate(
-                        HomeFragmentDirections.actionNavigationHomeToAllMovieTvFragment(
-                            UPCOMING_MOVIE,
-                            resource.data?.totalPages ?: 1
-                        )
-                    )
-                }
-                binding.rvPopularMovies.apply {
-                    val mAdapter = HorizontalListAdapter<Movie>()
-                    adapter = mAdapter
-                    layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
-                    mAdapter.setData(resource.data?.movie)
-
-                    mAdapter.setOnItemClickCallback(object : OnItemClickCallback {
-                        override fun onItemClicked(id: Int) {
-                            startActivity(
-                                Intent(context, DetailActivity::class.java).putExtra(EXTRA_MOVIE_ID, id)
-                            )
-                        }
-
-                    })
-                }
-            }
-            else -> {}
-        }
-    }
-
-    private fun setUpPopularMovies(resource: Resource<MovieResult>?) {
-        when (resource) {
-            is Resource.Success -> {
-                binding.tvSeeAllPopularMovies.setOnClickListener {
-                    findNavController().navigate(
-                        HomeFragmentDirections.actionNavigationHomeToAllMovieTvFragment(
-                            POPULAR_MOVIE,
-                            resource.data?.totalPages ?: 1
-                        )
-                    )
-                }
-                binding.rvUpcomingMovies.apply {
-                    val mAdapter = HorizontalListAdapter<Movie>()
-                    adapter = mAdapter
-                    layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
-                    mAdapter.setData(resource.data?.movie)
-
-                    mAdapter.setOnItemClickCallback(object : OnItemClickCallback {
-                        override fun onItemClicked(id: Int) {
-                            startActivity(
-                                Intent(context, DetailActivity::class.java)
-                                    .putExtra(EXTRA_MOVIE_ID, id)
-                            )
-                        }
-
-                    })
-                }
-
-            }
-            else -> {}
-        }
-    }
-
-    private fun setUpCarouselMovieData(movie: List<Movie>, currentItem: Int) {
-        setUpGenreList(movie[currentItem].genres)
-        binding.tvCarouselTitle.text = movie[currentItem].title
-    }
-
-    private fun setUpCarousel(movie: Resource<MovieResult>) {
-        binding.rvCarousel.apply {
-            val mAdapter = CarouselAdapter()
-            adapter = mAdapter
-            val mLayoutManager = CenterItemLayoutManager(context, RecyclerView.HORIZONTAL, false)
-            layoutManager = mLayoutManager
-            movie.data?.let { setUpCarouselMovieData(it.movie, 0) }
-            mAdapter.setData(movie.data?.movie)
-
-            PagerSnapHelper().attachToRecyclerView(this)
-            onFlingListener = null
-
-            addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            rvCarousel.addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                     super.onScrollStateChanged(recyclerView, newState)
                     if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                        val position: Int = getCurrentItem()
-                        movie.data?.let { setUpCarouselMovieData(it.movie, position) }
+                        try {
+
+                        } catch (e: UninitializedPropertyAccessException) {
+                            e.printStackTrace()
+                            Log.e("logError", e.message.orEmpty())
+                        }
                     }
                 }
             })
-
-
         }
     }
 
-    private fun setUpTabBar() {
-        binding.vpHome.apply {
-            adapter = activity?.let { HomeViewPagerAdapter(it) }
-        }
-
-        TabLayoutMediator(binding.tabLayout, binding.vpHome) { tab, position ->
-            val listTab = listOf("Airing Today TV", "Top Rated Movie", "Top Rated TV", "Popular TV")
-            tab.text = listTab[position]
-        }.attach()
+    private fun onCarouselClick(movie: Movie) {
+        DetailActivity.start(requireActivity(), movie.id, MOVIE)
     }
 
-
-    private fun getCurrentItem(): Int {
-        return (binding.rvCarousel.layoutManager as CenterItemLayoutManager)
-            .findFirstVisibleItemPosition()
-    }
-
-    private fun setUpGenreList(movie: List<String>) {
-        binding.rvCarouselGenre.apply {
-            val mAdapter = GenreListAdapter()
-            adapter = mAdapter
-            layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
-            mAdapter.setData(movie)
+    private fun onItemHorizontalClick(any: Any) {
+        val movie = any as Movie
+        val tv = any as Tv
+        when (any) {
+            is Movie -> DetailActivity.start(requireActivity(), movie.id, MOVIE)
+            is Tv -> DetailActivity.start(requireActivity(), tv.id, TV_SHOW)
         }
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
-
 }

@@ -3,9 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginTop="24dp"
     android:background="@color/app_backround"
     android:clickable="true"
-    android:layout_marginTop="24dp"
     android:focusable="true">
 
     <com.google.android.material.card.MaterialCardView
@@ -19,11 +19,12 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
+            android:id="@+id/iv_poster"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:contentDescription="@string/content_desc_movie_poster"
             android:scaleType="centerCrop"
-            android:src="@drawable/sample_movie_poster"
-            android:contentDescription="@string/content_desc_movie_poster" />
+            android:src="@drawable/sample_movie_poster" />
 
     </com.google.android.material.card.MaterialCardView>
 
@@ -31,33 +32,31 @@
         android:id="@+id/tv_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="18dp"
         android:fontFamily="@font/poppins_semibold"
+        android:maxLines="2"
         android:text="@string/sample_movie_title"
         android:textColor="@color/white"
         android:textSize="15sp"
-        android:maxLines="2"
-        android:layout_marginStart="18dp"
-        app:layout_constraintStart_toEndOf="@id/cv_poster"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/tv_genre"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/cv_poster"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="packed"
-        />
+        app:layout_constraintVertical_chainStyle="packed" />
 
     <TextView
         android:id="@+id/tv_genre"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:fontFamily="@font/poppins_medium"
+        android:maxLines="1"
         android:text="@string/sample_genres"
         android:textColor="@color/gray_text"
         android:textSize="11sp"
-        android:maxLines="1"
+        app:layout_constraintBottom_toTopOf="@+id/ll_rating"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@id/tv_title"
-        app:layout_constraintBottom_toTopOf="@+id/ll_rating"
-        app:layout_constraintTop_toBottomOf="@+id/tv_title"
-        />
+        app:layout_constraintTop_toBottomOf="@+id/tv_title" />
 
     <LinearLayout
         android:id="@+id/ll_rating"
@@ -65,43 +64,48 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:orientation="horizontal"
-        app:layout_constraintStart_toStartOf="@id/tv_title"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@id/tv_title"
         app:layout_constraintTop_toBottomOf="@+id/tv_genre">
 
         <ImageView
+            android:id="@+id/iv_stars_1"
             android:layout_width="10dp"
             android:layout_height="10dp"
-            android:src="@drawable/ic_stars_inactive"
-            android:contentDescription="@string/content_desc_rating_stars" />
+            android:contentDescription="@string/content_desc_rating_stars"
+            android:src="@drawable/ic_stars_inactive" />
 
         <ImageView
+            android:id="@+id/iv_stars_2"
             android:layout_width="10dp"
             android:layout_height="10dp"
             android:layout_marginStart="6dp"
-            android:src="@drawable/ic_stars_inactive"
-            android:contentDescription="@string/content_desc_rating_stars" />
+            android:contentDescription="@string/content_desc_rating_stars"
+            android:src="@drawable/ic_stars_inactive" />
 
         <ImageView
+            android:id="@+id/iv_stars_3"
             android:layout_width="10dp"
             android:layout_height="10dp"
             android:layout_marginStart="6dp"
-            android:src="@drawable/ic_stars_inactive"
-            android:contentDescription="@string/content_desc_rating_stars" />
+            android:contentDescription="@string/content_desc_rating_stars"
+            android:src="@drawable/ic_stars_inactive" />
 
         <ImageView
+            android:id="@+id/iv_stars_4"
             android:layout_width="10dp"
             android:layout_height="10dp"
             android:layout_marginStart="6dp"
-            android:src="@drawable/ic_stars_inactive"
-            android:contentDescription="@string/content_desc_rating_stars" />
+            android:contentDescription="@string/content_desc_rating_stars"
+            android:src="@drawable/ic_stars_inactive" />
 
         <ImageView
+            android:id="@+id/iv_stars_5"
             android:layout_width="10dp"
             android:layout_height="10dp"
             android:layout_marginStart="6dp"
-            android:src="@drawable/ic_stars_inactive"
-            android:contentDescription="@string/content_desc_rating_stars" />
+            android:contentDescription="@string/content_desc_rating_stars"
+            android:src="@drawable/ic_stars_inactive" />
 
     </LinearLayout>
 

@@ -14,7 +14,7 @@ import id.outivox.core.utils.Constants.BUNDLE_MOVIE_ID
 import id.outivox.movo.presentation.detail.fragments.OtherFragment
 import id.outivox.movo.presentation.detail.fragments.OverviewFragment
 
-class DetailViewPagerAdapter<T>(fa: FragmentActivity, val id: String, private val detailData: T) : FragmentStateAdapter(fa) {
+class DetailViewPagerAdapter<T>(fa: FragmentActivity, val id: Int, private val detailData: T) : FragmentStateAdapter(fa) {
 
     override fun getItemCount() = 2
 
@@ -23,7 +23,7 @@ class DetailViewPagerAdapter<T>(fa: FragmentActivity, val id: String, private va
         val otherFragment = OtherFragment()
         val overviewFragment = OverviewFragment()
         val bundle = Bundle()
-        bundle.putString(BUNDLE_MOVIE_ID, id)
+        bundle.putInt(BUNDLE_MOVIE_ID, id)
         if (detailData is MovieDetail) {
             bundle.putParcelable(BUNDLE_MOVIE_DETAIL, detailData as MovieDetail)
             bundle.putString(BUNDLE_MEDIA_TYPE, BUNDLE_MEDIA_MOVIE)

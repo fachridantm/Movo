@@ -1,5 +1,7 @@
 package id.outivox.movo.presentation.detail
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
@@ -7,10 +9,10 @@ import com.google.android.material.tabs.TabLayoutMediator
 import id.outivox.core.domain.model.Resource
 import id.outivox.core.domain.model.detail.MovieDetail
 import id.outivox.core.domain.model.detail.TvDetail
+import id.outivox.core.utils.Constants.EXTRA_DETAIL_ID
 import id.outivox.core.utils.Constants.EXTRA_MEDIA_MOVIE
 import id.outivox.core.utils.Constants.EXTRA_MEDIA_TV
 import id.outivox.core.utils.Constants.EXTRA_MEDIA_TYPE
-import id.outivox.core.utils.Constants.EXTRA_MOVIE_ID
 import id.outivox.core.utils.loadImageOnly
 import id.outivox.core.utils.reformat
 import id.outivox.core.utils.setTransparentStatusBar
@@ -25,26 +27,25 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class DetailActivity : AppCompatActivity() {
 
-    private var _binding: ActivityDetailBinding? = null
-    private val binding get() = _binding as ActivityDetailBinding
+    private lateinit var binding: ActivityDetailBinding
 
     private val detailViewModel: DetailViewModel by viewModel()
     private val favoriteViewModel: FavoriteViewModel by viewModel()
 
-    private lateinit var dataId: String
+    private var dataId: Int = 0
     private lateinit var dataMovie: MovieDetail
     private lateinit var dataTv: TvDetail
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        _binding = ActivityDetailBinding.inflate(layoutInflater)
+        binding = ActivityDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         setTransparentStatusBar()
         setSupportActionBar(binding.toolbarDetail)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        dataId = intent.getIntExtra(EXTRA_MOVIE_ID, 0).toString()
+        dataId = intent.getIntExtra(EXTRA_DETAIL_ID, 0).toString()
 
         initData()
         initView()
@@ -205,5 +206,16 @@ class DetailActivity : AppCompatActivity() {
     override fun onSupportNavigateUp(): Boolean {
         onBackPressedDispatcher.onBackPressed()
         return true
+    }
+
+    companion object {
+        fun start(
+            context: Context,
+            id: Int,
+            mediaType: String
+        ) = Intent(context, DetailActivity::class.java).apply {
+            putExtra(EXTRA_DETAIL_ID, id)
+            putExtra(EXTRA_MEDIA_TYPE, mediaType)
+        }.run { context.startActivity(this) }
     }
 }

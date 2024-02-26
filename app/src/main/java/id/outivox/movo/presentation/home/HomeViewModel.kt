@@ -1,49 +1,87 @@
 package id.outivox.movo.presentation.home
 
-import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.toLiveData
-import id.outivox.core.utils.Constants.NOW_PLAYING_MOVIE
-import id.outivox.core.utils.Constants.POPULAR_MOVIE
-import id.outivox.core.utils.Constants.UPCOMING_MOVIE
+import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
 import id.outivox.core.domain.model.Resource
-import id.outivox.core.domain.model.movie.MovieResult
+import id.outivox.core.domain.model.Resource.Companion.init
+import id.outivox.core.domain.model.Resource.Companion.loading
+import id.outivox.core.domain.model.movie.Movie
+import id.outivox.core.domain.model.tv.Tv
 import id.outivox.core.domain.usecase.home.HomeUseCase
+import id.outivox.core.utils.Constants.AIRING_TODAY_TV
 import id.outivox.core.utils.Constants.INDONESIA
+import id.outivox.core.utils.Constants.NOW_PLAYING_MOVIE
+import kotlinx.coroutines.launch
 
 class HomeViewModel(private val homeUseCase: HomeUseCase) : ViewModel() {
+    private val _nowPlayingMovies = MutableLiveData<Resource<PagingData<Movie>>>()
+    val nowPlayingMovies get() = _nowPlayingMovies
 
-    var nowPlayingResponse = MediatorLiveData<Resource<MovieResult>>()
-    var popularResponse = MediatorLiveData<Resource<MovieResult>>()
-    var upcomingResponse = MediatorLiveData<Resource<MovieResult>>()
+    private val _popularMovies = MutableLiveData<Resource<PagingData<Movie>>>()
+    val popularMovies get() = _popularMovies
 
-    private var currentPage = MutableLiveData(1)
+    private val _upcomingMovies = MutableLiveData<Resource<PagingData<Movie>>>()
+    val upcomingMovies get() = _upcomingMovies
+
+    private val _airingTodayTv = MutableLiveData<Resource<PagingData<Tv>>>()
+    val airingTodayTv get() = _airingTodayTv
+
+    private val _popularTv = MutableLiveData<Resource<PagingData<Tv>>>()
+    val popularTv get() = _popularTv
+
+    init {
+        _nowPlayingMovies.value = init()
+        _popularMovies.value = init()
+        _upcomingMovies.value = init()
+        _airingTodayTv.value = init()
+        _popularTv.value = init()
+    }
 
     fun getNowPlayingMovies() {
-        val source = homeUseCase.getMovies(NOW_PLAYING_MOVIE, currentPage.value.toString(), INDONESIA).toLiveData()
-
-        nowPlayingResponse.addSource(source){
-            nowPlayingResponse.postValue(it)
-            nowPlayingResponse.removeSource(source)
+        viewModelScope.launch {
+            _nowPlayingMovies.value = loading()
+            homeUseCase.getMovies(NOW_PLAYING_MOVIE, INDONESIA).collect {
+                _nowPlayingMovies.value = it
+            }
         }
     }
 
     fun getPopularMovies() {
-        val source = homeUseCase.getMovies(POPULAR_MOVIE, currentPage.value.toString(), INDONESIA).toLiveData()
-
-        popularResponse.addSource(source){
-            popularResponse.postValue(it)
-            popularResponse.removeSource(source)
+        viewModelScope.launch {
+            _popularMovies.value = loading()
+            homeUseCase.getMovies(NOW_PLAYING_MOVIE, INDONESIA).collect {
+                _popularMovies.value = it
+            }
         }
     }
 
-    fun getUpComingMovies() {
-        val source = homeUseCase.getMovies(UPCOMING_MOVIE, currentPage.value.toString(), INDONESIA).toLiveData()
+    fun getUpcomingMovies() {
+        viewModelScope.launch {
+            _upcomingMovies.value = loading()
+            homeUseCase.getMovies(NOW_PLAYING_MOVIE, INDONESIA).collect {
+                _upcomingMovies.value = it
+            }
+        }
+    }
 
-        upcomingResponse.addSource(source){
-            upcomingResponse.postValue(it)
-            upcomingResponse.removeSource(source)
+    fun getAiringTodayTv() {
+        viewModelScope.launch {
+            _airingTodayTv.value = loading()
+            homeUseCase.getTvShow(AIRING_TODAY_TV).collect {
+                _airingTodayTv.value = it
+            }
+        }
+    }
+
+    fun getPopularTv() {
+        viewModelScope.launch {
+            _popularTv.value = loading()
+            homeUseCase.getTvShow(AIRING_TODAY_TV).collect {
+                _popularTv.value = it
+            }
         }
     }
 }

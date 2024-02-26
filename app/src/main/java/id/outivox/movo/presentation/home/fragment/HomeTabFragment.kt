@@ -18,7 +18,7 @@ import id.outivox.core.utils.Constants.BUNDLE_MOVIE_CATEGORY
 import id.outivox.core.utils.Constants.EXTRA_MEDIA_MOVIE
 import id.outivox.core.utils.Constants.EXTRA_MEDIA_TV
 import id.outivox.core.utils.Constants.EXTRA_MEDIA_TYPE
-import id.outivox.core.utils.Constants.EXTRA_MOVIE_ID
+import id.outivox.core.utils.Constants.EXTRA_DETAIL_ID
 import id.outivox.core.utils.Constants.NOW_PLAYING_MOVIE
 import id.outivox.movo.adapter.VerticalListAdapter
 import id.outivox.movo.databinding.FragmentHomeTabBinding
@@ -93,7 +93,7 @@ class HomeTabFragment : Fragment() {
                 override fun onItemClicked(id: Int) {
                     startActivity(
                         Intent(context, DetailActivity::class.java)
-                            .putExtra(EXTRA_MOVIE_ID, id)
+                            .putExtra(EXTRA_DETAIL_ID, id)
                             .putExtra(EXTRA_MEDIA_TYPE, EXTRA_MEDIA_TV)
                     )
                 }
@@ -112,7 +112,7 @@ class HomeTabFragment : Fragment() {
                 override fun onItemClicked(id: Int) {
                     startActivity(
                         Intent(context, DetailActivity::class.java)
-                            .putExtra(EXTRA_MOVIE_ID, id)
+                            .putExtra(EXTRA_DETAIL_ID, id)
                             .putExtra(EXTRA_MEDIA_TYPE, EXTRA_MEDIA_MOVIE)
                     )
                 }

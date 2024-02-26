@@ -61,6 +61,8 @@ fun Double?.orZero() = this ?: 0.0
 
 fun Long?.orZero() = this ?: 0L
 
+fun String?.orZero() = this ?: "0"
+
 fun Boolean?.orFalse() = this ?: false
 
 fun Int.toMovieDurationFormat() = "${this / 60}h ${this % 60}min"
@@ -85,10 +87,6 @@ fun String?.reformat(
         Log.e("reformat", "reformat: ${e.message}")
     }
     return output.format(calendar.time)
-}
-
-fun List<String>.toComaSeparatedString(): String {
-    return this.joinToString(", ")
 }
 
 fun Activity.setTransparentStatusBar() {

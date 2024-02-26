@@ -2,12 +2,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
     android:layout_width="85dp"
     android:layout_height="wrap_content"
-    android:background="@android:color/transparent"
     android:layout_marginHorizontal="16dp"
-    android:gravity="center">
+    android:background="@android:color/transparent"
+    android:gravity="center"
+    android:orientation="vertical">
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="85dp"
@@ -16,32 +16,32 @@
         app:cardElevation="0dp">
 
         <ImageView
+            android:id="@+id/iv_profile_credit"
             android:layout_width="85dp"
             android:layout_height="85dp"
+            android:contentDescription="@string/content_desc_profile_credit_photo"
             android:scaleType="centerCrop"
-            tools:src="@tools:sample/avatars"
-            android:contentDescription="@string/content_desc_profile_credit_photo" />
+            tools:src="@tools:sample/avatars" />
 
     </com.google.android.material.card.MaterialCardView>
 
     <TextView
+        android:id="@+id/tv_character"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/sample_character_name"
         android:layout_marginTop="6dp"
         android:maxLines="2"
+        android:text="@string/sample_character_name"
         android:textAlignment="center"
-        android:textSize="15sp"
-        android:textColor="@color/white" />
+        android:textColor="@color/white"
+        android:textSize="15sp" />
 
     <TextView
+        android:id="@+id/tv_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/sample_artist_name"
         android:textAlignment="center"
-        android:textSize="12sp"
-        android:textColor="@color/light_grey" />
-
-
-
+        android:textColor="@color/light_grey"
+        android:textSize="12sp" />
 </LinearLayout>

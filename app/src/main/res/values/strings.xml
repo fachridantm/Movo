@@ -58,4 +58,6 @@
     <string name="region_code_indonesia">ID</string>
 
     <string name="not_given_access">Please give the access for debugging it</string>
+    <string name="data_is_empty">Data is empty</string>
+    <string name="retry">Retry</string>
 </resources>

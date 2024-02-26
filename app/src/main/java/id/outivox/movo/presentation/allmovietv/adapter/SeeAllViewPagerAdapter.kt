@@ -12,9 +12,9 @@ class SeeAllViewPagerAdapter(
     fa: FragmentActivity,
     private val category: String,
     private val pageTotal: Int
-) :FragmentStateAdapter(fa){
+) : FragmentStateAdapter(fa) {
 
-    override fun getItemCount() = if(pageTotal > 30) 30 else pageTotal
+    override fun getItemCount() = if (pageTotal > 30) 30 else pageTotal
 
     override fun createFragment(position: Int): Fragment {
         val seeAllTabFragment = SeeAllTabFragment()

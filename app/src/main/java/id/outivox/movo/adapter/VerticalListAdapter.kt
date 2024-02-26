@@ -2,69 +2,72 @@ package id.outivox.movo.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.paging.PagingDataAdapter
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import id.outivox.core.domain.model.movie.Movie
 import id.outivox.core.domain.model.tv.Tv
 import id.outivox.core.utils.loadImageWithOptions
 import id.outivox.movo.databinding.ItemVerticalMovieBinding
-import id.outivox.movo.`interface`.OnItemClickCallback
+import id.outivox.movo.utils.setupRatingStars
 
-class VerticalListAdapter<T> : RecyclerView.Adapter<VerticalListAdapter.VerticalViewholder>() {
+class VerticalListAdapter(
+    private val onItemClick: (Any) -> Unit
+) : PagingDataAdapter<Any, VerticalListAdapter.VerticalViewholder>(DIFF_CALLBACK) {
+    inner class VerticalViewholder(val binding: ItemVerticalMovieBinding) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(data: Any) {
+            when (data) {
+                is Movie -> bindMovieItem(data)
+                is Tv -> bindTvItem(data)
+            }
+        }
 
-    private val listMovie = ArrayList<T>()
+        private fun bindTvItem(data: Tv) {
+            binding.apply {
+                tvTitle.text = data.title
+                tvGenre.text = data.genres.joinToString(", ")
+                ivPoster.loadImageWithOptions(data.posterPath)
+                root.setOnClickListener { onItemClick(data) }
+            }
+        }
 
-    private var onItemClickCallback: OnItemClickCallback? = null
-
-    fun setOnItemClickCallback(onItemClickCallback: OnItemClickCallback) {
-        this.onItemClickCallback = onItemClickCallback
+        private fun bindMovieItem(data: Movie) {
+            binding.apply {
+                tvTitle.text = data.title
+                tvGenre.text = data.genres.joinToString(", ")
+                setupRatingStars(data.voteAverage)
+                ivPoster.loadImageWithOptions(data.posterPath)
+                root.setOnClickListener { onItemClick(data) }
+            }
+        }
     }
-
-    fun setData(list: List<T>?) {
-        if (list == null) return
-        listMovie.clear()
-        listMovie.addAll(list)
-    }
-
-    class VerticalViewholder(val binding: ItemVerticalMovieBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = VerticalViewholder(
         ItemVerticalMovieBinding.inflate(LayoutInflater.from(parent.context), parent, false)
     )
 
     override fun onBindViewHolder(holder: VerticalViewholder, position: Int) {
-        holder.binding.apply {
-            when (listMovie[position]) {
-                is Movie -> {
-                    with(listMovie[position] as Movie) {
-                        tvTitle.text = title
-                        tvGenre.text = HelperFunction.genreComaFormatter(genres)
-                        HelperFunction.setUpRatingStars(this@apply, voteAverage)
-                        imgPoster.loadImageWithOptions(posterPath, 300, 300)
+        val item = getItem(position)
+        if (item != null) holder.bind(item)
+    }
 
-                        holder.itemView.setOnClickListener {
-                            onItemClickCallback?.onItemClicked(id)
-                        }
-                    }
-                }
-
-                is Tv -> {
-                    with(listMovie[position] as Tv) {
-                        tvTitle.text = title
-                        tvGenre.text = HelperFunction.genreComaFormatter(genre)
-                        HelperFunction.setUpRatingStars(this@apply, voteAverage)
-                        imgPoster.loadImageWithOptions(posterPath)
-
-                        holder.itemView.setOnClickListener {
-                            onItemClickCallback?.onItemClicked(id)
-                        }
-                    }
+    companion object {
+        private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<Any>() {
+            override fun areItemsTheSame(oldItem: Any, newItem: Any): Boolean {
+                return when {
+                    oldItem is Movie && newItem is Movie -> oldItem == newItem
+                    oldItem is Tv && newItem is Tv -> oldItem == newItem
+                    else -> false
                 }
             }
 
+            override fun areContentsTheSame(oldItem: Any, newItem: Any): Boolean {
+                return when {
+                    oldItem is Movie && newItem is Movie -> oldItem.id == newItem.id
+                    oldItem is Tv && newItem is Tv -> oldItem.id == newItem.id
+                    else -> false
+                }
+            }
         }
-
-
     }
-
-    override fun getItemCount() = listMovie.size
 }

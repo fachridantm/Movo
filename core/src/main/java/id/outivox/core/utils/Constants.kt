@@ -27,7 +27,7 @@ object Constants {
     const val TOP_RATED_TV = "top_rated"
     const val ON_THE_AIR_TV = "on_the_air"
 
-    // Movie Search By
+    // Category
     const val MOVIE = "movie"
     const val TV_SHOW = "tv"
     const val PEOPLE = "person"
@@ -42,7 +42,7 @@ object Constants {
 
     // Language
     const val ENGLISH = "en-US"
-    const val INDONESIAN = "id-ID"
+    const val BAHASA = "id-ID"
 
     // Date & Time Format
     const val API_DATE_FORMAT = "yyyy-MM-dd"
@@ -50,7 +50,7 @@ object Constants {
     const val JAKARTA_TIME_ZONE = "Asia/Jakarta"
 
     // Intent Key
-    const val EXTRA_MOVIE_ID = "EXTRA_MOVIE_ID"
+    const val EXTRA_DETAIL_ID = "EXTRA_DETAIL_ID"
     const val EXTRA_DATA_MOVIE = "EXTRA_DATA_MOVIE"
     const val EXTRA_TV_ID = "EXTRA_TV_ID"
     const val EXTRA_MEDIA_TYPE = "EXTRA_MEDIA_TYPE"

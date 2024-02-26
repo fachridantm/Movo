@@ -19,12 +19,13 @@
             android:id="@+id/logo_movo"
             android:layout_width="34dp"
             android:layout_height="34dp"
+            android:contentDescription="@string/content_desc_movo_logo"
             android:src="@drawable/logo_home_movo"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:contentDescription="@string/content_desc_movo_logo" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
+            android:id="@+id/tv_movo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
@@ -40,6 +41,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:cardBackgroundColor="@android:color/transparent"
+            app:cardCornerRadius="6dp"
             app:cardElevation="0dp"
             app:layout_constraintBottom_toBottomOf="@id/logo_movo"
             app:layout_constraintEnd_toEndOf="parent"
@@ -48,13 +50,15 @@
             app:strokeWidth="2dp">
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:id="@+id/tv_region"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginVertical="4dp"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="4dp"
                 android:drawableEnd="@drawable/ic_arrow_right"
                 android:fontFamily="@font/poppins_semibold"
                 android:gravity="center_vertical"
+                android:includeFontPadding="false"
                 android:text="@string/region_code_indonesia"
                 android:textColor="@color/white"
                 android:textSize="12sp" />
@@ -76,6 +80,7 @@
             app:layout_constraintTop_toBottomOf="@id/logo_movo" />
 
         <com.google.android.material.card.MaterialCardView
+            android:id="@+id/sv_home_click"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:alpha="0"
@@ -152,6 +157,7 @@
             app:layout_constraintTop_toBottomOf="@id/tv_popular_movies" />
 
         <TextView
+            android:id="@+id/tv_see_all_popular_movies"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/poppins_regular"
@@ -199,6 +205,7 @@
             app:layout_constraintTop_toBottomOf="@id/tv_upcoming_movies" />
 
         <TextView
+            android:id="@+id/tv_see_all_upcoming_movies"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/poppins_regular"
@@ -245,6 +252,7 @@
             app:tabTextColor="@color/gray_text" />
 
         <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/vp_movies"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="-28dp"

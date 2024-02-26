@@ -1,115 +1,112 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/app_backround"
+        android:clipToPadding="false"
         android:paddingHorizontal="28dp"
         android:paddingTop="24dp"
-        android:paddingBottom="64dp"
-        android:clipToPadding="false">
+        android:paddingBottom="64dp">
 
         <TextView
             android:id="@+id/tv_reviews"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:fontFamily="@font/poppins_bold"
             android:text="@string/title_reviews"
             android:textColor="@color/white"
-            android:fontFamily="@font/poppins_bold"
-            android:layout_marginTop="24dp"
             android:textSize="16sp"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_reviews"
-            android:layout_marginTop="20dp"
             android:layout_width="match_parent"
-            android:layout_marginStart="-24dp"
-            android:layout_marginEnd="-24dp"
             android:layout_height="wrap_content"
-            tools:listitem="@layout/item_review_detail"
-            app:layout_constraintTop_toBottomOf="@id/tv_reviews"
+            android:layout_marginStart="-24dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="-24dp"
+            android:orientation="horizontal"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            android:orientation="horizontal" />
+            app:layout_constraintTop_toBottomOf="@id/tv_reviews"
+            tools:listitem="@layout/item_review_detail" />
 
         <TextView
             android:id="@+id/tv_similar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/similar_movies"
-            app:layout_constraintTop_toBottomOf="@id/rv_reviews"
-            android:textColor="@color/white"
-            android:fontFamily="@font/poppins_bold"
             android:layout_marginTop="28dp"
-            android:textSize="16sp" />
+            android:fontFamily="@font/poppins_bold"
+            android:text="@string/similar_movies"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            app:layout_constraintTop_toBottomOf="@id/rv_reviews" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins_regular"
             android:text="@string/see_all"
             android:textColor="@color/primary_color"
-            android:fontFamily="@font/poppins_regular"
             android:textSize="14sp"
-            app:layout_constraintTop_toTopOf="@id/tv_similar"
             app:layout_constraintBottom_toBottomOf="@id/tv_similar"
             app:layout_constraintEnd_toEndOf="parent"
-            />
+            app:layout_constraintTop_toTopOf="@id/tv_similar" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_similar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
             android:layout_marginStart="-28dp"
+            android:layout_marginTop="12dp"
             android:layout_marginEnd="-28dp"
-            android:paddingHorizontal="16dp"
             android:clipToPadding="false"
-            app:layout_constraintTop_toBottomOf="@id/tv_similar"
-            tools:listitem="@layout/item_horizontal_movie"
+            android:orientation="horizontal"
+            android:paddingHorizontal="16dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            android:orientation="horizontal" />
+            app:layout_constraintTop_toBottomOf="@id/tv_similar"
+            tools:listitem="@layout/item_horizontal_movie" />
 
         <TextView
             android:id="@+id/tv_recommended"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:fontFamily="@font/poppins_bold"
             android:text="@string/recommended_movies"
             android:textColor="@color/white"
-            android:fontFamily="@font/poppins_bold"
-            android:layout_marginTop="28dp"
             android:textSize="16sp"
-            app:layout_constraintTop_toBottomOf="@id/rv_similar"
-            />
+            app:layout_constraintTop_toBottomOf="@id/rv_similar" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins_regular"
             android:text="@string/see_all"
             android:textColor="@color/primary_color"
-            android:fontFamily="@font/poppins_regular"
             android:textSize="14sp"
-            app:layout_constraintTop_toTopOf="@id/tv_recommended"
             app:layout_constraintBottom_toBottomOf="@id/tv_recommended"
             app:layout_constraintEnd_toEndOf="parent"
-            />
+            app:layout_constraintTop_toTopOf="@id/tv_recommended" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
             android:layout_marginStart="-28dp"
+            android:layout_marginTop="12dp"
             android:layout_marginEnd="-28dp"
-            android:paddingHorizontal="16dp"
             android:clipToPadding="false"
-            app:layout_constraintTop_toBottomOf="@id/tv_recommended"
-            tools:listitem="@layout/item_horizontal_movie"
+            android:orientation="horizontal"
+            android:paddingHorizontal="16dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            android:orientation="horizontal" />
+            app:layout_constraintTop_toBottomOf="@id/tv_recommended"
+            tools:listitem="@layout/item_horizontal_movie" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

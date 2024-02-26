@@ -1,22 +1,22 @@
 package id.outivox.movo.presentation.detail
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.toLiveData
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
 import id.outivox.core.domain.model.Resource
 import id.outivox.core.domain.model.Resource.Companion.init
 import id.outivox.core.domain.model.Resource.Companion.loading
-import id.outivox.core.domain.model.Resource.Companion.success
 import id.outivox.core.domain.model.detail.Actor
 import id.outivox.core.domain.model.detail.MovieDetail
 import id.outivox.core.domain.model.detail.Review
 import id.outivox.core.domain.model.detail.TvDetail
 import id.outivox.core.domain.model.detail.Video
 import id.outivox.core.domain.model.detail.Wallpaper
+import id.outivox.core.domain.model.movie.Movie
 import id.outivox.core.domain.model.movie.MovieResult
+import id.outivox.core.domain.model.tv.Tv
 import id.outivox.core.domain.model.tv.TvResult
 import id.outivox.core.domain.usecase.detail.movie.MovieDetailUseCase
 import id.outivox.core.domain.usecase.detail.tv.TvDetailUseCase
@@ -26,36 +26,36 @@ import kotlinx.coroutines.launch
 class DetailViewModel(private val movieDetailUseCase: MovieDetailUseCase, private val tvDetailUseCase: TvDetailUseCase) : ViewModel() {
     // Movie
     private val _movieDetail = MutableLiveData<Resource<MovieDetail>>()
-    val movieDetail: LiveData<Resource<MovieDetail>> get() = _movieDetail
+    val movieDetail get() = _movieDetail
 
-    private val _movieSimilar = MutableLiveData<Resource<MovieResult>>()
-    val movieSimilar: LiveData<Resource<MovieResult>> get() = _movieSimilar
+    private val _movieSimilar = MutableLiveData<Resource<PagingData<Movie>>>()
+    val movieSimilar get() = _movieSimilar
 
-    private val _movieRecommendations = MutableLiveData<Resource<MovieResult>>()
-    val movieRecommendations: LiveData<Resource<MovieResult>> get() = _movieRecommendations
+    private val _movieRecommendations = MutableLiveData<Resource<PagingData<Movie>>>()
+    val movieRecommendations get() = _movieRecommendations
 
     // TV
     private val _tvDetail = MutableLiveData<Resource<TvDetail>>()
-    val tvDetail: LiveData<Resource<TvDetail>> get() = _tvDetail
+    val tvDetail get() = _tvDetail
 
-    private val _tvSimilar = MutableLiveData<Resource<TvResult>>()
-    val tvSimilar: LiveData<Resource<TvResult>> get() = _tvSimilar
+    private val _tvSimilar = MutableLiveData<Resource<PagingData<Tv>>>()
+    val tvSimilar get() = _tvSimilar
 
-    private val _tvRecommendations = MutableLiveData<Resource<TvResult>>()
-    val tvRecommendations: LiveData<Resource<TvResult>> get() = _tvRecommendations
+    private val _tvRecommendations = MutableLiveData<Resource<PagingData<Tv>>>()
+    val tvRecommendations get() = _tvRecommendations
 
     // Details
     private val _actor = MutableLiveData<Resource<List<Actor>>>()
-    val actor: LiveData<Resource<List<Actor>>> get() = _actor
+    val actor get() = _actor
 
-    private val _review = MutableLiveData<Resource<List<Review>>>()
-    val review: LiveData<Resource<List<Review>>> get() = _review
+    private val _review = MutableLiveData<Resource<PagingData<Review>>>()
+    val review get() = _review
 
     private val _wallpaper = MutableLiveData<Resource<Wallpaper>>()
-    val wallpaper: LiveData<Resource<Wallpaper>> get() = _wallpaper
+    val wallpaper get() = _wallpaper
 
     private val _video = MutableLiveData<Resource<List<Video>>>()
-    val video: LiveData<Resource<List<Video>>> get() = _video
+    val video get() = _video
 
     init {
         _movieDetail.value = init()
@@ -72,7 +72,7 @@ class DetailViewModel(private val movieDetailUseCase: MovieDetailUseCase, privat
         _video.value = init()
     }
 
-    fun getMovieDetail(id: String) {
+    fun getMovieDetail(id: Int) {
         viewModelScope.launch {
             _movieDetail.value = loading()
             movieDetailUseCase.getMovieDetail(id).collect {
@@ -81,16 +81,16 @@ class DetailViewModel(private val movieDetailUseCase: MovieDetailUseCase, privat
         }
     }
 
-    fun getMovieActor(id: String) {
+    fun getMovieActor(id: Int) {
         viewModelScope.launch {
             _actor.value = loading()
-            movieDetailUseCase.getMovieActors(id, INDONESIA).collect {
+            movieDetailUseCase.getMovieActors(id).collect {
                 _actor.value = it
             }
         }
     }
 
-    fun getMovieWallpaper(id: String) {
+    fun getMovieWallpaper(id: Int) {
         viewModelScope.launch {
             _wallpaper.value = loading()
             movieDetailUseCase.getMovieWallpapers(id).collect {
@@ -99,7 +99,7 @@ class DetailViewModel(private val movieDetailUseCase: MovieDetailUseCase, privat
         }
     }
 
-    fun getMovieTrailer(id: String) {
+    fun getMovieTrailer(id: Int) {
         viewModelScope.launch {
             _video.value = loading()
             movieDetailUseCase.getMovieVideos(id).collect {
@@ -108,7 +108,7 @@ class DetailViewModel(private val movieDetailUseCase: MovieDetailUseCase, privat
         }
     }
 
-    fun getMovieReviews(id: String) {
+    fun getMovieReviews(id: Int) {
         viewModelScope.launch {
             _review.value = loading()
             movieDetailUseCase.getMovieReviews(id).collect {
@@ -117,25 +117,25 @@ class DetailViewModel(private val movieDetailUseCase: MovieDetailUseCase, privat
         }
     }
 
-    fun getRecommendationsMovies(id: String) {
+    fun getRecommendationsMovies(id: Int) {
         viewModelScope.launch {
             _movieRecommendations.value = loading()
-            movieDetailUseCase.getRecommendationsMovies(id, INDONESIA).collect {
+            movieDetailUseCase.getRecommendationsMovies(id).collect {
                 _movieRecommendations.value = it
             }
         }
     }
 
-    fun getSimilarMovies(id: String) {
+    fun getSimilarMovies(id: Int) {
         viewModelScope.launch {
             _movieSimilar.value = loading()
-            movieDetailUseCase.getSimilarMovies(id, INDONESIA).collect {
+            movieDetailUseCase.getSimilarMovies(id).collect {
                 _movieSimilar.value = it
             }
         }
     }
 
-    fun getTvDetail(id: String) {
+    fun getTvDetail(id: Int) {
         viewModelScope.launch {
             _tvDetail.value = loading()
             tvDetailUseCase.getTvDetail(id).collect {
@@ -144,16 +144,16 @@ class DetailViewModel(private val movieDetailUseCase: MovieDetailUseCase, privat
         }
     }
 
-    fun getTvActor(id: String) {
+    fun getTvActor(id: Int) {
         viewModelScope.launch {
             _actor.value = loading()
-            tvDetailUseCase.getTvActors(id, INDONESIA).collect {
+            tvDetailUseCase.getTvActors(id).collect {
                 _actor.value = it
             }
         }
     }
 
-    fun getTvWallpaper(id: String) {
+    fun getTvWallpaper(id: Int) {
         viewModelScope.launch {
             _wallpaper.value = loading()
             tvDetailUseCase.getTvWallpapers(id).collect {
@@ -162,7 +162,7 @@ class DetailViewModel(private val movieDetailUseCase: MovieDetailUseCase, privat
         }
     }
 
-    fun getTvTrailer(id: String) {
+    fun getTvTrailer(id: Int) {
         viewModelScope.launch {
             _video.value = loading()
             tvDetailUseCase.getTvVideos(id).collect {
@@ -171,7 +171,7 @@ class DetailViewModel(private val movieDetailUseCase: MovieDetailUseCase, privat
         }
     }
 
-    fun getTvReviews(id: String) {
+    fun getTvReviews(id: Int) {
         viewModelScope.launch {
             _review.value = loading()
             tvDetailUseCase.getTvReviews(id).collect {
@@ -180,19 +180,19 @@ class DetailViewModel(private val movieDetailUseCase: MovieDetailUseCase, privat
         }
     }
 
-    fun getRecommendationsTv(id: String) {
+    fun getRecommendationsTv(id: Int) {
         viewModelScope.launch {
             _tvRecommendations.value = loading()
-            tvDetailUseCase.getRecommendationsTv(id, INDONESIA).collect {
+            tvDetailUseCase.getRecommendationsTv(id).collect {
                 _tvRecommendations.value = it
             }
         }
     }
 
-    fun getSimilarTv(id: String) {
+    fun getSimilarTv(id: Int) {
         viewModelScope.launch {
             _tvSimilar.value = loading()
-            tvDetailUseCase.getSimilarTv(id, INDONESIA).collect {
+            tvDetailUseCase.getSimilarTv(id).collect {
                 _tvSimilar.value = it
             }
         }

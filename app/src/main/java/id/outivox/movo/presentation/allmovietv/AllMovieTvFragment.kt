@@ -34,7 +34,12 @@ class AllMovieTvFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentAllMovieTvBinding.inflate(layoutInflater)
+        _binding = FragmentAllMovieTvBinding.inflate(layoutInflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         category = args.category
         totalPages = args.totalPages
@@ -42,8 +47,6 @@ class AllMovieTvFragment : Fragment() {
         setUpPageBar()
         setUpSeeAllTitle()
         setUpView()
-
-        return binding.root
     }
 
     private fun setUpView() {
@@ -56,6 +59,7 @@ class AllMovieTvFragment : Fragment() {
         binding.tvMovieTvCategory.text = categoryTextFormatter()
     }
 
+    @Suppress("DUPLICATE_LABEL_IN_WHEN")
     private fun categoryTextFormatter(): String {
         return when (category) {
             POPULAR_MOVIE -> "Popular Movie"
@@ -73,16 +77,13 @@ class AllMovieTvFragment : Fragment() {
 
     private fun setUpPageBar() {
         binding.apply {
-            binding.vpPage.isUserInputEnabled = false
-
-            vpPage.adapter = activity?.let { SeeAllViewPagerAdapter(it, category, totalPages) }
-            TabLayoutMediator(pageTabs, vpPage) { tab, position ->
-                tab.text = (position + 1).toString()
-            }.attach()
-
-            
+            binding.vpMoviesTv. apply {
+                isUserInputEnabled = false
+                adapter = activity?.let { SeeAllViewPagerAdapter(it, category, totalPages) }
+                TabLayoutMediator(pageTabs, this) { tab, position ->
+                    tab.text = (position + 1).toString()
+                }.attach()
+            }
         }
     }
-
-
 }

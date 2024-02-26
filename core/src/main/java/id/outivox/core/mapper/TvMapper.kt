@@ -21,7 +21,7 @@ object TvMapper {
     fun TvItem.map() = Tv(
         id = id.orZero(),
         title = name.orEmpty(),
-        genre = genreIds?.map { it.toGenreFormat() }.orEmpty(),
+        genres = genreIds?.map { it.toGenreFormat() }.orEmpty(),
         posterPath = posterPath.orEmpty(),
         voteAverage = voteAverage.orZero(),
         firstAirDate = firstAirDate.orEmpty()

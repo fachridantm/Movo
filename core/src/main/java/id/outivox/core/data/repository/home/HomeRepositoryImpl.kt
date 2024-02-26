@@ -12,7 +12,7 @@ import id.outivox.core.mapper.TvMapper.map
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 
-class HomeRepositoryImpl(val remoteDataSource: RemoteDataSource, val localDataSource: LocalDataSource) : HomeRepository {
+class HomeRepositoryImpl(private val remoteDataSource: RemoteDataSource, private val localDataSource: LocalDataSource) : HomeRepository {
     override fun getMovies(category: String, region: String) = flow {
         emit(Resource.loading())
         try {
