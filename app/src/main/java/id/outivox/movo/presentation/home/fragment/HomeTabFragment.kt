@@ -1,28 +1,25 @@
 package id.outivox.movo.presentation.home.fragment
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.paging.PagingData
+import androidx.paging.map
 import id.outivox.core.domain.model.Resource
 import id.outivox.core.domain.model.movie.Movie
-import id.outivox.core.domain.model.movie.MovieResult
 import id.outivox.core.domain.model.tv.Tv
-import id.outivox.core.domain.model.tv.TvResult
+import id.outivox.core.utils.Constants
 import id.outivox.core.utils.Constants.BUNDLE_MEDIA_MOVIE
 import id.outivox.core.utils.Constants.BUNDLE_MEDIA_TYPE
 import id.outivox.core.utils.Constants.BUNDLE_MOVIE_CATEGORY
-import id.outivox.core.utils.Constants.EXTRA_MEDIA_MOVIE
-import id.outivox.core.utils.Constants.EXTRA_MEDIA_TV
-import id.outivox.core.utils.Constants.EXTRA_MEDIA_TYPE
-import id.outivox.core.utils.Constants.EXTRA_DETAIL_ID
 import id.outivox.core.utils.Constants.NOW_PLAYING_MOVIE
+import id.outivox.core.utils.showSnackbar
+import id.outivox.movo.R
+import id.outivox.movo.adapter.MovieLoadStateAdapter
 import id.outivox.movo.adapter.VerticalListAdapter
 import id.outivox.movo.databinding.FragmentHomeTabBinding
-import id.outivox.movo.`interface`.OnItemClickCallback
 import id.outivox.movo.presentation.allmovietv.AllMovieTvViewModel
 import id.outivox.movo.presentation.detail.DetailActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -34,6 +31,9 @@ class HomeTabFragment : Fragment() {
     private var _binding: FragmentHomeTabBinding? = null
     private val binding get() = _binding as FragmentHomeTabBinding
 
+    private val verticalAdapter by lazy { VerticalListAdapter(::onItemClick) }
+
+    private var isMovie: Boolean = false
     private lateinit var category: String
 
     override fun onCreateView(
@@ -41,88 +41,77 @@ class HomeTabFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentHomeTabBinding.inflate(layoutInflater)
-
-        category = arguments?.getString(BUNDLE_MOVIE_CATEGORY) ?: NOW_PLAYING_MOVIE
-
-        initObservers()
-
         return binding.root
     }
 
-    private fun initObservers() {
-        if(isMovieType()){
-            viewModel.getMoviesByCategory(category)
-            viewModel.movieResponse.observe(viewLifecycleOwner){
-                setUpHomeTabRv(it)
-            }
-        } else {
-            viewModel.getTvByCategory(category)
-            viewModel.tvResponse.observe(viewLifecycleOwner){
-                setUpHomeTabRv(it)
-            }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        isMovie = arguments?.getString(BUNDLE_MEDIA_TYPE).equals(BUNDLE_MEDIA_MOVIE)
+        category = arguments?.getString(BUNDLE_MOVIE_CATEGORY) ?: NOW_PLAYING_MOVIE
+
+        initData()
+        initView()
+        initObservers()
+    }
+
+    private fun initData() {
+        viewModel.apply {
+            if (isMovie) getMoviesByCategory(category) else getTvShowByCategory(category)
         }
     }
 
-    private fun <T> setUpHomeTabRv(resource: Resource<T>) {
-        when(resource){
-            is Resource.Success -> {
-                when(resource.data){
-                    is MovieResult -> {
-                        val result = resource.data as MovieResult
-                        displayMovie(result)
+    private fun initView() {
+        with(binding) {
+            rvHome.adapter = verticalAdapter.withLoadStateFooter(
+                footer = MovieLoadStateAdapter { verticalAdapter.retry() }
+            )
+        }
+    }
 
-                    }
-                    is TvResult -> {
-                        val result = resource.data as TvResult
-                        displayTv(result)
-                    }
-                }
+    private fun initObservers() {
+        if (isMovie) viewModel.movies.observe(viewLifecycleOwner, ::setupMoviesData)
+        else viewModel.tvShow.observe(viewLifecycleOwner, ::setupTvShowData)
+    }
+
+    private fun setupMoviesData(resource: Resource<PagingData<Movie>>?) {
+        when (resource) {
+            is Resource.Loading -> {}
+
+            is Resource.Success -> {
+                val data: PagingData<Any> = resource.data.map { it }
+                verticalAdapter.submitData(lifecycle, data)
             }
+
+            is Resource.Error -> resource.message.showSnackbar(binding.root)
+
+            is Resource.Empty -> getString(R.string.data_is_empty).showSnackbar(binding.root)
+
             else -> {}
         }
-
     }
 
-    private fun displayTv(result: TvResult) {
-        binding.rvHomeTab.apply {
-            val mAdapter = VerticalListAdapter<Tv>()
-            layoutManager = LinearLayoutManager(context)
-            adapter = mAdapter
-            mAdapter.setData(result.tv)
-            mAdapter.setOnItemClickCallback(object: OnItemClickCallback{
-                override fun onItemClicked(id: Int) {
-                    startActivity(
-                        Intent(context, DetailActivity::class.java)
-                            .putExtra(EXTRA_DETAIL_ID, id)
-                            .putExtra(EXTRA_MEDIA_TYPE, EXTRA_MEDIA_TV)
-                    )
-                }
+    private fun setupTvShowData(resource: Resource<PagingData<Tv>>?) {
+        when (resource) {
+            is Resource.Loading -> {}
 
-            })
+            is Resource.Success -> {
+                val data: PagingData<Any> = resource.data.map { it }
+                verticalAdapter.submitData(lifecycle, data)
+            }
+
+            is Resource.Error -> resource.message.showSnackbar(binding.root)
+
+            is Resource.Empty -> getString(R.string.data_is_empty).showSnackbar(binding.root)
+
+            else -> {}
         }
     }
 
-    private fun displayMovie(result: MovieResult) {
-        binding.rvHomeTab.apply {
-            val mAdapter = VerticalListAdapter<Movie>()
-            layoutManager = LinearLayoutManager(context)
-            adapter = mAdapter
-            mAdapter.setData(result.movie)
-            mAdapter.setOnItemClickCallback(object: OnItemClickCallback{
-                override fun onItemClicked(id: Int) {
-                    startActivity(
-                        Intent(context, DetailActivity::class.java)
-                            .putExtra(EXTRA_DETAIL_ID, id)
-                            .putExtra(EXTRA_MEDIA_TYPE, EXTRA_MEDIA_MOVIE)
-                    )
-                }
-
-            })
+    private fun onItemClick(any: Any) {
+        when (any) {
+            is Movie -> DetailActivity.start(requireContext(), any.id, Constants.MOVIE)
+            is Tv -> DetailActivity.start(requireContext(), any.id, Constants.TV_SHOW)
         }
     }
-
-    private fun isMovieType(): Boolean {
-        return arguments?.getString(BUNDLE_MEDIA_TYPE) == BUNDLE_MEDIA_MOVIE
-    }
-
 }

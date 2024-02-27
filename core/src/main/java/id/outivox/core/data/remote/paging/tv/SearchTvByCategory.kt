@@ -18,21 +18,25 @@ class SearchTvByCategory(
 ) : PagingSource<Int, TvItem>() {
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, TvItem> {
         val pageNumber = params.key ?: 1
-        val pageSize = params.loadSize
+        val pageSize = 20
 
         return try {
             val response = apiService.searchTvByQuery(query = query, page = pageNumber)
-
-            if (response.results.isNullOrEmpty()) {
-                Log.e("logError", "Data: ${response.toJson()}")
-                LoadResult.Error(Exception("No more data"))
+            if (response != null) {
+                if (response.results.isNullOrEmpty()) {
+                    Log.e("logError", "Data: ${response.toJson()}")
+                    LoadResult.Error(Exception("No more data"))
+                } else {
+                    Log.i("logInfo", "Data: ${response.toJson()}")
+                    LoadResult.Page(
+                        data = response.results,
+                        prevKey = if (pageNumber == 1) null else pageNumber - 1,
+                        nextKey = if (response.results.size.orZero() < pageSize) null else pageNumber + 1
+                    )
+                }
             } else {
-                Log.i("logInfo", "Data: ${response.toJson()}")
-                LoadResult.Page(
-                    data = response.results,
-                    prevKey = if (pageNumber == 1) null else (pageNumber * pageSize) - pageSize,
-                    nextKey = if (response.totalPages.orZero() < pageSize) null else pageNumber + 1
-                )
+                Log.e("logError", "Data: ${response?.toJson()}")
+                LoadResult.Error(Exception("No more data"))
             }
         } catch (e: Exception) {
             when (e) {
@@ -53,5 +57,7 @@ class SearchTvByCategory(
         }
     }
 
-    override fun getRefreshKey(state: PagingState<Int, TvItem>) = state.anchorPosition
+    override fun getRefreshKey(state: PagingState<Int, TvItem>) = state.anchorPosition?.let { anchorPosition ->
+        state.closestPageToPosition(anchorPosition)?.prevKey?.plus(1) ?: state.closestPageToPosition(anchorPosition)?.nextKey?.minus(1)
+    }
 }

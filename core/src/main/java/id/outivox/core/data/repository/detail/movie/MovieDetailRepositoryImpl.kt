@@ -21,17 +21,23 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 
-class MovieDetailRepositoryImpl(val remoteDataSource: RemoteDataSource) : MovieDetailRepository {
-    override fun getMovieDetail(id: Int): Flow<Resource<MovieDetail>> {
-        return object : NetworkBoundResource<MovieDetail, MovieDetailResponse>() {
-            override fun loadFromDB() = throw UnsupportedOperationException()
+class MovieDetailRepositoryImpl(private val remoteDataSource: RemoteDataSource) : MovieDetailRepository {
+    override fun getMovieDetail(id: Int) = flow {
+        emit(loading())
+        try {
+            when (val response = remoteDataSource.getMovieDetail(id).first()) {
+                is ApiResponse.Success -> {
+                    val data = response.data.map()
+                    emit(success(data))
+                }
 
-            override fun shouldFetch(data: MovieDetail?) = true
-
-            override suspend fun createCall() = remoteDataSource.getMovieDetail(id)
-
-            override suspend fun saveCallResult(data: MovieDetailResponse) = throw UnsupportedOperationException()
-        }.asFlow()
+                is ApiResponse.Empty -> emit(empty())
+                is ApiResponse.Error -> emit(error(response.message))
+            }
+        } catch (e: Exception) {
+            Log.e("logError", e.message.orEmpty())
+            emit(error(e.message.orEmpty()))
+        }
     }
 
     override fun getSimilarMovies(id: Int) = flow {

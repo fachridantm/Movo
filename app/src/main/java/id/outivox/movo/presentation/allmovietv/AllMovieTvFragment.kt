@@ -7,32 +7,35 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.google.android.material.tabs.TabLayoutMediator
-import id.outivox.core.utils.Constants.AIRING_TODAY_TV
-import id.outivox.core.utils.Constants.LATEST_MOVIE
-import id.outivox.core.utils.Constants.NOW_PLAYING_MOVIE
-import id.outivox.core.utils.Constants.ON_THE_AIR_TV
-import id.outivox.core.utils.Constants.POPULAR_MOVIE
-import id.outivox.core.utils.Constants.POPULAR_TV
-import id.outivox.core.utils.Constants.TOP_RATED_MOVIE
-import id.outivox.core.utils.Constants.TOP_RATED_TV
-import id.outivox.core.utils.Constants.UPCOMING_MOVIE
+import androidx.paging.PagingData
+import androidx.paging.map
+import id.outivox.core.domain.model.Resource
+import id.outivox.core.domain.model.movie.Movie
+import id.outivox.core.domain.model.tv.Tv
+import id.outivox.core.utils.Constants
+import id.outivox.core.utils.showSnackbar
+import id.outivox.core.utils.toCategoryTitle
+import id.outivox.movo.R
+import id.outivox.movo.adapter.VerticalListAdapter
 import id.outivox.movo.databinding.FragmentAllMovieTvBinding
-import id.outivox.movo.presentation.allmovietv.adapter.SeeAllViewPagerAdapter
+import id.outivox.movo.presentation.detail.DetailActivity
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class AllMovieTvFragment : Fragment() {
 
     private var _binding: FragmentAllMovieTvBinding? = null
     private val binding get() = _binding as FragmentAllMovieTvBinding
 
+    private val viewModel: AllMovieTvViewModel by viewModel()
+    private val verticalAdapter by lazy { VerticalListAdapter(::onItemClick) }
+
     private lateinit var category: String
-    private var totalPages = 1
 
     private val args: AllMovieTvFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentAllMovieTvBinding.inflate(layoutInflater, container, false)
         return binding.root
@@ -42,48 +45,73 @@ class AllMovieTvFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         category = args.category
-        totalPages = args.totalPages
 
-        setUpPageBar()
-        setUpSeeAllTitle()
-        setUpView()
+        initData()
+        initObservers()
+        initView()
     }
 
-    private fun setUpView() {
-        binding.btnBack.setOnClickListener {
-            findNavController().popBackStack()
+    private fun initData() {
+        viewModel.apply {
+            getMoviesByCategory(category)
+            getTvShowByCategory(category)
         }
     }
 
-    private fun setUpSeeAllTitle() {
-        binding.tvMovieTvCategory.text = categoryTextFormatter()
-    }
-
-    @Suppress("DUPLICATE_LABEL_IN_WHEN")
-    private fun categoryTextFormatter(): String {
-        return when (category) {
-            POPULAR_MOVIE -> "Popular Movie"
-            TOP_RATED_MOVIE -> "Top Rated Movie"
-            UPCOMING_MOVIE -> "Upcoming Movie"
-            NOW_PLAYING_MOVIE -> "Now Playing Movie"
-            LATEST_MOVIE -> "Latest Movie"
-            AIRING_TODAY_TV -> "Airing Today TV"
-            POPULAR_TV -> "Popular TV"
-            TOP_RATED_TV -> "Top Rated TV"
-            ON_THE_AIR_TV -> "On The Air TV"
-            else -> category
+    private fun initObservers() {
+        viewModel.apply {
+            movies.observe(viewLifecycleOwner, ::setupMoviesData)
+            tvShow.observe(viewLifecycleOwner, ::setupTvShowData)
         }
     }
 
-    private fun setUpPageBar() {
-        binding.apply {
-            binding.vpMoviesTv. apply {
-                isUserInputEnabled = false
-                adapter = activity?.let { SeeAllViewPagerAdapter(it, category, totalPages) }
-                TabLayoutMediator(pageTabs, this) { tab, position ->
-                    tab.text = (position + 1).toString()
-                }.attach()
+    private fun setupMoviesData(resource: Resource<PagingData<Movie>>?) {
+        when (resource) {
+            is Resource.Loading -> {}
+
+            is Resource.Success -> {
+                val data: PagingData<Any> = resource.data.map { it }
+                verticalAdapter.submitData(lifecycle, data)
             }
+
+            is Resource.Error -> resource.message.showSnackbar(binding.root)
+
+            is Resource.Empty -> getString(R.string.data_is_empty).showSnackbar(binding.root)
+
+            else -> {}
+        }
+    }
+
+    private fun setupTvShowData(resource: Resource<PagingData<Tv>>?) {
+        when (resource) {
+            is Resource.Loading -> {}
+
+            is Resource.Success -> {
+                val data: PagingData<Any> = resource.data.map { it }
+                verticalAdapter.submitData(lifecycle, data)
+            }
+
+            is Resource.Error -> resource.message.showSnackbar(binding.root)
+
+            is Resource.Empty -> getString(R.string.data_is_empty).showSnackbar(binding.root)
+
+            else -> {}
+        }
+    }
+
+    private fun onItemClick(any: Any) {
+        when (any) {
+            is Movie -> DetailActivity.start(requireContext(), any.id, Constants.MOVIE)
+            is Tv -> DetailActivity.start(requireContext(), any.id, Constants.TV_SHOW)
+        }
+    }
+
+    private fun initView() {
+        with(binding) {
+            btnBack.setOnClickListener {
+                findNavController().popBackStack()
+            }
+            tvMovieTvCategory.text = category.toCategoryTitle()
         }
     }
 }

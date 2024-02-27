@@ -2,12 +2,13 @@ package id.outivox.movo.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import id.outivox.movo.databinding.ItemGenreListBinding
 
-class GenreListAdapter() : ListAdapter<List<String>, GenreListAdapter.GenreViewHolder>(DIFF_CALLBACK) {
+class GenreListAdapter() : PagingDataAdapter<List<String>, GenreListAdapter.GenreViewHolder>(DIFF_CALLBACK) {
     inner class GenreViewHolder(val binding: ItemGenreListBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(data: List<String>) {
             binding.apply {
@@ -24,8 +25,6 @@ class GenreListAdapter() : ListAdapter<List<String>, GenreListAdapter.GenreViewH
         val item = getItem(position)
         if (item != null) holder.bind(item)
     }
-
-    override fun getItemCount() = if (currentList.size <= 3) currentList.size else 3
 
     companion object {
         private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<List<String>>() {

@@ -10,11 +10,11 @@
         android:label="@string/title_home"
         tools:layout="@layout/fragment_home" >
         <action
-            android:id="@+id/action_navigation_home_to_navigation_search"
+            android:id="@+id/action_home_fragment_to_search_fragment"
             app:destination="@id/navigation_search" />
         <action
-            android:id="@+id/action_navigation_home_to_allMovieTvFragment"
-            app:destination="@id/allMovieTvFragment" />
+            android:id="@+id/action_home_fragment_to_all_movie_tv_fragment"
+            app:destination="@id/navigation_all_movie_tv" />
     </fragment>
     <fragment
         android:id="@+id/navigation_favorite"
@@ -28,7 +28,7 @@
         android:label="@string/title_search"
         tools:layout="@layout/fragment_search" />
     <fragment
-        android:id="@+id/allMovieTvFragment"
+        android:id="@+id/navigation_all_movie_tv"
         android:name="id.outivox.movo.presentation.allmovietv.AllMovieTvFragment"
         android:label="fragment_all_movie_tv"
         tools:layout="@layout/fragment_all_movie_tv"  >
@@ -36,10 +36,6 @@
             android:name="category"
             app:argType="string"
             android:defaultValue="now_playing" />
-        <argument
-            android:name="totalPages"
-            app:argType="integer"
-            android:defaultValue="1" />
     </fragment>
 
 </navigation>

@@ -2,7 +2,10 @@ package id.outivox.core.data
 
 import id.outivox.core.data.remote.source.network.ApiResponse
 import id.outivox.core.domain.model.Resource
+import id.outivox.core.domain.model.Resource.Companion.empty
 import id.outivox.core.domain.model.Resource.Companion.loading
+import id.outivox.core.domain.model.Resource.Companion.success
+import id.outivox.core.domain.model.Resource.Companion.error
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.first
@@ -18,14 +21,14 @@ abstract class NetworkBoundResource<ResultType, RequestType> {
             when (val response = createCall().first()) {
                 is ApiResponse.Success -> {
                     saveCallResult(response.data)
-                    emitAll(loadFromDB().map { Resource.Success(it) })
+                    emitAll(loadFromDB().map { success(it) })
                 }
                 is ApiResponse.Empty -> {
-                    emitAll(loadFromDB().map { Resource.Success(it) })
+                    emitAll(loadFromDB().map { empty() })
                 }
                 is ApiResponse.Error -> {
                     onFetchFailed()
-                    emit(Resource.Error(response.message))
+                    emit(error(response.message))
                 }
             }
         } else {

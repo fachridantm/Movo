@@ -12,6 +12,7 @@ import id.outivox.core.data.remote.paging.tv.GetRecommendationsTv
 import id.outivox.core.data.remote.paging.tv.GetSimilarTv
 import id.outivox.core.data.remote.paging.tv.GetTvByCategory
 import id.outivox.core.data.remote.paging.tv.SearchTvByCategory
+import id.outivox.core.data.remote.source.network.ApiResponse.Companion.apiEmpty
 import id.outivox.core.data.remote.source.network.ApiResponse.Companion.apiError
 import id.outivox.core.data.remote.source.network.ApiResponse.Companion.apiSuccess
 import id.outivox.core.data.remote.source.network.ApiService
@@ -30,7 +31,7 @@ class RemoteDataSource(private val apiService: ApiService) {
     suspend fun getMovieDetail(id: Int) = flow {
         try {
             val response = apiService.getMovieDetail(id)
-            emit(apiSuccess(response))
+            if (response != null) emit(apiSuccess(response)) else emit(apiEmpty())
         } catch (e: Exception) {
             when (e) {
                 is HttpException -> {
@@ -52,7 +53,7 @@ class RemoteDataSource(private val apiService: ApiService) {
 
     suspend fun getSimilarMovies(id: Int) = flow {
         Pager(
-            config = PagingConfig(pageSize = 25),
+            config = PagingConfig(pageSize = 20),
             pagingSourceFactory = { GetSimilarMovies(apiService, id) }
         ).flow
             .map { apiSuccess(it) }
@@ -77,7 +78,7 @@ class RemoteDataSource(private val apiService: ApiService) {
 
     suspend fun getRecommendationsMovies(id: Int) = flow {
         Pager(
-            config = PagingConfig(pageSize = 25),
+            config = PagingConfig(pageSize = 20),
             pagingSourceFactory = { GetRecommendationsMovies(apiService, id) }
         ).flow
             .map { apiSuccess(it) }
@@ -102,7 +103,7 @@ class RemoteDataSource(private val apiService: ApiService) {
 
     suspend fun getMoviesByCategory(category: String, region: String) = flow {
         Pager(
-            config = PagingConfig(pageSize = 25),
+            config = PagingConfig(pageSize = 20),
             pagingSourceFactory = { GetMoviesByCategory(apiService, category, region) }
         ).flow
             .map { apiSuccess(it) }
@@ -127,7 +128,7 @@ class RemoteDataSource(private val apiService: ApiService) {
 
     suspend fun searchMovieByQuery(query: String, region: String) = flow {
         Pager(
-            config = PagingConfig(pageSize = 25),
+            config = PagingConfig(pageSize = 20),
             pagingSourceFactory = { SearchMovieByCategory(apiService, query, region) }
         ).flow
             .map { apiSuccess(it) }
@@ -154,7 +155,7 @@ class RemoteDataSource(private val apiService: ApiService) {
     suspend fun getTvDetail(id: Int) = flow {
         try {
             val response = apiService.getTvDetail(id)
-            emit(apiSuccess(response))
+            if (response != null) emit(apiSuccess(response)) else emit(apiEmpty())
         } catch (e: Exception) {
             when (e) {
                 is HttpException -> {
@@ -176,7 +177,7 @@ class RemoteDataSource(private val apiService: ApiService) {
 
     suspend fun getTvByCategory(category: String) = flow {
         Pager(
-            config = PagingConfig(pageSize = 25),
+            config = PagingConfig(pageSize = 20),
             pagingSourceFactory = { GetTvByCategory(apiService, category) }
         ).flow
             .map { apiSuccess(it) }
@@ -201,7 +202,7 @@ class RemoteDataSource(private val apiService: ApiService) {
 
     suspend fun searchTvByQuery(query: String) = flow {
         Pager(
-            config = PagingConfig(pageSize = 25),
+            config = PagingConfig(pageSize = 20),
             pagingSourceFactory = { SearchTvByCategory(apiService, query) }
         ).flow
             .map { apiSuccess(it) }
@@ -226,7 +227,7 @@ class RemoteDataSource(private val apiService: ApiService) {
 
     suspend fun getSimilarTv(id: Int) = flow {
         Pager(
-            config = PagingConfig(pageSize = 25),
+            config = PagingConfig(pageSize = 20),
             pagingSourceFactory = { GetSimilarTv(apiService, id) }
         ).flow
             .map { apiSuccess(it) }
@@ -251,7 +252,7 @@ class RemoteDataSource(private val apiService: ApiService) {
 
     suspend fun getRecommendationsTv(id: Int) = flow {
         Pager(
-            config = PagingConfig(pageSize = 25),
+            config = PagingConfig(pageSize = 20),
             pagingSourceFactory = { GetRecommendationsTv(apiService, id) }
         ).flow
             .map { apiSuccess(it) }
@@ -277,7 +278,7 @@ class RemoteDataSource(private val apiService: ApiService) {
     // Details
     suspend fun getReviewList(media: String, id: Int) = flow {
         Pager(
-            config = PagingConfig(pageSize = 25),
+            config = PagingConfig(pageSize = 20),
             pagingSourceFactory = { GetReviewList(apiService, media, id) }
         ).flow
             .map { apiSuccess(it) }
@@ -303,7 +304,7 @@ class RemoteDataSource(private val apiService: ApiService) {
     suspend fun getCreditList(media: String, id: Int) = flow {
         try {
             val response = apiService.getCreditList(media, id)
-            emit(apiSuccess(response))
+            if (response != null) emit(apiSuccess(response)) else emit(apiEmpty())
         } catch (e: Exception) {
             when (e) {
                 is HttpException -> {
@@ -326,7 +327,7 @@ class RemoteDataSource(private val apiService: ApiService) {
     suspend fun getVideoList(media: String, id: Int) = flow {
         try {
             val response = apiService.getVideoList(media, id)
-            emit(apiSuccess(response))
+            if (response != null) emit(apiSuccess(response)) else emit(apiEmpty())
         } catch (e: Exception) {
             when (e) {
                 is HttpException -> {
@@ -349,7 +350,7 @@ class RemoteDataSource(private val apiService: ApiService) {
     suspend fun getWallpaperList(media: String, id: Int) = flow {
         try {
             val response = apiService.getWallpaperList(media, id)
-            emit(apiSuccess(response))
+            if (response != null) emit(apiSuccess(response)) else emit(apiEmpty())
         } catch (e: Exception) {
             when (e) {
                 is HttpException -> {

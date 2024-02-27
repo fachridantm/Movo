@@ -12,9 +12,18 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.GsonBuilder
+import id.outivox.core.utils.Constants.AIRING_TODAY_TV
 import id.outivox.core.utils.Constants.API_DATE_FORMAT
 import id.outivox.core.utils.Constants.JAKARTA_TIME_ZONE
+import id.outivox.core.utils.Constants.LATEST_MOVIE
+import id.outivox.core.utils.Constants.NOW_PLAYING_MOVIE
+import id.outivox.core.utils.Constants.ON_THE_AIR_TV
+import id.outivox.core.utils.Constants.POPULAR_MOVIE
+import id.outivox.core.utils.Constants.POPULAR_TV
+import id.outivox.core.utils.Constants.TOP_RATED_MOVIE
+import id.outivox.core.utils.Constants.TOP_RATED_TV
 import id.outivox.core.utils.Constants.UI_DATE_FORMAT
+import id.outivox.core.utils.Constants.UPCOMING_MOVIE
 import id.outivox.movo.core.BuildConfig.IMAGE_BASE_URL
 import org.json.JSONObject
 import retrofit2.HttpException
@@ -47,7 +56,7 @@ fun ImageView.loadImageOnly(path: String) {
 fun String.showSnackbar(
     view: View,
     anchorView: View? = null,
-    duration: Int = Snackbar.LENGTH_SHORT
+    duration: Int = Snackbar.LENGTH_SHORT,
 ) {
     Snackbar.make(view, this, duration).apply {
         if (anchorView != null) this.anchorView = anchorView
@@ -69,10 +78,10 @@ fun Int.toMovieDurationFormat() = "${this / 60}h ${this % 60}min"
 
 fun checkCurrentLocale(isLocale: Boolean): Locale = if (isLocale) Locale("in") else Locale.ENGLISH
 
-fun String?.reformat(
+fun String?.reformatDate(
     inputFormat: String = API_DATE_FORMAT,
     outputFormat: String = UI_DATE_FORMAT,
-    isLocale: Boolean = localeId
+    isLocale: Boolean = localeId,
 ): String {
     if (this.isNullOrEmpty()) return ""
     val calendar = Calendar.getInstance()
@@ -80,7 +89,7 @@ fun String?.reformat(
     val output = SimpleDateFormat(outputFormat, checkCurrentLocale(isLocale))
     try {
         calendar.apply {
-            timeInMillis = input.parse(this@reformat)?.time.orZero()
+            timeInMillis = input.parse(this@reformatDate)?.time.orZero()
             timeZone = TimeZone.getTimeZone(JAKARTA_TIME_ZONE)
         }
     } catch (e: ParseException) {
@@ -140,7 +149,8 @@ fun HttpException.errorMessage(): String? {
     }
 }
 
-fun Any.toJson(): String {
+fun Any?.toJson(): String {
+    if (this == null) return "null"
     val gson = GsonBuilder()
         .setPrettyPrinting()
         .create()
@@ -179,5 +189,21 @@ fun Int?.toGenreFormat(): String {
         10752 -> "War"
         37 -> "Western"
         else -> "Unknown"
+    }
+}
+
+@Suppress("DUPLICATE_LABEL_IN_WHEN")
+fun String?.toCategoryTitle(): String {
+    return when (this) {
+        POPULAR_MOVIE -> "Popular Movie"
+        TOP_RATED_MOVIE -> "Top Rated Movie"
+        UPCOMING_MOVIE -> "Upcoming Movie"
+        NOW_PLAYING_MOVIE -> "Now Playing Movie"
+        LATEST_MOVIE -> "Latest Movie"
+        AIRING_TODAY_TV -> "Airing Today TV"
+        POPULAR_TV -> "Popular TV"
+        TOP_RATED_TV -> "Top Rated TV"
+        ON_THE_AIR_TV -> "On The Air TV"
+        else -> this.orEmpty()
     }
 }

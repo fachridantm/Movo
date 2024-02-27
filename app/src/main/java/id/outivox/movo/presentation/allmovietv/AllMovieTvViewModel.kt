@@ -1,33 +1,45 @@
 package id.outivox.movo.presentation.allmovietv
 
-import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.toLiveData
+import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
 import id.outivox.core.domain.model.Resource
-import id.outivox.core.domain.model.movie.MovieResult
-import id.outivox.core.domain.model.tv.TvResult
+import id.outivox.core.domain.model.Resource.Companion.init
+import id.outivox.core.domain.model.Resource.Companion.loading
+import id.outivox.core.domain.model.movie.Movie
+import id.outivox.core.domain.model.tv.Tv
 import id.outivox.core.domain.usecase.allmovietv.AllMovieTvUseCase
 import id.outivox.core.utils.Constants.INDONESIA
+import kotlinx.coroutines.launch
 
 class AllMovieTvViewModel(private val allMovieTvUseCase: AllMovieTvUseCase) : ViewModel() {
-    val movieResponse = MediatorLiveData<Resource<MovieResult>>()
-    val tvResponse = MediatorLiveData<Resource<TvResult>>()
+    private val _movies = MutableLiveData<Resource<PagingData<Movie>>>()
+    val movies get() = _movies
 
-    fun getMoviesByCategory(category: String, page: String = "1") {
-        val source = allMovieTvUseCase.getMovies(category, page, INDONESIA).toLiveData()
+    private val _tvShow = MutableLiveData<Resource<PagingData<Tv>>>()
+    val tvShow get() = _tvShow
 
-        movieResponse.addSource(source) {
-            movieResponse.postValue(it)
-            movieResponse.removeSource(source)
+    init {
+        _movies.value = init()
+        _tvShow.value = init()
+    }
+
+    fun getMoviesByCategory(category: String) {
+        viewModelScope.launch {
+            _movies.value = loading()
+            allMovieTvUseCase.getMovies(category, INDONESIA).collect {
+                _movies.value = it
+            }
         }
     }
 
-    fun getTvByCategory(category: String, page: String = "1") {
-        val source = allMovieTvUseCase.getTvShow(category, page, INDONESIA).toLiveData()
-
-        tvResponse.addSource(source) {
-            tvResponse.postValue(it)
-            tvResponse.removeSource(source)
+    fun getTvShowByCategory(category: String) {
+        viewModelScope.launch {
+            _tvShow.value = loading()
+            allMovieTvUseCase.getTvShow(category).collect {
+                _tvShow.value = it
+            }
         }
     }
 }

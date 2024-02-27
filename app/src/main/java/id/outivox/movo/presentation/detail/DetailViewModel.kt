@@ -1,6 +1,5 @@
 package id.outivox.movo.presentation.detail
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -15,12 +14,9 @@ import id.outivox.core.domain.model.detail.TvDetail
 import id.outivox.core.domain.model.detail.Video
 import id.outivox.core.domain.model.detail.Wallpaper
 import id.outivox.core.domain.model.movie.Movie
-import id.outivox.core.domain.model.movie.MovieResult
 import id.outivox.core.domain.model.tv.Tv
-import id.outivox.core.domain.model.tv.TvResult
 import id.outivox.core.domain.usecase.detail.movie.MovieDetailUseCase
 import id.outivox.core.domain.usecase.detail.tv.TvDetailUseCase
-import id.outivox.core.utils.Constants.INDONESIA
 import kotlinx.coroutines.launch
 
 class DetailViewModel(private val movieDetailUseCase: MovieDetailUseCase, private val tvDetailUseCase: TvDetailUseCase) : ViewModel() {
@@ -45,17 +41,29 @@ class DetailViewModel(private val movieDetailUseCase: MovieDetailUseCase, privat
     val tvRecommendations get() = _tvRecommendations
 
     // Details
-    private val _actor = MutableLiveData<Resource<List<Actor>>>()
-    val actor get() = _actor
+    private val _movieActor = MutableLiveData<Resource<List<Actor>>>()
+    val movieActor get() = _movieActor
 
-    private val _review = MutableLiveData<Resource<PagingData<Review>>>()
-    val review get() = _review
+    private val _tvActor = MutableLiveData<Resource<List<Actor>>>()
+    val tvActor get() = _tvActor
 
-    private val _wallpaper = MutableLiveData<Resource<Wallpaper>>()
-    val wallpaper get() = _wallpaper
+    private val _movieReviews = MutableLiveData<Resource<PagingData<Review>>>()
+    val movieReviews get() = _movieReviews
 
-    private val _video = MutableLiveData<Resource<List<Video>>>()
-    val video get() = _video
+    private val _tvReviews = MutableLiveData<Resource<PagingData<Review>>>()
+    val tvReviews get() = _tvReviews
+
+    private val _movieWallpaper = MutableLiveData<Resource<Wallpaper>>()
+    val movieWallpaper get() = _movieWallpaper
+
+    private val _tvWallpaper = MutableLiveData<Resource<Wallpaper>>()
+    val tvWallpaper get() = _tvWallpaper
+
+    private val _movieTrailer = MutableLiveData<Resource<List<Video>>>()
+    val movieTrailer get() = _movieTrailer
+
+    private val _tvTrailer = MutableLiveData<Resource<List<Video>>>()
+    val tvTrailer get() = _tvTrailer
 
     init {
         _movieDetail.value = init()
@@ -66,10 +74,14 @@ class DetailViewModel(private val movieDetailUseCase: MovieDetailUseCase, privat
         _tvSimilar.value = init()
         _tvRecommendations.value = init()
 
-        _actor.value = init()
-        _review.value = init()
-        _wallpaper.value = init()
-        _video.value = init()
+        _movieActor.value = init()
+        _tvActor.value = init()
+        _movieReviews.value = init()
+        _tvReviews.value = init()
+        _movieWallpaper.value = init()
+        _tvWallpaper.value = init()
+        _movieTrailer.value = init()
+        _tvTrailer.value = init()
     }
 
     fun getMovieDetail(id: Int) {
@@ -83,36 +95,36 @@ class DetailViewModel(private val movieDetailUseCase: MovieDetailUseCase, privat
 
     fun getMovieActor(id: Int) {
         viewModelScope.launch {
-            _actor.value = loading()
+            _movieActor.value = loading()
             movieDetailUseCase.getMovieActors(id).collect {
-                _actor.value = it
+                _movieActor.value = it
             }
         }
     }
 
     fun getMovieWallpaper(id: Int) {
         viewModelScope.launch {
-            _wallpaper.value = loading()
+            _movieWallpaper.value = loading()
             movieDetailUseCase.getMovieWallpapers(id).collect {
-                _wallpaper.value = it
+                _movieWallpaper.value = it
             }
         }
     }
 
     fun getMovieTrailer(id: Int) {
         viewModelScope.launch {
-            _video.value = loading()
+            _movieTrailer.value = loading()
             movieDetailUseCase.getMovieVideos(id).collect {
-                _video.value = it
+                _movieTrailer.value = it
             }
         }
     }
 
     fun getMovieReviews(id: Int) {
         viewModelScope.launch {
-            _review.value = loading()
+            _movieReviews.value = loading()
             movieDetailUseCase.getMovieReviews(id).collect {
-                _review.value = it
+                _movieReviews.value = it
             }
         }
     }
@@ -146,36 +158,36 @@ class DetailViewModel(private val movieDetailUseCase: MovieDetailUseCase, privat
 
     fun getTvActor(id: Int) {
         viewModelScope.launch {
-            _actor.value = loading()
+            _tvActor.value = loading()
             tvDetailUseCase.getTvActors(id).collect {
-                _actor.value = it
+                _tvActor.value = it
             }
         }
     }
 
     fun getTvWallpaper(id: Int) {
         viewModelScope.launch {
-            _wallpaper.value = loading()
+            _tvWallpaper.value = loading()
             tvDetailUseCase.getTvWallpapers(id).collect {
-                _wallpaper.value = it
+                _tvWallpaper.value = it
             }
         }
     }
 
     fun getTvTrailer(id: Int) {
         viewModelScope.launch {
-            _video.value = loading()
+            _tvTrailer.value = loading()
             tvDetailUseCase.getTvVideos(id).collect {
-                _video.value = it
+                _tvTrailer.value = it
             }
         }
     }
 
     fun getTvReviews(id: Int) {
         viewModelScope.launch {
-            _review.value = loading()
+            _tvReviews.value = loading()
             tvDetailUseCase.getTvReviews(id).collect {
-                _review.value = it
+                _tvReviews.value = it
             }
         }
     }

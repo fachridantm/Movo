@@ -2,20 +2,19 @@ package id.outivox.movo.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import id.outivox.core.domain.model.detail.Wallpaper
 import id.outivox.core.utils.loadImageOnly
 import id.outivox.movo.databinding.ItemWallpaperBinding
 
-class WallpaperAdapter : RecyclerView.Adapter<WallpaperAdapter.WallpaperViewHolder>() {
-
-    private val listWallpaper = arrayListOf<String>()
-
-    fun setData(list: List<String>) {
-        listWallpaper.clear()
-        listWallpaper.addAll(list)
+class WallpaperAdapter : ListAdapter<Wallpaper, WallpaperAdapter.WallpaperViewHolder>(DIFF_CALLBACK) {
+    inner class WallpaperViewHolder(val binding: ItemWallpaperBinding) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(data: Wallpaper, position: Int) {
+            binding.ivWallpaper.loadImageOnly(data.wallpaperUrl[position])
+        }
     }
-
-    class WallpaperViewHolder(val binding: ItemWallpaperBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = WallpaperViewHolder(
         ItemWallpaperBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -23,10 +22,19 @@ class WallpaperAdapter : RecyclerView.Adapter<WallpaperAdapter.WallpaperViewHold
 
 
     override fun onBindViewHolder(holder: WallpaperViewHolder, position: Int) {
-        holder.apply {
-            binding.imgWallpaper.loadImageOnly(listWallpaper[position])
-        }
+        val item = getItem(position)
+        if (item != null) holder.bind(item, position)
     }
 
-    override fun getItemCount() = listWallpaper.size
+    companion object {
+        private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<Wallpaper>() {
+            override fun areItemsTheSame(oldItem: Wallpaper, newItem: Wallpaper): Boolean {
+                return oldItem.wallpaperUrl == newItem.wallpaperUrl
+            }
+
+            override fun areContentsTheSame(oldItem: Wallpaper, newItem: Wallpaper): Boolean {
+                return oldItem == newItem
+            }
+        }
+    }
 }

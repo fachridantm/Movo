@@ -14,6 +14,9 @@ import id.outivox.core.domain.usecase.home.HomeUseCase
 import id.outivox.core.utils.Constants.AIRING_TODAY_TV
 import id.outivox.core.utils.Constants.INDONESIA
 import id.outivox.core.utils.Constants.NOW_PLAYING_MOVIE
+import id.outivox.core.utils.Constants.POPULAR_MOVIE
+import id.outivox.core.utils.Constants.POPULAR_TV
+import id.outivox.core.utils.Constants.UPCOMING_MOVIE
 import kotlinx.coroutines.launch
 
 class HomeViewModel(private val homeUseCase: HomeUseCase) : ViewModel() {
@@ -52,7 +55,7 @@ class HomeViewModel(private val homeUseCase: HomeUseCase) : ViewModel() {
     fun getPopularMovies() {
         viewModelScope.launch {
             _popularMovies.value = loading()
-            homeUseCase.getMovies(NOW_PLAYING_MOVIE, INDONESIA).collect {
+            homeUseCase.getMovies(POPULAR_MOVIE, INDONESIA).collect {
                 _popularMovies.value = it
             }
         }
@@ -61,7 +64,7 @@ class HomeViewModel(private val homeUseCase: HomeUseCase) : ViewModel() {
     fun getUpcomingMovies() {
         viewModelScope.launch {
             _upcomingMovies.value = loading()
-            homeUseCase.getMovies(NOW_PLAYING_MOVIE, INDONESIA).collect {
+            homeUseCase.getMovies(UPCOMING_MOVIE, INDONESIA).collect {
                 _upcomingMovies.value = it
             }
         }
@@ -79,7 +82,7 @@ class HomeViewModel(private val homeUseCase: HomeUseCase) : ViewModel() {
     fun getPopularTv() {
         viewModelScope.launch {
             _popularTv.value = loading()
-            homeUseCase.getTvShow(AIRING_TODAY_TV).collect {
+            homeUseCase.getTvShow(POPULAR_TV).collect {
                 _popularTv.value = it
             }
         }

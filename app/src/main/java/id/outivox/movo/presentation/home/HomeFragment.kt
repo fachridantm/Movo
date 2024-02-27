@@ -6,7 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
+import androidx.navigation.findNavController
 import androidx.paging.PagingData
 import androidx.paging.map
 import androidx.recyclerview.widget.PagerSnapHelper
@@ -17,20 +17,25 @@ import id.outivox.core.domain.model.movie.Movie
 import id.outivox.core.domain.model.tv.Tv
 import id.outivox.core.utils.Constants.AIRING_TODAY_TV
 import id.outivox.core.utils.Constants.MOVIE
+import id.outivox.core.utils.Constants.POPULAR_MOVIE
 import id.outivox.core.utils.Constants.POPULAR_TV
 import id.outivox.core.utils.Constants.TOP_RATED_MOVIE
 import id.outivox.core.utils.Constants.TOP_RATED_TV
 import id.outivox.core.utils.Constants.TV_SHOW
+import id.outivox.core.utils.Constants.UPCOMING_MOVIE
 import id.outivox.core.utils.showSnackbar
+import id.outivox.core.utils.toCategoryTitle
 import id.outivox.movo.R
 import id.outivox.movo.adapter.CarouselAdapter
 import id.outivox.movo.adapter.GenreListAdapter
 import id.outivox.movo.adapter.HorizontalListAdapter
+import id.outivox.movo.adapter.MovieLoadStateAdapter
 import id.outivox.movo.databinding.FragmentHomeBinding
 import id.outivox.movo.presentation.detail.DetailActivity
 import id.outivox.movo.presentation.home.component.CenterItemLayoutManager
-import id.outivox.movo.presentation.home.fragment.adapter.HomeViewPagerAdapter
+import id.outivox.movo.presentation.home.fragment.adapter.HomeCategoryAdapter
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.util.Locale
 
 
 class HomeFragment : Fragment() {
@@ -42,14 +47,12 @@ class HomeFragment : Fragment() {
     private val carouselAdapter: CarouselAdapter by lazy { CarouselAdapter(::onCarouselClick) }
     private val genreListAdapter: GenreListAdapter by lazy { GenreListAdapter() }
     private val horizontalAdapter: HorizontalListAdapter by lazy { HorizontalListAdapter(::onItemHorizontalClick) }
-    private val homeVieewPagerAdapter: HomeViewPagerAdapter by lazy { HomeViewPagerAdapter(requireActivity()) }
-
-    private lateinit var movies: PagingData<Movie>
+    private val homeCategoryAdapter: HomeCategoryAdapter by lazy { HomeCategoryAdapter(requireActivity()) }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         return binding.root
@@ -87,23 +90,25 @@ class HomeFragment : Fragment() {
     private fun initView() {
         binding.apply {
             rvCarousel.apply {
-                adapter = carouselAdapter
+                adapter = carouselAdapter.withLoadStateFooter(
+                    footer = MovieLoadStateAdapter { carouselAdapter.retry() }
+                )
                 onFlingListener = null
                 layoutManager = CenterItemLayoutManager(context, RecyclerView.HORIZONTAL, false)
                 PagerSnapHelper().attachToRecyclerView(this)
             }
 
             vpMovies.apply {
-                adapter = homeVieewPagerAdapter
+                adapter = homeCategoryAdapter
                 TabLayoutMediator(tabLayout, this) { tab, position ->
                     val listTab = listOf(AIRING_TODAY_TV, TOP_RATED_MOVIE, TOP_RATED_TV, POPULAR_TV)
-                    tab.text = listTab[position]
+                    tab.text = listTab[position].toCategoryTitle()
                 }.attach()
             }
 
-            rvCarouselGenre.apply {
-                adapter = genreListAdapter
-            }
+            rvCarouselGenre.adapter = genreListAdapter.withLoadStateFooter(
+                footer = MovieLoadStateAdapter { carouselAdapter.retry() }
+            )
         }
     }
 
@@ -113,8 +118,10 @@ class HomeFragment : Fragment() {
             is Resource.Loading -> {}
 
             is Resource.Success -> {
-                movies = resource.data
-                carouselAdapter.submitData(lifecycle, resource.data)
+                val data = resource.data
+//                carouselAdapter.submitData(lifecycle, data)
+                genreListAdapter.submitData(lifecycle, data.map { it.genres })
+
             }
 
             is Resource.Error -> resource.message.showSnackbar(binding.root)
@@ -196,7 +203,9 @@ class HomeFragment : Fragment() {
     private fun initListener() {
         binding.apply {
             svHomeClick.setOnClickListener {
-                findNavController().navigate(R.id.action_navigation_home_to_navigation_search)
+                it.findNavController().navigate(
+                    HomeFragmentDirections.actionHomeFragmentToSearchFragment()
+                )
             }
             tvRegion.setOnClickListener {
                 // TODO: Add region picker
@@ -216,6 +225,23 @@ class HomeFragment : Fragment() {
                     }
                 }
             })
+
+            tvSeeAllPopularMovies.setOnClickListener {
+                it.findNavController().navigate(
+                    HomeFragmentDirections.actionHomeFragmentToAllMovieTvFragment(
+                        category = POPULAR_MOVIE
+                    )
+                )
+
+            }
+
+            tvSeeAllUpcomingMovies.setOnClickListener {
+                it.findNavController().navigate(
+                    HomeFragmentDirections.actionHomeFragmentToAllMovieTvFragment(
+                        category = UPCOMING_MOVIE
+                    )
+                )
+            }
         }
     }
 

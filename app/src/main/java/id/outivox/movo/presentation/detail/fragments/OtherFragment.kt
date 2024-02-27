@@ -12,7 +12,6 @@ import id.outivox.core.domain.model.detail.Review
 import id.outivox.core.domain.model.movie.Movie
 import id.outivox.core.domain.model.tv.Tv
 import id.outivox.core.utils.Constants.BUNDLE_MEDIA_MOVIE
-import id.outivox.core.utils.Constants.BUNDLE_MEDIA_TV
 import id.outivox.core.utils.Constants.BUNDLE_MEDIA_TYPE
 import id.outivox.core.utils.Constants.BUNDLE_MOVIE_ID
 import id.outivox.core.utils.Constants.MOVIE
@@ -52,19 +51,9 @@ class OtherFragment : Fragment() {
         id = arguments?.getInt(BUNDLE_MOVIE_ID).orZero()
         isMovie = arguments?.getString(BUNDLE_MEDIA_TYPE).equals(BUNDLE_MEDIA_MOVIE)
 
-        initView()
         initData()
         initObserver()
-    }
-
-    private fun initView() {
-        with(binding) {
-            rvSimilar.apply {
-                adapter = horizontalAdapter.withLoadStateFooter(
-                    footer = MovieLoadStateAdapter { horizontalAdapter.retry() }
-                )
-            }
-        }
+        initView()
     }
 
     private fun initData() {
@@ -86,11 +75,21 @@ class OtherFragment : Fragment() {
             if (isMovie) {
                 movieSimilar.observe(viewLifecycleOwner, ::setupSimilarMoviesData)
                 movieRecommendations.observe(viewLifecycleOwner, ::setupRecommendationsMoviesData)
-                review.observe(viewLifecycleOwner, ::setupReviewsMovieData)
+                movieReviews.observe(viewLifecycleOwner, ::setupReviewsMovieData)
             } else {
                 tvSimilar.observe(viewLifecycleOwner, ::setupSimilarTvData)
                 tvRecommendations.observe(viewLifecycleOwner, ::setupRecommendationsTvData)
-                review.observe(viewLifecycleOwner, ::setupReviewsTvData)
+                tvReviews.observe(viewLifecycleOwner, ::setupReviewsTvData)
+            }
+        }
+    }
+
+    private fun initView() {
+        with(binding) {
+            rvSimilar.apply {
+                adapter = horizontalAdapter.withLoadStateFooter(
+                    footer = MovieLoadStateAdapter { horizontalAdapter.retry() }
+                )
             }
         }
     }

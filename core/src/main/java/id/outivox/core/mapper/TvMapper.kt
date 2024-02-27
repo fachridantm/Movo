@@ -1,6 +1,7 @@
 package id.outivox.core.mapper
 
 import id.outivox.core.data.local.source.room.tv.TvEntity
+import id.outivox.core.data.remote.source.response.detail.tv.TvDetailResponse
 import id.outivox.core.data.remote.source.response.tv.TvItem
 import id.outivox.core.data.remote.source.response.tv.TvResponse
 import id.outivox.core.domain.model.detail.TvDetail
@@ -38,6 +39,19 @@ object TvMapper {
         overview = overview,
         posterPath = posterPath,
         voteAverage = voteAverage
+    )
+
+    fun TvDetailResponse.map() = TvDetail(
+        id = id.orZero(),
+        title = title.orEmpty(),
+        numberOfEpisodes = numberOfEpisodes.orZero(),
+        genres = genres?.map { it.name.orEmpty() }.orEmpty(),
+        numberOfSeasons = numberOfSeasons.orZero(),
+        voteCount = voteCount.orZero(),
+        firstAirDate = firstAirDate.orEmpty(),
+        overview = overview.orEmpty(),
+        posterPath = posterPath.orEmpty(),
+        voteAverage = voteAverage.orZero()
     )
 
     fun List<TvEntity>.asModel() = map {

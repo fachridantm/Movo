@@ -1,35 +1,52 @@
 package id.outivox.movo.presentation.search
 
 import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.toLiveData
+import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
 import id.outivox.core.domain.model.Resource
+import id.outivox.core.domain.model.Resource.Companion.init
+import id.outivox.core.domain.model.Resource.Companion.loading
+import id.outivox.core.domain.model.movie.Movie
 import id.outivox.core.domain.model.movie.MovieResult
+import id.outivox.core.domain.model.tv.Tv
 import id.outivox.core.domain.model.tv.TvResult
 import id.outivox.core.domain.usecase.search.SearchUseCase
 import id.outivox.core.utils.Constants.INDONESIA
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 class SearchViewModel(
     private val searchUseCase: SearchUseCase
 ) : ViewModel() {
-    val movieResponse = MediatorLiveData<Resource<MovieResult>>()
-    val tvResponse = MediatorLiveData<Resource<TvResult>>()
+    private val _movies = MutableLiveData<Resource<PagingData<Movie>>>()
+    val movies get() = _movies
 
-    fun searchMovie(query: String, page: String = "1") {
-        val source = searchUseCase.searchMovie(query, page, INDONESIA).toLiveData()
+    private val _tvShow = MutableLiveData<Resource<PagingData<Tv>>>()
+    val tvShow get() = _tvShow
 
-        movieResponse.addSource(source) {
-            movieResponse.postValue(it)
-            movieResponse.removeSource(source)
+    init {
+        _movies.value = init()
+        _tvShow.value = init()
+    }
+
+    fun searchMovie(query: String) {
+        viewModelScope.launch {
+            _movies.value = loading()
+            searchUseCase.searchMovie(query, INDONESIA).collect {
+                _movies.value = it
+            }
         }
     }
 
-    fun searchTv(query: String, page: String = "1") {
-        val source = searchUseCase.searchTvShow(query, page, INDONESIA).toLiveData()
-
-        tvResponse.addSource(source) {
-            tvResponse.postValue(it)
-            tvResponse.removeSource(source)
+    fun searchTv(query: String) {
+        viewModelScope.launch {
+            _tvShow.value = loading()
+            searchUseCase.searchTvShow(query).collect {
+                _tvShow.value = it
+            }
         }
     }
 }

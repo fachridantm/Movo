@@ -5,14 +5,24 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.paging.PagingData
+import androidx.paging.map
 import com.google.android.material.tabs.TabLayoutMediator
+import id.outivox.core.domain.model.Resource
+import id.outivox.core.domain.model.movie.Movie
+import id.outivox.core.domain.model.tv.Tv
 import id.outivox.core.utils.Constants.BUNDLE_MEDIA_MOVIE
-import id.outivox.core.utils.Constants.BUNDLE_MEDIA_TV
 import id.outivox.core.utils.Constants.BUNDLE_MEDIA_TYPE
 import id.outivox.core.utils.Constants.BUNDLE_SEARCH_QUERY
+import id.outivox.core.utils.Constants.MOVIE
+import id.outivox.core.utils.Constants.TV_SHOW
+import id.outivox.core.utils.showSnackbar
+import id.outivox.movo.R
+import id.outivox.movo.adapter.MovieLoadStateAdapter
+import id.outivox.movo.adapter.VerticalListAdapter
 import id.outivox.movo.databinding.FragmentSearchMediaBinding
+import id.outivox.movo.presentation.detail.DetailActivity
 import id.outivox.movo.presentation.search.SearchViewModel
-import id.outivox.movo.presentation.search.fragment.adapter.SearchMediaViewPagerAdapter
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchMediaFragment : Fragment() {
@@ -21,6 +31,7 @@ class SearchMediaFragment : Fragment() {
     private val binding get() = _binding as FragmentSearchMediaBinding
 
     private val viewModel: SearchViewModel by viewModel()
+    private val verticalAdapter by lazy { VerticalListAdapter(::onItemClick) }
 
     private lateinit var mediaType: String
     private lateinit var query: String
@@ -30,42 +41,75 @@ class SearchMediaFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentSearchMediaBinding.inflate(layoutInflater)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         mediaType = arguments?.getString(BUNDLE_MEDIA_TYPE).orEmpty()
         query = arguments?.getString(BUNDLE_SEARCH_QUERY).orEmpty()
 
-        setUpSearchTabViewPager(0, mediaType)
+        initData()
+        initView()
         initObserver()
+    }
 
-        return binding.root
+    private fun initData() {
+        if (mediaType.equals(BUNDLE_MEDIA_MOVIE, true)) viewModel.searchMovie(query) else viewModel.searchTv(query)
+    }
+
+    private fun initView() {
+        with(binding) {
+            rvSearchResult.adapter = verticalAdapter.withLoadStateFooter(
+                footer = MovieLoadStateAdapter { verticalAdapter.retry() }
+            )
+        }
     }
 
     private fun initObserver() {
-        when(mediaType){
-            BUNDLE_MEDIA_MOVIE -> {
-                viewModel.searchMovie(query)
-                viewModel.movieResponse.observe(viewLifecycleOwner){
-                    setUpSearchTabViewPager(it.data?.totalPages ?: 1, mediaType)
-                }
+        if (mediaType == BUNDLE_MEDIA_MOVIE) viewModel.movies.observe(viewLifecycleOwner, ::setupMoviesData)
+        else viewModel.tvShow.observe(viewLifecycleOwner, ::setupTvShowData)
+    }
+
+    private fun setupMoviesData(resource: Resource<PagingData<Movie>>?) {
+        when (resource) {
+            is Resource.Loading -> {}
+
+            is Resource.Success -> {
+                val data: PagingData<Any> = resource.data.map { it }
+                verticalAdapter.submitData(lifecycle, data)
             }
-            BUNDLE_MEDIA_TV -> {
-                viewModel.searchTv(query)
-                viewModel.tvResponse.observe(viewLifecycleOwner){
-                    setUpSearchTabViewPager(it.data?.totalPages ?: 1, mediaType)
-                }
-            }
+
+            is Resource.Error -> resource.message.showSnackbar(binding.root)
+
+            is Resource.Empty -> getString(R.string.data_is_empty).showSnackbar(binding.root)
+
+            else -> {}
         }
     }
 
-    private fun setUpSearchTabViewPager(pageTotal: Int, mediaType: String) {
-        binding.apply {
-            vpSearchPage.isUserInputEnabled = false
-            vpSearchPage.adapter = activity?.let { SearchMediaViewPagerAdapter(it, mediaType, query, pageTotal) }
-            if(pageTotal == 1) tabSearchPage.visibility = View.GONE
-            TabLayoutMediator(tabSearchPage, vpSearchPage){ tab, position ->
-                tab.text = (position+1).toString()
-            }.attach()
+    private fun setupTvShowData(resource: Resource<PagingData<Tv>>?) {
+        when (resource) {
+            is Resource.Loading -> {}
+
+            is Resource.Success -> {
+                val data: PagingData<Any> = resource.data.map { it }
+                verticalAdapter.submitData(lifecycle, data)
+            }
+
+            is Resource.Error -> resource.message.showSnackbar(binding.root)
+
+            is Resource.Empty -> getString(R.string.data_is_empty).showSnackbar(binding.root)
+
+            else -> {}
         }
     }
 
+    private fun onItemClick(any: Any) {
+        when (any) {
+            is Movie -> DetailActivity.start(requireContext(), any.id, MOVIE)
+            is Tv -> DetailActivity.start(requireContext(), any.id, TV_SHOW)
+        }
+    }
 }

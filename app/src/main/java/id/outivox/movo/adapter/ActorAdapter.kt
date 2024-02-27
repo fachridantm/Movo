@@ -9,14 +9,13 @@ import id.outivox.core.domain.model.detail.Actor
 import id.outivox.core.utils.loadImageWithOptions
 import id.outivox.movo.databinding.ItemCreditDetailBinding
 
-class ActorAdapter(private val onItemClick: (Actor) -> Unit) : ListAdapter<Actor, ActorAdapter.ActorViewHolder>(DIFF_CALLBACK) {
+class ActorAdapter() : ListAdapter<Actor, ActorAdapter.ActorViewHolder>(DIFF_CALLBACK) {
     inner class ActorViewHolder(val binding: ItemCreditDetailBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(data: Actor) {
             binding.apply {
                 tvCharacter.text = data.character
                 tvName.text = data.name
                 ivProfileCredit.loadImageWithOptions(data.profilePath)
-                root.setOnClickListener { onItemClick(data) }
             }
         }
     }

@@ -8,7 +8,7 @@ import android.widget.SearchView
 import androidx.fragment.app.Fragment
 import com.google.android.material.tabs.TabLayoutMediator
 import id.outivox.movo.databinding.FragmentSearchBinding
-import id.outivox.movo.presentation.search.fragment.adapter.SearchViewPagerAdapter
+import id.outivox.movo.presentation.search.fragment.adapter.SearchAdapter
 
 
 class SearchFragment : Fragment() {
@@ -49,8 +49,11 @@ class SearchFragment : Fragment() {
 
     private fun setUpMediaViewPager(query: String) {
         binding.apply {
-            vpSearch.isUserInputEnabled = false
-            vpSearch.adapter = activity?.let { SearchViewPagerAdapter(it, query) }
+            vpSearch.apply {
+                isUserInputEnabled = false
+                adapter = SearchAdapter(requireActivity(), query)
+            }
+
             TabLayoutMediator(searchMediaTabs, vpSearch){ tab, position ->
                 when (position) {
                     0 -> tab.text = "Movie"

@@ -23,12 +23,12 @@ interface ApiService {
         @Query("region") region: String,
         @Query("page") page: Int = 1,
         @Query("language") language: String = ENGLISH,
-    ): MovieResponse
+    ): MovieResponse?
 
     @GET("movie/{id}")
     suspend fun getMovieDetail(
         @Path("id") id: Int // required
-    ): MovieDetailResponse
+    ): MovieDetailResponse?
 
     @GET("search/movie")
     suspend fun searchMovieByQuery(
@@ -38,21 +38,21 @@ interface ApiService {
         @Query("language") language: String = ENGLISH,
         @Query("include_adult") adult: Boolean = false,
         @Query("year") year: String? = null
-    ): MovieResponse
+    ): MovieResponse?
 
     @GET("movie/{id}/similar")
     suspend fun getSimilarMovies(
         @Path("id") id: Int, // required
         @Query("page") page: Int = 1,
         @Query("language") language: String = ENGLISH
-    ): MovieResponse
+    ): MovieResponse?
 
     @GET("movie/{id}/recommendations")
     suspend fun getRecommendationsMovies(
         @Path("id") id: Int, // required
         @Query("page") page: Int = 1,
         @Query("language") language: String = ENGLISH
-    ): MovieResponse
+    ): MovieResponse?
 
     // TV Show
     @GET("tv/{category}")
@@ -60,13 +60,13 @@ interface ApiService {
         @Path("category") category: String,
         @Query("page") page: Int = 1,
         @Query("language") language: String = ENGLISH
-    ): TvResponse
+    ): TvResponse?
 
     @GET("tv/{id}")
     suspend fun getTvDetail(
         @Path("id") id: Int, // required
         @Query("language") language: String = ENGLISH
-    ): TvDetailResponse
+    ): TvDetailResponse?
 
     @GET("search/tv")
     suspend fun searchTvByQuery(
@@ -75,21 +75,21 @@ interface ApiService {
         @Query("page") page: Int = 1,
         @Query("language") language: String = ENGLISH,
         @Query("year") year: String? = null
-    ): TvResponse
+    ): TvResponse?
 
     @GET("tv/{id}/similar")
     suspend fun getSimilarTv(
         @Path("id") id: Int, // required
         @Query("page") page: Int = 1,
         @Query("language") language: String = ENGLISH
-    ): TvResponse
+    ): TvResponse?
 
     @GET("tv/{id}/recommendations")
     suspend fun getRecommendationsTv(
         @Path("id") id: Int, // required
         @Query("page") page: Int = 1,
         @Query("language") language: String = ENGLISH
-    ): TvResponse
+    ): TvResponse?
 
     // Details
     @GET("{media}/{id}/reviews")
@@ -98,26 +98,26 @@ interface ApiService {
         @Path("id") id: Int,
         @Query("page") page: Int = 1,
         @Query("language") language: String = ENGLISH
-    ): ReviewResponse
+    ): ReviewResponse?
 
     @GET("{media}/{id}/credits")
     suspend fun getCreditList(
         @Path("media") media: String,
         @Path("id") id: Int,
         @Query("language") language: String = ENGLISH
-    ): ActorResponse
+    ): ActorResponse?
 
     @GET("{media}/{id}/videos")
     suspend fun getVideoList(
         @Path("media") media: String,
         @Path("id") id: Int,
         @Query("language") language: String = ENGLISH
-    ): VideoResponse
+    ): VideoResponse?
 
     @GET("{media}/{id}/images")
     suspend fun getWallpaperList(
         @Path("media") media: String,
         @Path("id") id: Int,
         @Query("language") language: String = ENGLISH,
-    ): WallpaperResponse
+    ): WallpaperResponse?
 }
