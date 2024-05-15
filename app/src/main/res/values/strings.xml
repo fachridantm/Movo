@@ -60,4 +60,15 @@
     <string name="not_given_access">Please give the access for debugging it</string>
     <string name="data_is_empty">Data is empty</string>
     <string name="retry">Retry</string>
+    <string name="now_playing_movie_is_empty">Now playing movie is empty!</string>
+    <string name="popular_movie_is_empty">Popular movie is empty!</string>
+    <string name="upcoming_movie_is_empty">Upcoming movie is empty!</string>
+    <string name="trailer_is_empty">No trailer for this movie/tv!</string>
+    <string name="actors_is_empty">Actors data is empty!</string>
+    <string name="wallpapers_is_empty">Wallpapers data is empty!</string>
+    <string name="no_similar_movies">No similar movies!</string>
+    <string name="no_recommended_movies">No recommended movies!\n</string>
+    <string name="no_reviews">No reviews for this movie!</string>
+    <string name="no_favorite_movies">No Favorite Movies!</string>
+    <string name="no_favorite_tv">No Favorite TV Shows!</string>
 </resources>

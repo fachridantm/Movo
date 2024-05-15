@@ -20,6 +20,9 @@ class AllMovieTvViewModel(private val allMovieTvUseCase: AllMovieTvUseCase) : Vi
     private val _tvShow = MutableLiveData<Resource<PagingData<Tv>>>()
     val tvShow get() = _tvShow
 
+    private val _isLoading = MutableLiveData<Boolean>()
+    val isLoading get() = _isLoading
+
     init {
         _movies.value = init()
         _tvShow.value = init()
@@ -28,7 +31,7 @@ class AllMovieTvViewModel(private val allMovieTvUseCase: AllMovieTvUseCase) : Vi
     fun getMoviesByCategory(category: String) {
         viewModelScope.launch {
             _movies.value = loading()
-            allMovieTvUseCase.getMovies(category, INDONESIA).collect {
+            allMovieTvUseCase.getMovies(category, INDONESIA, viewModelScope).collect {
                 _movies.value = it
             }
         }

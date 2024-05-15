@@ -1,7 +1,5 @@
 package id.outivox.core.domain.usecase.detail.movie
 
-import id.outivox.core.domain.model.detail.*
-import id.outivox.core.domain.model.movie.Movie
 import id.outivox.core.domain.repository.detail.movie.MovieDetailRepository
 
 class MovieDetailInteractor(private val movieDetailRepository: MovieDetailRepository): MovieDetailUseCase {

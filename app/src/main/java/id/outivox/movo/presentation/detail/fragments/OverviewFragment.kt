@@ -10,21 +10,17 @@ import android.webkit.WebChromeClient
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.paging.PagingData
-import androidx.paging.map
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import id.outivox.core.domain.model.Resource
+import id.outivox.core.domain.model.detail.Actor
+import id.outivox.core.domain.model.detail.Video
+import id.outivox.core.domain.model.detail.Wallpaper
 import id.outivox.core.utils.Constants.BUNDLE_MEDIA_MOVIE
 import id.outivox.core.utils.Constants.BUNDLE_MEDIA_TYPE
 import id.outivox.core.utils.Constants.BUNDLE_MOVIE_ID
-import id.outivox.core.domain.model.Resource
-import id.outivox.core.domain.model.detail.*
 import id.outivox.core.utils.orZero
-import id.outivox.core.utils.showSnackbar
-import id.outivox.movo.R
 import id.outivox.movo.adapter.ActorAdapter
-import id.outivox.movo.adapter.HorizontalListAdapter
 import id.outivox.movo.adapter.WallpaperAdapter
 import id.outivox.movo.databinding.FragmentOverviewBinding
 import id.outivox.movo.presentation.detail.DetailViewModel
@@ -40,12 +36,12 @@ class OverviewFragment : Fragment() {
     private val actorAdapter: ActorAdapter by lazy { ActorAdapter() }
     private val wallpaperAdapter: WallpaperAdapter by lazy { WallpaperAdapter() }
 
-    private var id: Int = 0
-    private var isMovie: Boolean = false
+    private val mediaId by lazy { arguments?.getInt(BUNDLE_MOVIE_ID).orZero() }
+    private val isMovie by lazy { arguments?.getString(BUNDLE_MEDIA_TYPE).equals(BUNDLE_MEDIA_MOVIE) }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentOverviewBinding.inflate(layoutInflater)
         return binding.root
@@ -54,38 +50,36 @@ class OverviewFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        id = arguments?.getInt(BUNDLE_MOVIE_ID).orZero()
-        isMovie = arguments?.getString(BUNDLE_MEDIA_TYPE).equals(BUNDLE_MEDIA_MOVIE)
-
+        initObservers()
         initData()
-        initObserver()
         initView()
+    }
+
+    private fun initObservers() {
+        viewModel.apply {
+            if (isMovie) {
+                movieActor.observe(viewLifecycleOwner, ::setupMovieTvActorData)
+                movieWallpaper.observe(viewLifecycleOwner, ::setupMovieTvWallpaperData)
+                movieTrailer.observe(viewLifecycleOwner, ::setupMovieTvTrailerData)
+            } else {
+                tvActor.observe(viewLifecycleOwner, ::setupMovieTvActorData)
+                tvWallpaper.observe(viewLifecycleOwner, ::setupMovieTvWallpaperData)
+                tvTrailer.observe(viewLifecycleOwner, ::setupMovieTvTrailerData)
+            }
+            isLoading.observe(viewLifecycleOwner, ::setupLoadingData)
+        }
     }
 
     private fun initData() {
         viewModel.apply {
             if (isMovie) {
-                getMovieActor(id)
-                getMovieWallpaper(id)
-                getMovieTrailer(id)
+                getMovieActor(mediaId)
+                getMovieWallpaper(mediaId)
+                getMovieTrailer(mediaId)
             } else {
-                getTvActor(id)
-                getTvWallpaper(id)
-                getTvTrailer(id)
-            }
-        }
-    }
-
-    private fun initObserver() {
-        viewModel.apply {
-            if (isMovie) {
-                movieActor.observe(viewLifecycleOwner, ::setupMovieActorData)
-                movieWallpaper.observe(viewLifecycleOwner, ::setupMovieWallpaperData)
-                movieTrailer.observe(viewLifecycleOwner, ::setupMovieTrailerData)
-            } else {
-                tvActor.observe(viewLifecycleOwner, ::setupMovieActorData)
-                tvWallpaper.observe(viewLifecycleOwner, ::setupMovieWallpaperData)
-                tvTrailer.observe(viewLifecycleOwner, ::setupMovieTrailerData)
+                getTvActor(mediaId)
+                getTvWallpaper(mediaId)
+                getTvTrailer(mediaId)
             }
         }
     }
@@ -122,56 +116,99 @@ class OverviewFragment : Fragment() {
         }
     }
 
+    private fun setupLoadingData(isLoading: Boolean) {
+        binding.progressBar.isVisible = isLoading
+    }
+
     @SuppressLint("SetJavaScriptEnabled")
-    private fun setupMovieTrailerData(resource: Resource<List<Video>>) {
+    private fun setupMovieTvTrailerData(resource: Resource<List<Video>>) {
         when (resource) {
-            is Resource.Loading -> {}
+            is Resource.Loading -> viewModel.isLoading.value = true
 
             is Resource.Success -> {
-                val frameVideo = "<html><body style=\"margin: 0;margin-top: -30px;\"><br><iframe  width=\"100%\" height=\"100%\" src=\"https://www.youtube.com/embed/${
-                    resource.data[0].key
-                }\" frameborder=\"0\" allowfullscreen></iframe></body></html>"
-                binding.wvTrailer.loadData(frameVideo, "text/html", "utf-8")
+                viewModel.isLoading.value = false
+                if (resource.data.isEmpty()) {
+                    binding.wvTrailer.visibility = View.INVISIBLE
+                    binding.tvTrailerIsEmpty.visibility = View.VISIBLE
+                } else {
+                    val frameVideo = "<html><body style=\"margin: 0;margin-top: -30px;\"><br><iframe  width=\"100%\" height=\"100%\" src=\"https://www.youtube.com/embed/${
+                        resource.data[0].key
+                    }\" frameborder=\"0\" allowfullscreen></iframe></body></html>"
+                    binding.wvTrailer.loadData(frameVideo, "text/html", "utf-8")
+                }
             }
 
-            is Resource.Error -> resource.message.showSnackbar(binding.root)
-
-            is Resource.Empty -> getString(R.string.data_is_empty).showSnackbar(binding.root)
+            is Resource.Error -> {
+                viewModel.isLoading.value = false
+                binding.wvTrailer.visibility = View.INVISIBLE
+                binding.tvTrailerIsEmpty.apply {
+                    text = resource.message
+                    visibility = View.VISIBLE
+                }
+            }
 
             else -> {}
         }
     }
 
-    private fun setupMovieWallpaperData(resource: Resource<Wallpaper>?) {
+    private fun setupMovieTvWallpaperData(resource: Resource<Wallpaper>?) {
         when (resource) {
-            is Resource.Loading -> {}
+            is Resource.Loading -> viewModel.isLoading.value = true
 
             is Resource.Success -> {
+                viewModel.isLoading.value = false
                 val data = listOf(resource.data)
-                wallpaperAdapter.submitList(data)
+                if (data.isNotEmpty()) wallpaperAdapter.submitList(data)
+                else {
+                    binding.apply {
+                        rvWallpapers.visibility = View.INVISIBLE
+                        tvWallpaperIsEmpty.visibility = View.VISIBLE
+                    }
+                }
             }
 
-            is Resource.Error -> resource.message.showSnackbar(binding.root)
-
-            is Resource.Empty -> getString(R.string.data_is_empty).showSnackbar(binding.root)
+            is Resource.Error -> {
+                viewModel.isLoading.value = false
+                binding.apply {
+                    rvWallpapers.visibility = View.INVISIBLE
+                    tvWallpaperIsEmpty.apply {
+                        text = resource.message
+                        visibility = View.VISIBLE
+                    }
+                }
+            }
 
             else -> {}
         }
 
     }
 
-    private fun setupMovieActorData(resource: Resource<List<Actor>>?) {
+    private fun setupMovieTvActorData(resource: Resource<List<Actor>>?) {
         when (resource) {
-            is Resource.Loading -> {}
+            is Resource.Loading -> viewModel.isLoading.value = true
 
             is Resource.Success -> {
+                viewModel.isLoading.value = false
                 val data = resource.data
-                actorAdapter.submitList(data)
+                if (data.isNotEmpty()) actorAdapter.submitList(data)
+                else {
+                    binding.apply {
+                        rvActors.visibility = View.INVISIBLE
+                        tvActorIsEmpty.visibility = View.VISIBLE
+                    }
+                }
             }
 
-            is Resource.Error -> resource.message.showSnackbar(binding.root)
-
-            is Resource.Empty -> getString(R.string.data_is_empty).showSnackbar(binding.root)
+            is Resource.Error -> {
+                viewModel.isLoading.value = false
+                binding.apply {
+                    rvActors.visibility = View.INVISIBLE
+                    tvActorIsEmpty.apply {
+                        text = resource.message
+                        visibility = View.VISIBLE
+                    }
+                }
+            }
 
             else -> {}
         }

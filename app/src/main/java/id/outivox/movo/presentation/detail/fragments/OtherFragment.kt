@@ -4,7 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isInvisible
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.paging.map
 import id.outivox.core.domain.model.Resource
@@ -21,6 +24,7 @@ import id.outivox.core.utils.showSnackbar
 import id.outivox.movo.R
 import id.outivox.movo.adapter.HorizontalListAdapter
 import id.outivox.movo.adapter.MovieLoadStateAdapter
+import id.outivox.movo.adapter.ReviewAdapter
 import id.outivox.movo.databinding.FragmentOtherBinding
 import id.outivox.movo.presentation.detail.DetailActivity
 import id.outivox.movo.presentation.detail.DetailViewModel
@@ -32,10 +36,12 @@ class OtherFragment : Fragment() {
     private val binding get() = _binding as FragmentOtherBinding
 
     private val viewModel: DetailViewModel by viewModel()
-    private val horizontalAdapter: HorizontalListAdapter by lazy { HorizontalListAdapter(::onItemClick) }
+    private val horizontalReviewAdapter by lazy { ReviewAdapter() }
+    private val horizontalSimilarAdapter by lazy { HorizontalListAdapter(::onItemClick) }
+    private val horizontalRecommendedAdapter by lazy { HorizontalListAdapter(::onItemClick) }
 
-    private var id: Int = 0
-    private var isMovie: Boolean = false
+    private val mediaId by lazy { arguments?.getInt(BUNDLE_MOVIE_ID).orZero() }
+    private val isMovie by lazy { arguments?.getString(BUNDLE_MEDIA_TYPE).equals(BUNDLE_MEDIA_MOVIE) }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -48,29 +54,13 @@ class OtherFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        id = arguments?.getInt(BUNDLE_MOVIE_ID).orZero()
-        isMovie = arguments?.getString(BUNDLE_MEDIA_TYPE).equals(BUNDLE_MEDIA_MOVIE)
-
+        initObservers()
         initData()
-        initObserver()
         initView()
+        initAction()
     }
 
-    private fun initData() {
-        viewModel.apply {
-            if (isMovie) {
-                getSimilarMovies(id)
-                getMovieReviews(id)
-                getRecommendationsMovies(id)
-            } else {
-                getSimilarTv(id)
-                getTvReviews(id)
-                getRecommendationsTv(id)
-            }
-        }
-    }
-
-    private fun initObserver() {
+    private fun initObservers() {
         viewModel.apply {
             if (isMovie) {
                 movieSimilar.observe(viewLifecycleOwner, ::setupSimilarMoviesData)
@@ -81,31 +71,93 @@ class OtherFragment : Fragment() {
                 tvRecommendations.observe(viewLifecycleOwner, ::setupRecommendationsTvData)
                 tvReviews.observe(viewLifecycleOwner, ::setupReviewsTvData)
             }
+            isLoading.observe(viewLifecycleOwner, ::setupLoadingData)
+        }
+    }
+
+    private fun initData() {
+        viewModel.apply {
+            if (isMovie) {
+                getSimilarMovies(mediaId)
+                getMovieReviews(mediaId)
+                getRecommendationsMovies(mediaId)
+            } else {
+                getSimilarTv(mediaId)
+                getTvReviews(mediaId)
+                getRecommendationsTv(mediaId)
+            }
         }
     }
 
     private fun initView() {
         with(binding) {
-            rvSimilar.apply {
-                adapter = horizontalAdapter.withLoadStateFooter(
-                    footer = MovieLoadStateAdapter { horizontalAdapter.retry() }
+            rvReviews.apply {
+                adapter = horizontalReviewAdapter.withLoadStateFooter(
+                    footer = MovieLoadStateAdapter { horizontalReviewAdapter.retry() }
                 )
+
+                horizontalReviewAdapter.addLoadStateListener {
+                    val state = it.source.refresh is LoadState.NotLoading && it.append.endOfPaginationReached && horizontalReviewAdapter.itemCount == 0
+                    isInvisible = state
+                    tvNoReviews.isVisible = state
+                }
+            }
+
+            rvSimilar.apply {
+                adapter = horizontalSimilarAdapter.withLoadStateFooter(
+                    footer = MovieLoadStateAdapter { horizontalSimilarAdapter.retry() }
+                )
+
+                horizontalSimilarAdapter.addLoadStateListener {
+                    val state = it.source.refresh is LoadState.NotLoading && it.append.endOfPaginationReached && horizontalSimilarAdapter.itemCount == 0
+                    isInvisible = state
+                    tvNoSimilarMovies.isVisible = state
+                }
+            }
+
+            rvRecommended.apply {
+                adapter = horizontalRecommendedAdapter.withLoadStateFooter(
+                    footer = MovieLoadStateAdapter { horizontalRecommendedAdapter.retry() }
+                )
+
+                horizontalRecommendedAdapter.addLoadStateListener {
+                    val state = it.source.refresh is LoadState.NotLoading && it.append.endOfPaginationReached && horizontalRecommendedAdapter.itemCount == 0
+                    isInvisible = state
+                    tvNoRecommendedMovies.isVisible = state
+                }
             }
         }
     }
 
+    private fun initAction() = binding.apply {
+        tvSeeAllSimilar.setOnClickListener { requireContext().getString(R.string.under_development).showSnackbar(root) }
+        tvSeeAllRecommended.setOnClickListener { requireContext().getString(R.string.under_development).showSnackbar(root) }
+    }
+
+    private fun setupLoadingData(isLoading: Boolean) {
+        binding.progressBar.isVisible = isLoading
+    }
+
     private fun setupReviewsTvData(resource: Resource<PagingData<Review>>?) {
         when (resource) {
-            is Resource.Loading -> {}
+            is Resource.Loading -> viewModel.isLoading.value = true
 
             is Resource.Success -> {
-                val data: PagingData<Any> = resource.data.map { it }
-                horizontalAdapter.submitData(lifecycle, data)
+                viewModel.isLoading.value = false
+                val data = resource.data.map { it }
+                horizontalReviewAdapter.submitData(lifecycle, data)
             }
 
-            is Resource.Error -> resource.message.showSnackbar(binding.root)
-
-            is Resource.Empty -> getString(R.string.data_is_empty).showSnackbar(binding.root)
+            is Resource.Error -> {
+                viewModel.isLoading.value = false
+                binding.apply {
+                    rvReviews.visibility = View.INVISIBLE
+                    tvNoReviews.apply {
+                        text = resource.message
+                        visibility = View.VISIBLE
+                    }
+                }
+            }
 
             else -> {}
         }
@@ -113,16 +165,24 @@ class OtherFragment : Fragment() {
 
     private fun setupRecommendationsTvData(resource: Resource<PagingData<Tv>>?) {
         when (resource) {
-            is Resource.Loading -> {}
+            is Resource.Loading -> viewModel.isLoading.value = true
 
             is Resource.Success -> {
+                viewModel.isLoading.value = false
                 val data: PagingData<Any> = resource.data.map { it }
-                horizontalAdapter.submitData(lifecycle, data)
+                horizontalRecommendedAdapter.submitData(lifecycle, data)
             }
 
-            is Resource.Error -> resource.message.showSnackbar(binding.root)
-
-            is Resource.Empty -> getString(R.string.data_is_empty).showSnackbar(binding.root)
+            is Resource.Error -> {
+                viewModel.isLoading.value = false
+                binding.apply {
+                    rvRecommended.visibility = View.INVISIBLE
+                    tvNoRecommendedMovies.apply {
+                        text = resource.message
+                        visibility = View.VISIBLE
+                    }
+                }
+            }
 
             else -> {}
         }
@@ -130,16 +190,24 @@ class OtherFragment : Fragment() {
 
     private fun setupSimilarTvData(resource: Resource<PagingData<Tv>>?) {
         when (resource) {
-            is Resource.Loading -> {}
+            is Resource.Loading -> viewModel.isLoading.value = true
 
             is Resource.Success -> {
+                viewModel.isLoading.value = false
                 val data: PagingData<Any> = resource.data.map { it }
-                horizontalAdapter.submitData(lifecycle, data)
+                horizontalSimilarAdapter.submitData(lifecycle, data)
             }
 
-            is Resource.Error -> resource.message.showSnackbar(binding.root)
-
-            is Resource.Empty -> getString(R.string.data_is_empty).showSnackbar(binding.root)
+            is Resource.Error -> {
+                viewModel.isLoading.value = false
+                binding.apply {
+                    rvSimilar.visibility = View.INVISIBLE
+                    tvNoSimilarMovies.apply {
+                        text = resource.message
+                        visibility = View.VISIBLE
+                    }
+                }
+            }
 
             else -> {}
         }
@@ -147,16 +215,24 @@ class OtherFragment : Fragment() {
 
     private fun setupReviewsMovieData(resource: Resource<PagingData<Review>>?) {
         when (resource) {
-            is Resource.Loading -> {}
+            is Resource.Loading -> viewModel.isLoading.value = true
 
             is Resource.Success -> {
-                val data: PagingData<Any> = resource.data.map { it }
-                horizontalAdapter.submitData(lifecycle, data)
+                viewModel.isLoading.value = false
+                val data = resource.data.map { it }
+                horizontalReviewAdapter.submitData(lifecycle, data)
             }
 
-            is Resource.Error -> resource.message.showSnackbar(binding.root)
-
-            is Resource.Empty -> getString(R.string.data_is_empty).showSnackbar(binding.root)
+            is Resource.Error -> {
+                viewModel.isLoading.value = false
+                binding.apply {
+                    rvReviews.visibility = View.INVISIBLE
+                    tvNoReviews.apply {
+                        text = resource.message
+                        visibility = View.VISIBLE
+                    }
+                }
+            }
 
             else -> {}
         }
@@ -164,16 +240,24 @@ class OtherFragment : Fragment() {
 
     private fun setupRecommendationsMoviesData(resource: Resource<PagingData<Movie>>?) {
         when (resource) {
-            is Resource.Loading -> {}
+            is Resource.Loading -> viewModel.isLoading.value = true
 
             is Resource.Success -> {
+                viewModel.isLoading.value = false
                 val data: PagingData<Any> = resource.data.map { it }
-                horizontalAdapter.submitData(lifecycle, data)
+                horizontalRecommendedAdapter.submitData(lifecycle, data)
             }
 
-            is Resource.Error -> resource.message.showSnackbar(binding.root)
-
-            is Resource.Empty -> getString(R.string.data_is_empty).showSnackbar(binding.root)
+            is Resource.Error -> {
+                viewModel.isLoading.value = false
+                binding.apply {
+                    rvRecommended.visibility = View.INVISIBLE
+                    tvNoRecommendedMovies.apply {
+                        text = resource.message
+                        visibility = View.VISIBLE
+                    }
+                }
+            }
 
             else -> {}
         }
@@ -181,16 +265,24 @@ class OtherFragment : Fragment() {
 
     private fun setupSimilarMoviesData(resource: Resource<PagingData<Movie>>?) {
         when (resource) {
-            is Resource.Loading -> {}
+            is Resource.Loading -> viewModel.isLoading.value = true
 
             is Resource.Success -> {
+                viewModel.isLoading.value = false
                 val data: PagingData<Any> = resource.data.map { it }
-                horizontalAdapter.submitData(lifecycle, data)
+                horizontalSimilarAdapter.submitData(lifecycle, data)
             }
 
-            is Resource.Error -> resource.message.showSnackbar(binding.root)
-
-            is Resource.Empty -> getString(R.string.data_is_empty).showSnackbar(binding.root)
+            is Resource.Error -> {
+                viewModel.isLoading.value = false
+                binding.apply {
+                    rvSimilar.visibility = View.INVISIBLE
+                    tvNoSimilarMovies.apply {
+                        text = resource.message
+                        visibility = View.VISIBLE
+                    }
+                }
+            }
 
             else -> {}
         }

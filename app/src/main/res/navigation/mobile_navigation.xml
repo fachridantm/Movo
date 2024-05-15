@@ -2,40 +2,69 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    app:startDestination="@+id/navigation_home">
+    app:startDestination="@id/nav_home">
 
     <fragment
-        android:id="@+id/navigation_home"
+        android:id="@+id/nav_home"
         android:name="id.outivox.movo.presentation.home.HomeFragment"
         android:label="@string/title_home"
-        tools:layout="@layout/fragment_home" >
+        tools:layout="@layout/fragment_home">
         <action
             android:id="@+id/action_home_fragment_to_search_fragment"
-            app:destination="@id/navigation_search" />
+            app:destination="@id/search_fragment" />
         <action
             android:id="@+id/action_home_fragment_to_all_movie_tv_fragment"
-            app:destination="@id/navigation_all_movie_tv" />
+            app:destination="@id/all_movie_tv_fragment" />
+        <action
+            android:id="@+id/action_home_fragment_to_detailActivity"
+            app:destination="@id/detailActivity" />
     </fragment>
-    <fragment
-        android:id="@+id/navigation_favorite"
-        android:name="id.outivox.movo.presentation.favorite.FavoriteFragment"
-        android:label="@string/title_favorite"
-        tools:layout="@layout/fragment_favorite" />
 
     <fragment
-        android:id="@+id/navigation_search"
+        android:id="@+id/nav_favorite"
+        android:name="id.outivox.movo.presentation.favorite.FavoriteFragment"
+        android:label="@string/title_favorite"
+        tools:layout="@layout/fragment_favorite" >
+        <action
+            android:id="@+id/action_favorite_fragment_to_detailActivity"
+            app:destination="@id/detailActivity" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/search_fragment"
         android:name="id.outivox.movo.presentation.search.SearchFragment"
         android:label="@string/title_search"
         tools:layout="@layout/fragment_search" />
+
     <fragment
-        android:id="@+id/navigation_all_movie_tv"
+        android:id="@+id/all_movie_tv_fragment"
         android:name="id.outivox.movo.presentation.allmovietv.AllMovieTvFragment"
         android:label="fragment_all_movie_tv"
-        tools:layout="@layout/fragment_all_movie_tv"  >
+        tools:layout="@layout/fragment_all_movie_tv">
         <argument
             android:name="category"
-            app:argType="string"
-            android:defaultValue="now_playing" />
+            android:defaultValue="now_playing"
+            app:argType="string" />
+        <argument
+            android:name="media_type"
+            android:defaultValue="movie"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_all_movie_tv_fragment_to_detailActivity"
+            app:destination="@id/detailActivity" />
     </fragment>
+
+    <activity
+        android:id="@+id/detailActivity"
+        android:name="id.outivox.movo.presentation.detail.DetailActivity"
+        android:label="activity_detail"
+        tools:layout="@layout/activity_detail">
+        <argument
+            android:name="media_id"
+            app:argType="integer" />
+        <argument
+            android:name="media_type"
+            app:argType="string" />
+    </activity>
 
 </navigation>

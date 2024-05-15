@@ -19,25 +19,28 @@ class SearchMovieByCategory(
 ) : PagingSource<Int, MovieItem>() {
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, MovieItem> {
         val pageNumber = params.key ?: 1
-        val pageSize = 20
 
         return try {
             val response = apiService.searchMovieByQuery(query = query, region = region, page = pageNumber)
             if (response != null) {
                 if (response.results.isNullOrEmpty()) {
                     Log.e("logError", "Data: ${response.toJson()}")
-                    LoadResult.Error(Exception("No more data"))
+                    LoadResult.Page(
+                        data = emptyList(),
+                        prevKey = if (pageNumber == 1) null else pageNumber - 1,
+                        nextKey = if (response.totalPages.orZero() == pageNumber) null else (if (response.totalPages.orZero() > 0) pageNumber + 1 else null)
+                    )
                 } else {
                     Log.i("logInfo", "Data: ${response.toJson()}")
                     LoadResult.Page(
                         data = response.results,
                         prevKey = if (pageNumber == 1) null else pageNumber - 1,
-                        nextKey = if (response.results.size.orZero() < pageSize) null else pageNumber + 1
+                        nextKey = if (response.totalPages.orZero() == pageNumber) null else (if (response.totalPages.orZero() > 0) pageNumber + 1 else null)
                     )
                 }
             } else {
                 Log.e("logError", "Data: ${response?.toJson()}")
-                LoadResult.Error(Exception("No more data"))
+                LoadResult.Error(Exception("Response is empty"))
             }
         } catch (e: Exception) {
             when (e) {

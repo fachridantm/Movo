@@ -11,7 +11,6 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.dsl.module
 import retrofit2.Retrofit
-import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
@@ -37,7 +36,7 @@ val networkModule = module {
                 chain.request()
                     .newBuilder()
                     .addHeader("accept", "application/json")
-                    .addHeader("Authorization", "Bearer ${API_KEY}")
+                    .addHeader("Authorization", "Bearer $API_KEY")
                     .build()
                     .let(chain::proceed)
             }

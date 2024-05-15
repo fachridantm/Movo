@@ -1,21 +1,16 @@
 package id.outivox.movo.presentation.search
 
-import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.toLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import id.outivox.core.domain.model.Resource
 import id.outivox.core.domain.model.Resource.Companion.init
 import id.outivox.core.domain.model.Resource.Companion.loading
 import id.outivox.core.domain.model.movie.Movie
-import id.outivox.core.domain.model.movie.MovieResult
 import id.outivox.core.domain.model.tv.Tv
-import id.outivox.core.domain.model.tv.TvResult
 import id.outivox.core.domain.usecase.search.SearchUseCase
 import id.outivox.core.utils.Constants.INDONESIA
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class SearchViewModel(

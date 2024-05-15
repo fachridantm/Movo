@@ -1,28 +1,30 @@
-package id.outivox.movo.adapter
+package id.outivox.movo.presentation.favorite.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import id.outivox.core.domain.model.detail.MovieDetail
+import id.outivox.core.domain.model.detail.TvDetail
 import id.outivox.core.domain.model.movie.Movie
 import id.outivox.core.domain.model.tv.Tv
 import id.outivox.core.utils.loadImageWithOptions
 import id.outivox.movo.databinding.ItemVerticalMovieBinding
 import id.outivox.movo.utils.setupRatingStars
 
-class VerticalListAdapter(
-    private val onItemClick: (Any) -> Unit
-) : PagingDataAdapter<Any, VerticalListAdapter.VerticalViewholder>(DIFF_CALLBACK) {
-    inner class VerticalViewholder(val binding: ItemVerticalMovieBinding) : RecyclerView.ViewHolder(binding.root) {
+class FavoriteAdapter(
+    private val onItemClick: (Any) -> Unit,
+) : ListAdapter<Any, FavoriteAdapter.FavoriteViewHolder>(DIFF_CALLBACK) {
+    inner class FavoriteViewHolder(val binding: ItemVerticalMovieBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(data: Any) {
             when (data) {
-                is Movie -> bindMovieItem(data)
-                is Tv -> bindTvItem(data)
+                is MovieDetail -> bindMovieItem(data)
+                is TvDetail -> bindTvItem(data)
             }
         }
 
-        private fun bindTvItem(data: Tv) {
+        private fun bindTvItem(data: TvDetail) {
             binding.apply {
                 tvTitle.text = data.title
                 tvGenre.text = data.genres.joinToString(", ")
@@ -32,7 +34,7 @@ class VerticalListAdapter(
             }
         }
 
-        private fun bindMovieItem(data: Movie) {
+        private fun bindMovieItem(data: MovieDetail) {
             binding.apply {
                 tvTitle.text = data.title
                 tvGenre.text = data.genres.joinToString(", ")
@@ -43,11 +45,11 @@ class VerticalListAdapter(
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = VerticalViewholder(
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = FavoriteViewHolder(
         ItemVerticalMovieBinding.inflate(LayoutInflater.from(parent.context), parent, false)
     )
 
-    override fun onBindViewHolder(holder: VerticalViewholder, position: Int) {
+    override fun onBindViewHolder(holder: FavoriteViewHolder, position: Int) {
         val item = getItem(position)
         if (item != null) holder.bind(item)
     }

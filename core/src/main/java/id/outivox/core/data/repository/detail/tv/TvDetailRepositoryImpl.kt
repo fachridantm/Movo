@@ -12,6 +12,7 @@ import id.outivox.core.domain.repository.detail.tv.TvDetailRepository
 import id.outivox.core.mapper.DetailsMapper.map
 import id.outivox.core.mapper.TvMapper.map
 import id.outivox.core.utils.Constants.TV_SHOW
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 
@@ -29,8 +30,29 @@ class TvDetailRepositoryImpl(private val remoteDataSource: RemoteDataSource) : T
                 is ApiResponse.Error -> emit(error(response.message))
             }
         } catch (e: Exception) {
-            Log.e("logError", e.message.orEmpty())
-            emit(error(e.message.orEmpty()))
+            when (e) {
+                is IndexOutOfBoundsException -> {
+                    if (e.message == "Index: 0, Size: 0") emit(empty())
+                    else emit(error(e.message.orEmpty()))
+                }
+
+                else -> {
+                    Log.e("logError", e.message.orEmpty())
+                    emit(error(e.message.orEmpty()))
+                }
+            }
+        }
+    }.catch { e ->
+        when (e) {
+            is IndexOutOfBoundsException -> {
+                if (e.message == "Index: 0, Size: 0") emit(empty())
+                else emit(error(e.message.orEmpty()))
+            }
+
+            else -> {
+                Log.e("logError", e.message.orEmpty())
+                emit(error(e.message.orEmpty()))
+            }
         }
     }
 
@@ -47,8 +69,29 @@ class TvDetailRepositoryImpl(private val remoteDataSource: RemoteDataSource) : T
                 is ApiResponse.Error -> emit(error(response.message))
             }
         } catch (e: Exception) {
-            Log.e("logError", e.message.orEmpty())
-            emit(error(e.message.orEmpty()))
+            when (e) {
+                is IndexOutOfBoundsException -> {
+                    if (e.message == "Index: 0, Size: 0") emit(empty())
+                    else emit(error(e.message.orEmpty()))
+                }
+
+                else -> {
+                    Log.e("logError", e.message.orEmpty())
+                    emit(error(e.message.orEmpty()))
+                }
+            }
+        }
+    }.catch { e ->
+        when (e) {
+            is IndexOutOfBoundsException -> {
+                if (e.message == "Index: 0, Size: 0") emit(empty())
+                else emit(error(e.message.orEmpty()))
+            }
+
+            else -> {
+                Log.e("logError", e.message.orEmpty())
+                emit(error(e.message.orEmpty()))
+            }
         }
     }
 
@@ -65,8 +108,29 @@ class TvDetailRepositoryImpl(private val remoteDataSource: RemoteDataSource) : T
                 is ApiResponse.Error -> emit(error(response.message))
             }
         } catch (e: Exception) {
-            Log.e("logError", e.message.orEmpty())
-            emit(error(e.message.orEmpty()))
+            when (e) {
+                is IndexOutOfBoundsException -> {
+                    if (e.message == "Index: 0, Size: 0") emit(empty())
+                    else emit(error(e.message.orEmpty()))
+                }
+
+                else -> {
+                    Log.e("logError", e.message.orEmpty())
+                    emit(error(e.message.orEmpty()))
+                }
+            }
+        }
+    }.catch { e ->
+        when (e) {
+            is IndexOutOfBoundsException -> {
+                if (e.message == "Index: 0, Size: 0") emit(empty())
+                else emit(error(e.message.orEmpty()))
+            }
+
+            else -> {
+                Log.e("logError", e.message.orEmpty())
+                emit(error(e.message.orEmpty()))
+            }
         }
     }
 
@@ -83,8 +147,29 @@ class TvDetailRepositoryImpl(private val remoteDataSource: RemoteDataSource) : T
                 is ApiResponse.Error -> emit(error(response.message))
             }
         } catch (e: Exception) {
-            Log.e("logError", e.message.orEmpty())
-            emit(error(e.message.orEmpty()))
+            when (e) {
+                is IndexOutOfBoundsException -> {
+                    if (e.message == "Index: 0, Size: 0") emit(empty())
+                    else emit(error(e.message.orEmpty()))
+                }
+
+                else -> {
+                    Log.e("logError", e.message.orEmpty())
+                    emit(error(e.message.orEmpty()))
+                }
+            }
+        }
+    }.catch { e ->
+        when (e) {
+            is IndexOutOfBoundsException -> {
+                if (e.message == "Index: 0, Size: 0") emit(empty())
+                else emit(error(e.message.orEmpty()))
+            }
+
+            else -> {
+                Log.e("logError", e.message.orEmpty())
+                emit(error(e.message.orEmpty()))
+            }
         }
     }
 
@@ -101,8 +186,29 @@ class TvDetailRepositoryImpl(private val remoteDataSource: RemoteDataSource) : T
                 is ApiResponse.Error -> emit(error(response.message))
             }
         } catch (e: Exception) {
-            Log.e("logError", e.message.orEmpty())
-            emit(error(e.message.orEmpty()))
+            when (e) {
+                is IndexOutOfBoundsException -> {
+                    if (e.message == "Index: 0, Size: 0") emit(empty())
+                    else emit(error(e.message.orEmpty()))
+                }
+
+                else -> {
+                    Log.e("logError", e.message.orEmpty())
+                    emit(error(e.message.orEmpty()))
+                }
+            }
+        }
+    }.catch { e ->
+        when (e) {
+            is IndexOutOfBoundsException -> {
+                if (e.message == "Index: 0, Size: 0") emit(empty())
+                else emit(error(e.message.orEmpty()))
+            }
+
+            else -> {
+                Log.e("logError", e.message.orEmpty())
+                emit(error(e.message.orEmpty()))
+            }
         }
     }
 
@@ -119,8 +225,29 @@ class TvDetailRepositoryImpl(private val remoteDataSource: RemoteDataSource) : T
                 is ApiResponse.Error -> emit(error(response.message))
             }
         } catch (e: Exception) {
-            Log.e("logError", e.message.orEmpty())
-            emit(error(e.message.orEmpty()))
+            when (e) {
+                is IndexOutOfBoundsException -> {
+                    if (e.message == "Index: 0, Size: 0") emit(empty())
+                    else emit(error(e.message.orEmpty()))
+                }
+
+                else -> {
+                    Log.e("logError", e.message.orEmpty())
+                    emit(error(e.message.orEmpty()))
+                }
+            }
+        }
+    }.catch { e ->
+        when (e) {
+            is IndexOutOfBoundsException -> {
+                if (e.message == "Index: 0, Size: 0") emit(empty())
+                else emit(error(e.message.orEmpty()))
+            }
+
+            else -> {
+                Log.e("logError", e.message.orEmpty())
+                emit(error(e.message.orEmpty()))
+            }
         }
     }
 
@@ -137,8 +264,29 @@ class TvDetailRepositoryImpl(private val remoteDataSource: RemoteDataSource) : T
                 is ApiResponse.Error -> emit(error(response.message))
             }
         } catch (e: Exception) {
-            Log.e("logError", e.message.orEmpty())
-            emit(error(e.message.orEmpty()))
+            when (e) {
+                is IndexOutOfBoundsException -> {
+                    if (e.message == "Index: 0, Size: 0") emit(empty())
+                    else emit(error(e.message.orEmpty()))
+                }
+
+                else -> {
+                    Log.e("logError", e.message.orEmpty())
+                    emit(error(e.message.orEmpty()))
+                }
+            }
+        }
+    }.catch { e ->
+        when (e) {
+            is IndexOutOfBoundsException -> {
+                if (e.message == "Index: 0, Size: 0") emit(empty())
+                else emit(error(e.message.orEmpty()))
+            }
+
+            else -> {
+                Log.e("logError", e.message.orEmpty())
+                emit(error(e.message.orEmpty()))
+            }
         }
     }
 }

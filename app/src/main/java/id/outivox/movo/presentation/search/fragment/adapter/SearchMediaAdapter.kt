@@ -10,7 +10,7 @@ import id.outivox.core.utils.Constants.BUNDLE_MEDIA_TYPE
 import id.outivox.core.utils.Constants.BUNDLE_SEARCH_QUERY
 import id.outivox.movo.presentation.search.fragment.SearchMediaFragment
 
-class SearchAdapter(fa: FragmentActivity, private val query: String) : FragmentStateAdapter(fa) {
+class SearchMediaAdapter(fa: FragmentActivity, private val query: String) : FragmentStateAdapter(fa) {
     override fun getItemCount() = 2
 
     override fun createFragment(position: Int): Fragment {
@@ -28,6 +28,4 @@ class SearchAdapter(fa: FragmentActivity, private val query: String) : FragmentS
 
         return if (position == 0) movieTabFragment else tvTabFragment
     }
-
-
 }

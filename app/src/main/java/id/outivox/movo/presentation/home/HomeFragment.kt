@@ -5,8 +5,11 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isInvisible
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
+import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.paging.map
 import androidx.recyclerview.widget.PagerSnapHelper
@@ -31,11 +34,9 @@ import id.outivox.movo.adapter.GenreListAdapter
 import id.outivox.movo.adapter.HorizontalListAdapter
 import id.outivox.movo.adapter.MovieLoadStateAdapter
 import id.outivox.movo.databinding.FragmentHomeBinding
-import id.outivox.movo.presentation.detail.DetailActivity
 import id.outivox.movo.presentation.home.component.CenterItemLayoutManager
 import id.outivox.movo.presentation.home.fragment.adapter.HomeCategoryAdapter
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import java.util.Locale
 
 
 class HomeFragment : Fragment() {
@@ -46,8 +47,10 @@ class HomeFragment : Fragment() {
     private val viewModel: HomeViewModel by viewModel()
     private val carouselAdapter: CarouselAdapter by lazy { CarouselAdapter(::onCarouselClick) }
     private val genreListAdapter: GenreListAdapter by lazy { GenreListAdapter() }
-    private val horizontalAdapter: HorizontalListAdapter by lazy { HorizontalListAdapter(::onItemHorizontalClick) }
-    private val homeCategoryAdapter: HomeCategoryAdapter by lazy { HomeCategoryAdapter(requireActivity()) }
+    private val horizontalPopularMovieAdapter: HorizontalListAdapter by lazy { HorizontalListAdapter(::onItemHorizontalClick) }
+    private val horizontaUpcomingMovieAdapter: HorizontalListAdapter by lazy { HorizontalListAdapter(::onItemHorizontalClick) }
+
+    private var currentPage = 1
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -61,10 +64,19 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        initObservers()
         initData()
-        initObserver()
         initView()
         initListener()
+    }
+
+    private fun initObservers() {
+        viewModel.apply {
+            nowPlayingMovies.observe(viewLifecycleOwner, ::setupNowPlayingMoviesData)
+            popularMovies.observe(viewLifecycleOwner, ::setupPopularMoviesData)
+            upcomingMovies.observe(viewLifecycleOwner, ::setupUpcomingMoviesData)
+            isLoading.observe(viewLifecycleOwner, ::setupLoadingData)
+        }
     }
 
     private fun initData() {
@@ -72,23 +84,15 @@ class HomeFragment : Fragment() {
             getNowPlayingMovies()
             getPopularMovies()
             getUpcomingMovies()
-            getAiringTodayTv()
-            getPopularTv()
-        }
-    }
-
-    private fun initObserver() {
-        viewModel.apply {
-            nowPlayingMovies.observe(viewLifecycleOwner, ::setupNowPlayingMoviesData)
-            popularMovies.observe(viewLifecycleOwner, ::setupPopularMoviesData)
-            upcomingMovies.observe(viewLifecycleOwner, ::setupUpcomingMoviesData)
-            airingTodayTv.observe(viewLifecycleOwner, ::setupAiringTodayTvData)
-            popularTv.observe(viewLifecycleOwner, ::setupPopularTvData)
         }
     }
 
     private fun initView() {
         binding.apply {
+            rvCarouselGenre.adapter = genreListAdapter.withLoadStateFooter(
+                footer = MovieLoadStateAdapter { carouselAdapter.retry() }
+            )
+
             rvCarousel.apply {
                 adapter = carouselAdapter.withLoadStateFooter(
                     footer = MovieLoadStateAdapter { carouselAdapter.retry() }
@@ -96,37 +100,76 @@ class HomeFragment : Fragment() {
                 onFlingListener = null
                 layoutManager = CenterItemLayoutManager(context, RecyclerView.HORIZONTAL, false)
                 PagerSnapHelper().attachToRecyclerView(this)
+
+                carouselAdapter.addLoadStateListener { loadState ->
+                    val state = loadState.source.refresh is LoadState.NotLoading && loadState.append.endOfPaginationReached && carouselAdapter.itemCount == 0
+                    listOf(
+                        rvCarousel,
+                        rvCarouselGenre
+                    ).forEach { it.isInvisible = state }
+                    tvEmptyNowPlaying.isVisible = state
+                }
             }
 
             vpMovies.apply {
-                adapter = homeCategoryAdapter
-                TabLayoutMediator(tabLayout, this) { tab, position ->
+                adapter = HomeCategoryAdapter(requireActivity())
+                TabLayoutMediator(tabLayout, vpMovies) { tab, position ->
                     val listTab = listOf(AIRING_TODAY_TV, TOP_RATED_MOVIE, TOP_RATED_TV, POPULAR_TV)
                     tab.text = listTab[position].toCategoryTitle()
                 }.attach()
             }
 
-            rvCarouselGenre.adapter = genreListAdapter.withLoadStateFooter(
-                footer = MovieLoadStateAdapter { carouselAdapter.retry() }
+            rvPopularMovies.adapter = horizontalPopularMovieAdapter.withLoadStateFooter(
+                footer = MovieLoadStateAdapter { horizontalPopularMovieAdapter.retry() }
             )
+
+            horizontalPopularMovieAdapter.addLoadStateListener {
+                val state = it.source.refresh is LoadState.NotLoading && it.append.endOfPaginationReached && horizontalPopularMovieAdapter.itemCount == 0
+                rvPopularMovies.isInvisible = state
+                tvEmptyPopularMovies.isVisible = state
+            }
+
+            rvUpcomingMovies.adapter = horizontaUpcomingMovieAdapter.withLoadStateFooter(
+                footer = MovieLoadStateAdapter { horizontaUpcomingMovieAdapter.retry() }
+            )
+
+            horizontaUpcomingMovieAdapter.addLoadStateListener {
+                val state = it.source.refresh is LoadState.NotLoading && it.append.endOfPaginationReached && horizontaUpcomingMovieAdapter.itemCount == 0
+                rvUpcomingMovies.isInvisible = state
+                tvEmptyUpcomingMovies.isVisible = state
+            }
         }
     }
 
+    private fun setupLoadingData(isLoading: Boolean) {
+        binding.progressBar.isVisible = isLoading
+    }
 
     private fun setupNowPlayingMoviesData(resource: Resource<PagingData<Movie>>?) {
+        Log.i("logInfo", "setupNowPlayingMoviesData: $resource")
         when (resource) {
-            is Resource.Loading -> {}
+            is Resource.Loading -> viewModel.isLoading.value = true
 
             is Resource.Success -> {
+                viewModel.isLoading.value = false
                 val data = resource.data
-//                carouselAdapter.submitData(lifecycle, data)
+                carouselAdapter.submitData(lifecycle, data)
                 genreListAdapter.submitData(lifecycle, data.map { it.genres })
-
             }
 
-            is Resource.Error -> resource.message.showSnackbar(binding.root)
-
-            is Resource.Empty -> getString(R.string.data_is_empty).showSnackbar(binding.root)
+            is Resource.Error -> {
+                viewModel.isLoading.value = false
+                binding.apply {
+                    listOf(
+                        rvCarousel,
+                        rvCarouselGenre
+                    ).forEach { it.visibility = View.GONE }
+                    tvEmptyNowPlaying.apply {
+                        text = resource.message
+                        visibility = View.VISIBLE
+                    }
+                }
+            }
 
             else -> {}
         }
@@ -134,16 +177,24 @@ class HomeFragment : Fragment() {
 
     private fun setupPopularMoviesData(resource: Resource<PagingData<Movie>>?) {
         when (resource) {
-            is Resource.Loading -> {}
+            is Resource.Loading -> viewModel.isLoading.value = true
 
             is Resource.Success -> {
+                viewModel.isLoading.value = false
                 val data: PagingData<Any> = resource.data.map { it }
-                horizontalAdapter.submitData(lifecycle, data)
+                horizontalPopularMovieAdapter.submitData(lifecycle, data)
             }
 
-            is Resource.Error -> resource.message.showSnackbar(binding.root)
-
-            is Resource.Empty -> getString(R.string.data_is_empty).showSnackbar(binding.root)
+            is Resource.Error -> {
+                viewModel.isLoading.value = false
+                binding.apply {
+                    rvPopularMovies.visibility = View.INVISIBLE
+                    tvEmptyPopularMovies.apply {
+                        text = resource.message
+                        visibility = View.VISIBLE
+                    }
+                }
+            }
 
             else -> {}
         }
@@ -151,50 +202,24 @@ class HomeFragment : Fragment() {
 
     private fun setupUpcomingMoviesData(resource: Resource<PagingData<Movie>>?) {
         when (resource) {
-            is Resource.Loading -> {}
+            is Resource.Loading -> viewModel.isLoading.value = true
 
             is Resource.Success -> {
+                viewModel.isLoading.value = false
                 val data: PagingData<Any> = resource.data.map { it }
-                horizontalAdapter.submitData(lifecycle, data)
+                horizontaUpcomingMovieAdapter.submitData(lifecycle, data)
             }
 
-            is Resource.Error -> resource.message.showSnackbar(binding.root)
-
-            is Resource.Empty -> getString(R.string.data_is_empty).showSnackbar(binding.root)
-
-            else -> {}
-        }
-    }
-
-    private fun setupAiringTodayTvData(resource: Resource<PagingData<Tv>>?) {
-        when (resource) {
-            is Resource.Loading -> {}
-
-            is Resource.Success -> {
-                val data: PagingData<Any> = resource.data.map { it }
-                horizontalAdapter.submitData(lifecycle, data)
+            is Resource.Error -> {
+                viewModel.isLoading.value = false
+                binding.apply {
+                    rvUpcomingMovies.visibility = View.INVISIBLE
+                    tvEmptyUpcomingMovies.apply {
+                        text = resource.message
+                        visibility = View.VISIBLE
+                    }
+                }
             }
-
-            is Resource.Error -> resource.message.showSnackbar(binding.root)
-
-            is Resource.Empty -> getString(R.string.data_is_empty).showSnackbar(binding.root)
-
-            else -> {}
-        }
-    }
-
-    private fun setupPopularTvData(resource: Resource<PagingData<Tv>>?) {
-        when (resource) {
-            is Resource.Loading -> {}
-
-            is Resource.Success -> {
-                val data: PagingData<Any> = resource.data.map { it }
-                horizontalAdapter.submitData(lifecycle, data)
-            }
-
-            is Resource.Error -> resource.message.showSnackbar(binding.root)
-
-            is Resource.Empty -> getString(R.string.data_is_empty).showSnackbar(binding.root)
 
             else -> {}
         }
@@ -203,10 +228,9 @@ class HomeFragment : Fragment() {
     private fun initListener() {
         binding.apply {
             svHomeClick.setOnClickListener {
-                it.findNavController().navigate(
-                    HomeFragmentDirections.actionHomeFragmentToSearchFragment()
-                )
+                findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToSearchFragment())
             }
+
             tvRegion.setOnClickListener {
                 // TODO: Add region picker
                 getString(R.string.under_development).showSnackbar(binding.root)
@@ -227,34 +251,23 @@ class HomeFragment : Fragment() {
             })
 
             tvSeeAllPopularMovies.setOnClickListener {
-                it.findNavController().navigate(
-                    HomeFragmentDirections.actionHomeFragmentToAllMovieTvFragment(
-                        category = POPULAR_MOVIE
-                    )
-                )
-
+                findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToAllMovieTvFragment(category = POPULAR_MOVIE))
             }
 
             tvSeeAllUpcomingMovies.setOnClickListener {
-                it.findNavController().navigate(
-                    HomeFragmentDirections.actionHomeFragmentToAllMovieTvFragment(
-                        category = UPCOMING_MOVIE
-                    )
-                )
+                findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToAllMovieTvFragment(category = UPCOMING_MOVIE))
             }
         }
     }
 
     private fun onCarouselClick(movie: Movie) {
-        DetailActivity.start(requireActivity(), movie.id, MOVIE)
+        findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToDetailActivity(movie.id, MOVIE))
     }
 
     private fun onItemHorizontalClick(any: Any) {
-        val movie = any as Movie
-        val tv = any as Tv
         when (any) {
-            is Movie -> DetailActivity.start(requireActivity(), movie.id, MOVIE)
-            is Tv -> DetailActivity.start(requireActivity(), tv.id, TV_SHOW)
+            is Movie -> findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToDetailActivity(any.id, MOVIE))
+            is Tv -> findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToDetailActivity(any.id, TV_SHOW))
         }
     }
 

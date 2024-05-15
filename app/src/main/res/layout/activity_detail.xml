@@ -131,10 +131,10 @@
                     android:id="@+id/tv_favorite"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
-                    android:paddingHorizontal="16dp"
                     android:drawableStart="@drawable/ic_favorite"
                     android:fontFamily="@font/poppins_semibold"
                     android:gravity="center"
+                    android:paddingHorizontal="16dp"
                     android:text="@string/add_to_favorite"
                     android:textColor="@color/white"
                     android:textSize="11sp"
@@ -190,10 +190,10 @@
                 android:id="@+id/toolbar_detail"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                android:layout_marginTop="40dp"
+                android:layout_marginTop="28dp"
                 android:theme="?attr/actionBarTheme"
                 app:layout_collapseMode="pin"
-                app:navigationIconTint="@color/white" />
+                app:navigationIcon="@drawable/ic_back" />
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
 
@@ -201,14 +201,15 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:background="@color/app_backround"
         android:orientation="vertical"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
 
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:fillViewport="true">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -218,7 +219,6 @@
                     android:id="@+id/horizontal_line"
                     android:layout_width="match_parent"
                     android:layout_height="3dp"
-                    android:layout_marginTop="12dp"
                     android:background="@color/dark_grey"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -231,7 +231,7 @@
                     app:layout_constraintTop_toBottomOf="@id/horizontal_line"
                     app:tabIndicatorColor="@color/primary_color"
                     app:tabSelectedTextColor="@color/primary_color"
-                    app:tabTextAppearance="@style/tabLayoutTextTheme"
+                    app:tabTextAppearance="@style/tabTextAppearance"
                     app:tabTextColor="@color/gray_text" />
 
 
@@ -243,7 +243,6 @@
             android:id="@+id/vp_detail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/tab_detail"
             app:layout_constraintVertical_weight="1" />
 
     </LinearLayout>

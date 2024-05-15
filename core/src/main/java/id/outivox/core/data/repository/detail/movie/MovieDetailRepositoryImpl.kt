@@ -2,22 +2,17 @@ package id.outivox.core.data.repository.detail.movie
 
 import android.util.Log
 import androidx.paging.map
-import id.outivox.core.data.NetworkBoundResource
 import id.outivox.core.data.remote.RemoteDataSource
 import id.outivox.core.data.remote.source.network.ApiResponse
-import id.outivox.core.data.remote.source.response.detail.movie.MovieDetailResponse
-import id.outivox.core.domain.model.Resource
 import id.outivox.core.domain.model.Resource.Companion.empty
 import id.outivox.core.domain.model.Resource.Companion.error
 import id.outivox.core.domain.model.Resource.Companion.loading
 import id.outivox.core.domain.model.Resource.Companion.success
-import id.outivox.core.domain.model.detail.MovieDetail
 import id.outivox.core.domain.repository.detail.movie.MovieDetailRepository
 import id.outivox.core.mapper.DetailsMapper.map
 import id.outivox.core.mapper.MovieMapper.map
-import id.outivox.core.mapper.TvMapper.map
 import id.outivox.core.utils.Constants.MOVIE
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 
@@ -35,8 +30,29 @@ class MovieDetailRepositoryImpl(private val remoteDataSource: RemoteDataSource) 
                 is ApiResponse.Error -> emit(error(response.message))
             }
         } catch (e: Exception) {
-            Log.e("logError", e.message.orEmpty())
-            emit(error(e.message.orEmpty()))
+            when (e) {
+                is IndexOutOfBoundsException -> {
+                    if (e.message == "Index: 0, Size: 0") emit(empty())
+                    else emit(error(e.message.orEmpty()))
+                }
+
+                else -> {
+                    Log.e("logError", e.message.orEmpty())
+                    emit(error(e.message.orEmpty()))
+                }
+            }
+        }
+    }.catch { e ->
+        when (e) {
+            is IndexOutOfBoundsException -> {
+                if (e.message == "Index: 0, Size: 0") emit(empty())
+                else emit(error(e.message.orEmpty()))
+            }
+
+            else -> {
+                Log.e("logError", e.message.orEmpty())
+                emit(error(e.message.orEmpty()))
+            }
         }
     }
 
@@ -53,8 +69,29 @@ class MovieDetailRepositoryImpl(private val remoteDataSource: RemoteDataSource) 
                 is ApiResponse.Error -> emit(error(response.message))
             }
         } catch (e: Exception) {
-            Log.e("logError", e.message.orEmpty())
-            emit(error(e.message.orEmpty()))
+            when (e) {
+                is IndexOutOfBoundsException -> {
+                    if (e.message == "Index: 0, Size: 0") emit(empty())
+                    else emit(error(e.message.orEmpty()))
+                }
+
+                else -> {
+                    Log.e("logError", e.message.orEmpty())
+                    emit(error(e.message.orEmpty()))
+                }
+            }
+        }
+    }.catch { e ->
+        when (e) {
+            is IndexOutOfBoundsException -> {
+                if (e.message == "Index: 0, Size: 0") emit(empty())
+                else emit(error(e.message.orEmpty()))
+            }
+
+            else -> {
+                Log.e("logError", e.message.orEmpty())
+                emit(error(e.message.orEmpty()))
+            }
         }
     }
 
@@ -71,8 +108,29 @@ class MovieDetailRepositoryImpl(private val remoteDataSource: RemoteDataSource) 
                 is ApiResponse.Error -> emit(error(response.message))
             }
         } catch (e: Exception) {
-            Log.e("logError", e.message.orEmpty())
-            emit(error(e.message.orEmpty()))
+            when (e) {
+                is IndexOutOfBoundsException -> {
+                    if (e.message == "Index: 0, Size: 0") emit(empty())
+                    else emit(error(e.message.orEmpty()))
+                }
+
+                else -> {
+                    Log.e("logError", e.message.orEmpty())
+                    emit(error(e.message.orEmpty()))
+                }
+            }
+        }
+    }.catch { e ->
+        when (e) {
+            is IndexOutOfBoundsException -> {
+                if (e.message == "Index: 0, Size: 0") emit(empty())
+                else emit(error(e.message.orEmpty()))
+            }
+
+            else -> {
+                Log.e("logError", e.message.orEmpty())
+                emit(error(e.message.orEmpty()))
+            }
         }
     }
 
@@ -89,8 +147,29 @@ class MovieDetailRepositoryImpl(private val remoteDataSource: RemoteDataSource) 
                 is ApiResponse.Error -> emit(error(response.message))
             }
         } catch (e: Exception) {
-            Log.e("logError", e.message.orEmpty())
-            emit(error(e.message.orEmpty()))
+            when (e) {
+                is IndexOutOfBoundsException -> {
+                    if (e.message == "Index: 0, Size: 0") emit(empty())
+                    else emit(error(e.message.orEmpty()))
+                }
+
+                else -> {
+                    Log.e("logError", e.message.orEmpty())
+                    emit(error(e.message.orEmpty()))
+                }
+            }
+        }
+    }.catch { e ->
+        when (e) {
+            is IndexOutOfBoundsException -> {
+                if (e.message == "Index: 0, Size: 0") emit(empty())
+                else emit(error(e.message.orEmpty()))
+            }
+
+            else -> {
+                Log.e("logError", e.message.orEmpty())
+                emit(error(e.message.orEmpty()))
+            }
         }
     }
 
@@ -107,8 +186,29 @@ class MovieDetailRepositoryImpl(private val remoteDataSource: RemoteDataSource) 
                 is ApiResponse.Error -> emit(error(response.message))
             }
         } catch (e: Exception) {
-            Log.e("logError", e.message.orEmpty())
-            emit(error(e.message.orEmpty()))
+            when (e) {
+                is IndexOutOfBoundsException -> {
+                    if (e.message == "Index: 0, Size: 0") emit(empty())
+                    else emit(error(e.message.orEmpty()))
+                }
+
+                else -> {
+                    Log.e("logError", e.message.orEmpty())
+                    emit(error(e.message.orEmpty()))
+                }
+            }
+        }
+    }.catch { e ->
+        when (e) {
+            is IndexOutOfBoundsException -> {
+                if (e.message == "Index: 0, Size: 0") emit(empty())
+                else emit(error(e.message.orEmpty()))
+            }
+
+            else -> {
+                Log.e("logError", e.message.orEmpty())
+                emit(error(e.message.orEmpty()))
+            }
         }
     }
 
@@ -125,8 +225,29 @@ class MovieDetailRepositoryImpl(private val remoteDataSource: RemoteDataSource) 
                 is ApiResponse.Error -> emit(error(response.message))
             }
         } catch (e: Exception) {
-            Log.e("logError", e.message.orEmpty())
-            emit(error(e.message.orEmpty()))
+            when (e) {
+                is IndexOutOfBoundsException -> {
+                    if (e.message == "Index: 0, Size: 0") emit(empty())
+                    else emit(error(e.message.orEmpty()))
+                }
+
+                else -> {
+                    Log.e("logError", e.message.orEmpty())
+                    emit(error(e.message.orEmpty()))
+                }
+            }
+        }
+    }.catch { e ->
+        when (e) {
+            is IndexOutOfBoundsException -> {
+                if (e.message == "Index: 0, Size: 0") emit(empty())
+                else emit(error(e.message.orEmpty()))
+            }
+
+            else -> {
+                Log.e("logError", e.message.orEmpty())
+                emit(error(e.message.orEmpty()))
+            }
         }
     }
 
@@ -143,8 +264,29 @@ class MovieDetailRepositoryImpl(private val remoteDataSource: RemoteDataSource) 
                 is ApiResponse.Error -> emit(error(response.message))
             }
         } catch (e: Exception) {
-            Log.e("logError", e.message.orEmpty())
-            emit(error(e.message.orEmpty()))
+            when (e) {
+                is IndexOutOfBoundsException -> {
+                    if (e.message == "Index: 0, Size: 0") emit(empty())
+                    else emit(error(e.message.orEmpty()))
+                }
+
+                else -> {
+                    Log.e("logError", e.message.orEmpty())
+                    emit(error(e.message.orEmpty()))
+                }
+            }
+        }
+    }.catch { e ->
+        when (e) {
+            is IndexOutOfBoundsException -> {
+                if (e.message == "Index: 0, Size: 0") emit(empty())
+                else emit(error(e.message.orEmpty()))
+            }
+
+            else -> {
+                Log.e("logError", e.message.orEmpty())
+                emit(error(e.message.orEmpty()))
+            }
         }
     }
 }

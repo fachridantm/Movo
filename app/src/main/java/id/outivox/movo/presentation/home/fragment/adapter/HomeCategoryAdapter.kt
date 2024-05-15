@@ -31,9 +31,11 @@ class HomeCategoryAdapter(fa: FragmentActivity) : FragmentStateAdapter(fa) {
     private fun generateData(category: String, mediaType: String): Fragment {
         val bundle = Bundle()
         val fragment = HomeTabFragment()
-        bundle.putString(BUNDLE_MOVIE_CATEGORY, category)
-        bundle.putString(BUNDLE_MEDIA_TYPE, mediaType)
-        fragment.arguments = bundle
+        bundle.apply {
+            putString(BUNDLE_MOVIE_CATEGORY, category)
+            putString(BUNDLE_MEDIA_TYPE, mediaType)
+            fragment.arguments = this@apply
+        }
         return fragment
     }
 }

@@ -11,14 +11,15 @@ import id.outivox.core.domain.model.Resource.Companion.error
 import id.outivox.core.domain.repository.allmovietv.AllMovieTvRepository
 import id.outivox.core.mapper.MovieMapper.map
 import id.outivox.core.mapper.TvMapper.map
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 
-class AllMovieTvRepositoryImpl(val remoteDataSource: RemoteDataSource) : AllMovieTvRepository {
-    override fun getMovies(category: String, region: String) = flow {
+class AllMovieTvRepositoryImpl(private val remoteDataSource: RemoteDataSource) : AllMovieTvRepository {
+    override fun getMovies(category: String, region: String, scope: CoroutineScope) = flow {
         emit(loading())
         try {
-            when (val response = remoteDataSource.getMoviesByCategory(category, region).first()) {
+            when (val response = remoteDataSource.getMoviesByCategory(category, region, scope).first()) {
                 is ApiResponse.Success -> {
                     val data = response.data.map { it.map() }
                     emit(success(data))

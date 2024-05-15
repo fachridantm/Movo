@@ -8,7 +8,6 @@ import id.outivox.core.domain.model.detail.Review
 import id.outivox.core.domain.model.detail.Video
 import id.outivox.core.domain.model.detail.Wallpaper
 import id.outivox.core.domain.model.movie.Movie
-import id.outivox.core.domain.model.movie.MovieResult
 import kotlinx.coroutines.flow.Flow
 
 interface MovieDetailRepository {

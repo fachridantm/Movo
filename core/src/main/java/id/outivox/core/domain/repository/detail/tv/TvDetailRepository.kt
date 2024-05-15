@@ -8,7 +8,6 @@ import id.outivox.core.domain.model.detail.TvDetail
 import id.outivox.core.domain.model.detail.Video
 import id.outivox.core.domain.model.detail.Wallpaper
 import id.outivox.core.domain.model.tv.Tv
-import id.outivox.core.domain.model.tv.TvResult
 import kotlinx.coroutines.flow.Flow
 
 interface TvDetailRepository {

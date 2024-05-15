@@ -3,6 +3,7 @@ package id.outivox.core.data.remote.paging.movie
 import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import id.outivox.core.data.remote.source.network.ApiResponse.Companion.apiEmpty
 import id.outivox.core.data.remote.source.network.ApiService
 import id.outivox.core.data.remote.source.response.movie.MovieItem
 import id.outivox.core.utils.localizedApiCodeErrorMessage
@@ -11,6 +12,7 @@ import id.outivox.core.utils.toJson
 import retrofit2.HttpException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
+import java.util.EmptyStackException
 
 class GetMoviesByCategory(
     private val apiService: ApiService,
@@ -19,26 +21,29 @@ class GetMoviesByCategory(
 ) : PagingSource<Int, MovieItem>() {
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, MovieItem> {
         val pageNumber = params.key ?: 1
-        val pageSize = 20
 
         return try {
             val response = apiService.getMoviesByCategory(category = category, region = region, page = pageNumber)
 
             if (response != null) {
                 if (response.results.isNullOrEmpty()) {
-                    Log.e("logError", "Data: ${response.toJson()}")
-                    LoadResult.Error(Exception("No more data"))
+                    Log.e("logError", "GetMoviesByCategory: ${response.toJson()}")
+                    LoadResult.Page(
+                        data = emptyList(),
+                        prevKey = if (pageNumber == 1) null else pageNumber - 1,
+                        nextKey = if (response.totalPages.orZero() == pageNumber) null else (if (response.totalPages.orZero() > 0) pageNumber + 1 else null)
+                    )
                 } else {
-                    Log.i("logInfo", "Data: ${response.toJson()}")
+                    Log.i("logInfo", "GetMoviesByCategory: ${response.toJson()}")
                     LoadResult.Page(
                         data = response.results,
                         prevKey = if (pageNumber == 1) null else pageNumber - 1,
-                        nextKey = if (response.results.size.orZero() < pageSize) null else pageNumber + 1
+                        nextKey = if (response.totalPages.orZero() == pageNumber) null else (if (response.totalPages.orZero() > 0) pageNumber + 1 else null)
                     )
                 }
             } else {
-                Log.e("logError", "Data: ${response?.toJson()}")
-                LoadResult.Error(Exception("No more data"))
+                Log.e("logError", "GetMoviesByCategory: ${response?.toJson()}")
+                LoadResult.Error(Exception("Response is null"))
             }
         } catch (e: Exception) {
             when (e) {

@@ -3,7 +3,6 @@ package id.outivox.core.mapper
 import id.outivox.core.data.remote.source.response.detail.actor.ActorResponse
 import id.outivox.core.data.remote.source.response.detail.review.ReviewItem
 import id.outivox.core.data.remote.source.response.detail.video.VideoResponse
-import id.outivox.core.data.remote.source.response.detail.wallpaper.BackdropsItem
 import id.outivox.core.data.remote.source.response.detail.wallpaper.WallpaperResponse
 import id.outivox.core.domain.model.detail.Actor
 import id.outivox.core.domain.model.detail.Review

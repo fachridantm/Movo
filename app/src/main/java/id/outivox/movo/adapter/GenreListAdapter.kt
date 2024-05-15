@@ -4,11 +4,10 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import id.outivox.movo.databinding.ItemGenreListBinding
 
-class GenreListAdapter() : PagingDataAdapter<List<String>, GenreListAdapter.GenreViewHolder>(DIFF_CALLBACK) {
+class GenreListAdapter : PagingDataAdapter<List<String>, GenreListAdapter.GenreViewHolder>(DIFF_CALLBACK) {
     inner class GenreViewHolder(val binding: ItemGenreListBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(data: List<String>) {
             binding.apply {

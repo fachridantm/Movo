@@ -12,20 +12,20 @@ import id.outivox.core.domain.model.Resource.Companion.success
 import id.outivox.core.domain.repository.home.HomeRepository
 import id.outivox.core.mapper.MovieMapper.map
 import id.outivox.core.mapper.TvMapper.map
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import java.util.concurrent.CancellationException
 
 class HomeRepositoryImpl(private val remoteDataSource: RemoteDataSource, private val localDataSource: LocalDataSource) : HomeRepository {
-    override fun getMovies(category: String, region: String) = flow {
+    override fun getMovies(category: String, region: String, scope: CoroutineScope) = flow {
         emit(loading())
         try {
-            when (val response = remoteDataSource.getMoviesByCategory(category, region).first()) {
+            when (val response = remoteDataSource.getMoviesByCategory(category, region, scope).first()) {
                 is ApiResponse.Success -> {
                     val data = response.data.map { it.map() }
                     emit(success(data))
                 }
-
                 is ApiResponse.Empty -> emit(empty())
                 is ApiResponse.Error -> emit(error(response.message))
             }

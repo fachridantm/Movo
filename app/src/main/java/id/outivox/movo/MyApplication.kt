@@ -1,7 +1,7 @@
 package id.outivox.movo
 
 import android.app.Application
-import id.outivox.core.di.*
+import id.outivox.movo.di.listModules
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin

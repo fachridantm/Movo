@@ -65,6 +65,9 @@ class DetailViewModel(private val movieDetailUseCase: MovieDetailUseCase, privat
     private val _tvTrailer = MutableLiveData<Resource<List<Video>>>()
     val tvTrailer get() = _tvTrailer
 
+    private val _isLoading = MutableLiveData<Boolean>()
+    val isLoading get() = _isLoading
+
     init {
         _movieDetail.value = init()
         _movieSimilar.value = init()

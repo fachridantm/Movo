@@ -1,6 +1,5 @@
 package id.outivox.movo.presentation.home
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -29,24 +28,19 @@ class HomeViewModel(private val homeUseCase: HomeUseCase) : ViewModel() {
     private val _upcomingMovies = MutableLiveData<Resource<PagingData<Movie>>>()
     val upcomingMovies get() = _upcomingMovies
 
-    private val _airingTodayTv = MutableLiveData<Resource<PagingData<Tv>>>()
-    val airingTodayTv get() = _airingTodayTv
-
-    private val _popularTv = MutableLiveData<Resource<PagingData<Tv>>>()
-    val popularTv get() = _popularTv
+    private val _isLoading = MutableLiveData<Boolean>()
+    val isLoading get() = _isLoading
 
     init {
         _nowPlayingMovies.value = init()
         _popularMovies.value = init()
         _upcomingMovies.value = init()
-        _airingTodayTv.value = init()
-        _popularTv.value = init()
     }
 
     fun getNowPlayingMovies() {
         viewModelScope.launch {
             _nowPlayingMovies.value = loading()
-            homeUseCase.getMovies(NOW_PLAYING_MOVIE, INDONESIA).collect {
+            homeUseCase.getMovies(NOW_PLAYING_MOVIE, INDONESIA, viewModelScope).collect {
                 _nowPlayingMovies.value = it
             }
         }
@@ -55,7 +49,7 @@ class HomeViewModel(private val homeUseCase: HomeUseCase) : ViewModel() {
     fun getPopularMovies() {
         viewModelScope.launch {
             _popularMovies.value = loading()
-            homeUseCase.getMovies(POPULAR_MOVIE, INDONESIA).collect {
+            homeUseCase.getMovies(POPULAR_MOVIE, INDONESIA, viewModelScope).collect {
                 _popularMovies.value = it
             }
         }
@@ -64,26 +58,8 @@ class HomeViewModel(private val homeUseCase: HomeUseCase) : ViewModel() {
     fun getUpcomingMovies() {
         viewModelScope.launch {
             _upcomingMovies.value = loading()
-            homeUseCase.getMovies(UPCOMING_MOVIE, INDONESIA).collect {
+            homeUseCase.getMovies(UPCOMING_MOVIE, INDONESIA, viewModelScope).collect {
                 _upcomingMovies.value = it
-            }
-        }
-    }
-
-    fun getAiringTodayTv() {
-        viewModelScope.launch {
-            _airingTodayTv.value = loading()
-            homeUseCase.getTvShow(AIRING_TODAY_TV).collect {
-                _airingTodayTv.value = it
-            }
-        }
-    }
-
-    fun getPopularTv() {
-        viewModelScope.launch {
-            _popularTv.value = loading()
-            homeUseCase.getTvShow(POPULAR_TV).collect {
-                _popularTv.value = it
             }
         }
     }

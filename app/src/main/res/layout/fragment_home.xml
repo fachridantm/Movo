@@ -13,7 +13,7 @@
         android:clipToPadding="false"
         android:paddingHorizontal="28dp"
         android:paddingTop="32dp"
-        android:paddingBottom="92dp">
+        android:paddingBottom="12dp">
 
         <ImageView
             android:id="@+id/logo_movo"
@@ -102,24 +102,8 @@
             android:paddingHorizontal="92dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintTop_toBottomOf="@id/sv_home"
-            tools:listitem="@layout/item_carousel_home" />
-
-        <TextView
-            android:id="@+id/tv_carousel_title"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="50dp"
-            android:layout_marginTop="24dp"
-            android:layout_marginEnd="50dp"
-            android:fontFamily="@font/poppins_semibold"
-            android:maxLines="1"
-            android:text="@string/sample_carousel_movie_title"
-            android:textAlignment="center"
-            android:textColor="@color/white"
-            android:textSize="19sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/rv_carousel" />
+            tools:listitem="@layout/item_carousel_home"
+            tools:visibility="visible" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_carousel_genre"
@@ -130,30 +114,47 @@
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_carousel_title"
+            app:layout_constraintTop_toBottomOf="@id/rv_carousel"
             tools:itemCount="3"
-            tools:listitem="@layout/item_genre_list" />
+            tools:listitem="@layout/item_genre_list"
+            tools:visibility="visible" />
+
+        <TextView
+            android:id="@+id/tv_empty_now_playing"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="28dp"
+            android:fontFamily="@font/poppins_bold"
+            android:text="@string/now_playing_movie_is_empty"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@id/tv_popular_movies"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/sv_home" />
 
         <TextView
             android:id="@+id/tv_popular_movies"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="28dp"
             android:fontFamily="@font/poppins_bold"
             android:text="@string/popular_movies"
             android:textColor="@color/white"
             android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/rv_carousel_genre" />
 
         <TextView
             android:id="@+id/tv_popular_movies_desc"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="-4dp"
             android:fontFamily="@font/poppins_regular"
             android:text="@string/see_playing_now_on_cinema"
             android:textColor="@color/gray_text"
             android:textSize="11sp"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_popular_movies" />
 
         <TextView
@@ -161,6 +162,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/poppins_regular"
+            android:gravity="center"
+            android:padding="10dp"
             android:text="@string/see_all"
             android:textColor="@color/primary_color"
             android:textSize="14sp"
@@ -183,25 +186,41 @@
             tools:listitem="@layout/item_horizontal_movie" />
 
         <TextView
+            android:id="@+id/tv_empty_popular_movies"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="28dp"
+            android:fontFamily="@font/poppins_bold"
+            android:text="@string/popular_movie_is_empty"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/rv_popular_movies"
+            app:layout_constraintEnd_toEndOf="@id/rv_popular_movies"
+            app:layout_constraintStart_toStartOf="@id/rv_popular_movies"
+            app:layout_constraintTop_toTopOf="@id/rv_popular_movies" />
+
+        <TextView
             android:id="@+id/tv_upcoming_movies"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
             android:fontFamily="@font/poppins_bold"
             android:text="@string/upcoming_movies"
             android:textColor="@color/white"
             android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/rv_popular_movies" />
 
         <TextView
             android:id="@+id/tv_upcoming_movies_desc"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="-4dp"
             android:fontFamily="@font/poppins_regular"
             android:text="@string/see_upcoming_movies"
             android:textColor="@color/gray_text"
             android:textSize="11sp"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_upcoming_movies" />
 
         <TextView
@@ -209,6 +228,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/poppins_regular"
+            android:padding="10dp"
             android:text="@string/see_all"
             android:textColor="@color/primary_color"
             android:textSize="14sp"
@@ -230,6 +250,21 @@
             app:layout_constraintTop_toBottomOf="@id/tv_upcoming_movies_desc"
             tools:listitem="@layout/item_horizontal_movie" />
 
+        <TextView
+            android:id="@+id/tv_empty_upcoming_movies"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="28dp"
+            android:fontFamily="@font/poppins_bold"
+            android:text="@string/upcoming_movie_is_empty"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/rv_upcoming_movies"
+            app:layout_constraintEnd_toEndOf="@id/rv_upcoming_movies"
+            app:layout_constraintStart_toStartOf="@id/rv_upcoming_movies"
+            app:layout_constraintTop_toTopOf="@id/rv_upcoming_movies" />
+
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tab_layout"
             android:layout_width="match_parent"
@@ -239,28 +274,42 @@
             android:layout_marginEnd="-28dp"
             android:background="@android:color/transparent"
             android:clipToPadding="false"
-            android:paddingHorizontal="28dp"
+            android:paddingHorizontal="12dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/rv_upcoming_movies"
+            app:tabGravity="start"
             app:tabIndicator="@drawable/tab_indicator"
             app:tabIndicatorAnimationMode="elastic"
             app:tabIndicatorGravity="stretch"
             app:tabMode="scrollable"
             app:tabRippleColor="@android:color/transparent"
             app:tabSelectedTextColor="@color/white"
-            app:tabTextAppearance="@style/tabLayoutTextTheme"
+            app:tabTextAppearance="@style/tabTextAppearance"
             app:tabTextColor="@color/gray_text" />
 
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/vp_movies"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="-28dp"
-            android:layout_marginEnd="-28dp"
+            android:layout_height="720dp"
+            android:layout_marginStart="-40dp"
+            android:layout_marginEnd="-40dp"
             android:clipToPadding="false"
             android:isScrollContainer="false"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tab_layout"
             app:layout_constraintVertical_weight="1" />
+
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:progressTint="@color/primary_color"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="visible" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

@@ -3,12 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/app_backround"
+        android:layout_height="wrap_content"
         android:clipToPadding="false"
         android:paddingHorizontal="28dp"
         android:paddingTop="24dp"
@@ -29,13 +28,27 @@
             android:id="@+id/rv_reviews"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="-24dp"
+            android:layout_marginStart="-8dp"
             android:layout_marginTop="20dp"
             android:layout_marginEnd="-24dp"
             android:orientation="horizontal"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintTop_toBottomOf="@id/tv_reviews"
             tools:listitem="@layout/item_review_detail" />
+
+        <TextView
+            android:id="@+id/tv_no_reviews"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins_bold"
+            android:text="@string/no_reviews"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/rv_reviews"
+            app:layout_constraintEnd_toEndOf="@id/rv_reviews"
+            app:layout_constraintStart_toStartOf="@id/rv_reviews"
+            app:layout_constraintTop_toTopOf="@id/rv_reviews" />
 
         <TextView
             android:id="@+id/tv_similar"
@@ -53,6 +66,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/poppins_regular"
+            android:foreground="?attr/selectableItemBackground"
             android:text="@string/see_all"
             android:textColor="@color/primary_color"
             android:textSize="14sp"
@@ -75,6 +89,20 @@
             tools:listitem="@layout/item_horizontal_movie" />
 
         <TextView
+            android:id="@+id/tv_no_similar_movies"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins_bold"
+            android:text="@string/no_similar_movies"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/rv_similar"
+            app:layout_constraintEnd_toEndOf="@id/rv_similar"
+            app:layout_constraintStart_toStartOf="@id/rv_similar"
+            app:layout_constraintTop_toTopOf="@id/rv_similar" />
+
+        <TextView
             android:id="@+id/tv_recommended"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -90,6 +118,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/poppins_regular"
+            android:foreground="?attr/selectableItemBackground"
             android:text="@string/see_all"
             android:textColor="@color/primary_color"
             android:textSize="14sp"
@@ -98,6 +127,7 @@
             app:layout_constraintTop_toTopOf="@id/tv_recommended" />
 
         <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_recommended"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="-28dp"
@@ -109,6 +139,32 @@
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintTop_toBottomOf="@id/tv_recommended"
             tools:listitem="@layout/item_horizontal_movie" />
+
+        <TextView
+            android:id="@+id/tv_no_recommended_movies"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins_bold"
+            android:text="@string/no_recommended_movies"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/rv_recommended"
+            app:layout_constraintEnd_toEndOf="@id/rv_recommended"
+            app:layout_constraintStart_toStartOf="@id/rv_recommended"
+            app:layout_constraintTop_toTopOf="@id/rv_recommended" />
+
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:progressTint="@color/primary_color"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="visible" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

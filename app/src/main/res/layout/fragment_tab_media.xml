@@ -5,40 +5,29 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/app_backround"
-    tools:context=".presentation.home.fragment.HomeTabFragment">
+    tools:context=".presentation.search.fragment.SearchMediaFragment">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_home"
+        android:id="@+id/rv_results"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingHorizontal="28dp"
-        android:paddingTop="4dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         tools:listitem="@layout/item_vertical_movie" />
 
     <TextView
-        android:id="@+id/tv_data_is_empty"
+        android:id="@+id/tv_no_results"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
+        android:fontFamily="@font/poppins_bold"
         android:text="@string/data_is_empty"
         android:textColor="@color/white"
         android:textSize="16sp"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@id/rv_home"
-        app:layout_constraintEnd_toEndOf="@id/rv_home"
-        app:layout_constraintStart_toStartOf="@id/rv_home"
-        app:layout_constraintTop_toTopOf="@id/rv_home" />
-
-    <ProgressBar
-        android:id="@+id/progress_bar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:progressTint="@color/primary_color"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:visibility="visible" />
+        app:layout_constraintTop_toTopOf="parent" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

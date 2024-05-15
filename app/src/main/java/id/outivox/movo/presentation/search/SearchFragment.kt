@@ -6,9 +6,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.SearchView
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.tabs.TabLayoutMediator
 import id.outivox.movo.databinding.FragmentSearchBinding
-import id.outivox.movo.presentation.search.fragment.adapter.SearchAdapter
+import id.outivox.movo.presentation.search.fragment.adapter.SearchMediaAdapter
 
 
 class SearchFragment : Fragment() {
@@ -21,20 +22,46 @@ class SearchFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentSearchBinding.inflate(layoutInflater)
-
-        setUpMediaViewPager("")
-        setUpSearchView()
-
         return binding.root
     }
 
-    private fun setUpSearchView() {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        initAction()
+        setupMediaViewPager()
+        setupSearchView()
+    }
+
+    private fun initAction() {
+        with(binding) {
+            toolbar.setNavigationOnClickListener { findNavController().popBackStack() }
+        }
+    }
+
+    private fun setupMediaViewPager(query: String = "") {
+        binding.apply {
+            vpSearch.apply {
+                isUserInputEnabled = true
+                adapter = SearchMediaAdapter(requireActivity(), query)
+            }
+
+            TabLayoutMediator(searchMediaTabs, vpSearch){ tab, position ->
+                when (position) {
+                    0 -> tab.text = "Movie"
+                    1 -> tab.text = "Tv Show"
+                }
+            }.attach()
+        }
+    }
+
+    private fun setupSearchView() {
         binding.svSearch.apply {
             requestFocus()
             binding.svSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(query: String?): Boolean {
-                    if (query == null) return false
-                    setUpMediaViewPager(query)
+                    if (query.isNullOrEmpty()) return false
+                    setupMediaViewPager(query)
                     return true
                 }
 
@@ -45,21 +72,5 @@ class SearchFragment : Fragment() {
             })
         }
 
-    }
-
-    private fun setUpMediaViewPager(query: String) {
-        binding.apply {
-            vpSearch.apply {
-                isUserInputEnabled = false
-                adapter = SearchAdapter(requireActivity(), query)
-            }
-
-            TabLayoutMediator(searchMediaTabs, vpSearch){ tab, position ->
-                when (position) {
-                    0 -> tab.text = "Movie"
-                    1 -> tab.text = "Tv Show"
-                }
-            }.attach()
-        }
     }
 }

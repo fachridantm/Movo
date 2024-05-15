@@ -22,8 +22,6 @@ class FavoriteViewModel(private val favoriteUseCase: FavoriteUseCase) : ViewMode
 
     val favoriteListMovies = MediatorLiveData<List<MovieDetail>>()
     val favoriteListTv = MediatorLiveData<List<TvDetail>>()
-    val favoriteMovie = MediatorLiveData<MovieDetail>()
-    val favoriteTv = MediatorLiveData<TvDetail>()
 
     fun getFavoriteMovies() {
         val source = favoriteUseCase.getFavoriteMovies().asLiveData()
@@ -40,24 +38,6 @@ class FavoriteViewModel(private val favoriteUseCase: FavoriteUseCase) : ViewMode
         favoriteListTv.addSource(source) {
             favoriteListTv.postValue(it)
             favoriteListTv.removeSource(source)
-        }
-    }
-
-    fun getFavoriteMovieById(id: String) {
-        val source = favoriteUseCase.getFavoriteMovieById(id).asLiveData()
-
-        favoriteMovie.addSource(source) {
-            favoriteMovie.postValue(it)
-            favoriteMovie.removeSource(source)
-        }
-    }
-
-    fun getFavoriteTvById(id: String) {
-        val source = favoriteUseCase.getFavoriteTvById(id).asLiveData()
-
-        favoriteTv.addSource(source) {
-            favoriteTv.postValue(it)
-            favoriteTv.removeSource(source)
         }
     }
 

@@ -40,7 +40,7 @@ fun ImageView.loadImageWithOptions(path: String, widthOverride: Int? = null, hei
         .load(IMAGE_BASE_URL + path)
         .apply(RequestOptions())
         .override(widthOverride ?: this.width, heightOverride ?: this.height)
-        .placeholder(android.R.color.darker_gray)
+        .error(android.R.color.darker_gray)
         .diskCacheStrategy(DiskCacheStrategy.ALL)
         .priority(Priority.HIGH)
         .into(this)
@@ -49,7 +49,7 @@ fun ImageView.loadImageWithOptions(path: String, widthOverride: Int? = null, hei
 fun ImageView.loadImageOnly(path: String) {
     Glide.with(this.context)
         .load(IMAGE_BASE_URL + path)
-        .placeholder(android.R.color.darker_gray)
+        .error(android.R.color.darker_gray)
         .into(this)
 }
 

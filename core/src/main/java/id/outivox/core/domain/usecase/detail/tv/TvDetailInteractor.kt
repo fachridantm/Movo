@@ -1,7 +1,5 @@
 package id.outivox.core.domain.usecase.detail.tv
 
-import id.outivox.core.domain.model.detail.*
-import id.outivox.core.domain.model.tv.Tv
 import id.outivox.core.domain.repository.detail.tv.TvDetailRepository
 
 class TvDetailInteractor(private val tvDetailRepository: TvDetailRepository): TvDetailUseCase {

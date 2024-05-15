@@ -12,7 +12,8 @@ import id.outivox.movo.databinding.ItemWallpaperBinding
 class WallpaperAdapter : ListAdapter<Wallpaper, WallpaperAdapter.WallpaperViewHolder>(DIFF_CALLBACK) {
     inner class WallpaperViewHolder(val binding: ItemWallpaperBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(data: Wallpaper, position: Int) {
-            binding.ivWallpaper.loadImageOnly(data.wallpaperUrl[position])
+            if (data.wallpaperUrl.isNotEmpty()) binding.ivWallpaper.loadImageOnly(data.wallpaperUrl[position])
+            else binding.tvWallpaperIsEmpty.visibility = ViewGroup.VISIBLE
         }
     }
 

@@ -9,13 +9,14 @@
     <application
         android:name="id.outivox.movo.MyApplication"
         android:allowBackup="true"
+        android:enableOnBackInvokedCallback="true"
         android:icon="@drawable/logo_home_movo"
         android:label="@string/app_name"
-        android:usesCleartextTraffic="true"
         android:roundIcon="@drawable/logo_home_movo"
         android:supportsRtl="true"
         android:theme="@style/Theme.Movo"
-        tools:targetApi="m">
+        android:usesCleartextTraffic="true"
+        tools:targetApi="tiramisu">
         <activity
             android:name="id.outivox.movo.presentation.detail.DetailActivity"
             android:exported="false"
