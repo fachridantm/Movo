@@ -4,10 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.paging.map
 import id.outivox.core.domain.model.Resource
@@ -16,6 +18,8 @@ import id.outivox.core.domain.model.tv.Tv
 import id.outivox.core.utils.Constants.MOVIE
 import id.outivox.core.utils.Constants.TV_SHOW
 import id.outivox.core.utils.toCategoryTitle
+import id.outivox.movo.R
+import id.outivox.movo.adapter.MovieLoadStateAdapter
 import id.outivox.movo.adapter.VerticalListAdapter
 import id.outivox.movo.databinding.FragmentAllMovieTvBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -69,6 +73,20 @@ class AllMovieTvFragment : Fragment() {
             toolbar.apply {
                 title = category.toCategoryTitle()
                 setNavigationOnClickListener { findNavController().popBackStack() }
+            }
+            rvHome.apply {
+                adapter = verticalAdapter.withLoadStateFooter(
+                    footer = MovieLoadStateAdapter { verticalAdapter.retry() }
+                )
+
+                verticalAdapter.addLoadStateListener {
+                    val state = it.source.refresh is LoadState.NotLoading && it.append.endOfPaginationReached && verticalAdapter.itemCount == 0
+                    isInvisible = state
+                    tvDataIsEmpty.apply {
+                        isVisible = state
+                        text = context.getString(R.string.vararg_is_empty, category.toCategoryTitle())
+                    }
+                }
             }
         }
     }

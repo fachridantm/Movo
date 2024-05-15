@@ -154,8 +154,12 @@ class DetailActivity : AppCompatActivity() {
         list.let { movies ->
             val data = if (::movieData.isInitialized) movieData else null
             val isFavorite = movies?.any { favorite -> favorite.id == data?.id }.orFalse()
-            setFavoriteIcon(isFavorite)
-            setFavoriteIconOnClickListener(isFavorite, data)
+            if (data != null) {
+                setFavoriteIcon(isFavorite)
+                setFavoriteIconOnClickListener(isFavorite, data)
+            } else {
+                initData()
+            }
         }
     }
 
@@ -163,8 +167,12 @@ class DetailActivity : AppCompatActivity() {
         list.let { tvs ->
             val data = if (::tvData.isInitialized) tvData else null
             val isFavorite = tvs?.any { favorite -> favorite.id == data?.id }.orFalse()
-            setFavoriteIcon(isFavorite)
-            setFavoriteIconOnClickListener(isFavorite, data)
+            if (data != null) {
+                setFavoriteIcon(isFavorite)
+                setFavoriteIconOnClickListener(isFavorite, data)
+            } else {
+                initData()
+            }
         }
     }
 
