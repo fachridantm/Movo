@@ -44,7 +44,6 @@ class FavoriteMediaFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         initObservers()
-        initData()
         initView()
     }
 
@@ -99,5 +98,10 @@ class FavoriteMediaFragment : Fragment() {
             is MovieDetail -> findNavController().navigate(FavoriteFragmentDirections.actionFavoriteFragmentToDetailActivity(any.id, MOVIE))
             is TvDetail -> findNavController().navigate(FavoriteFragmentDirections.actionFavoriteFragmentToDetailActivity(any.id, TV_SHOW))
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        initData()
     }
 }
